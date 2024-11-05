@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Contactanos</title>
+  <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="text-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <img class="simple-piggy-bank-money-logo" src="/img/LogoF.png" alt="Logo" >
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/inicio}">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/aboutUs}">Sobre Nosotros</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Contáctenos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-light text-dark" th:href="@{/login}">Iniciar Sesión</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Contáctanos Section -->
+<section class="container my-5">
+  <h2>Contáctanos</h2>
+  <p>¿Tienes alguna pregunta, comentario o necesitas asistencia? En Piggy Wallet, estamos aquí para ayudarte. Ponte en contacto con nosotros a través de los siguientes canales y nuestro equipo estará encantado de asistirte.</p>
+
+  <h4>Correo Electrónico</h4>
+  <p>Para consultas generales o soporte técnico:</p>
+  <div class="d-flex align-items-center">
+    <div>
+      <p> <i class="bi bi-envelope-at-fill me-2"></i>soporte@piggywallet.com</p>
+      <p> <i class="bi bi-envelope-at-fill me-2"></i>piggyWallet@gmail.com</p>
+    </div>
+  </div>
+
+  <h4>Teléfono</h4>
+  <p>Llámanos de lunes a viernes, de 9:00 AM a 6:00 PM:</p>
+  <div class="d-flex align-items-center">
+    <i class="bi bi-telephone me-2"></i>
+    <p>+57 320 1231232</p>
+  </div>
+</section>
+
+<!-- Redes Sociales Section -->
+<section class="container my-5">
+  <h2>Redes Sociales</h2>
+  <p>¡Síguenos en nuestras redes sociales y mantente al día con las últimas actualizaciones!</p>
+  <ul class="list-unstyled">
+    <li>
+      <a href="https://www.facebook.com/piggywallet" target="_blank">
+        <i class="bi bi-facebook me-2"></i>Facebook
+      </a>
+    </li>
+    <li>
+      <a href="https://www.twitter.com/piggywallet" target="_blank">
+        <i class="bi bi-twitter me-2"></i>Twitter
+      </a>
+    </li>
+    <li>
+      <a href="https://www.instagram.com/piggywallet" target="_blank">
+        <i class="bi bi-instagram me-2"></i>Instagram
+      </a>
+    </li>
+    <li>
+      <a href="https://www.linkedin.com/company/piggywallet" target="_blank">
+        <i class="bi bi-linkedin me-2"></i>LinkedIn
+      </a>
+    </li>
+  </ul>
+</section>
+
+<!-- Footer -->
+<footer class=" text-center py-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 text-start">
+        <img src="/img/LogoF.png" alt="Contact Image">
+        <div class="social-icons mt-3">
+          <a href="#"><i class="bi bi-google"></i></a>
+          <a href="#"><i class="bi bi-twitter"></i></a>
+          <a href="#"><i class="bi bi-linkedin"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <p>Contact Us</p>
+        <p>(+57) 320 1231232</p>
+        <p>pigsrWallet@gmail.com</p>
+        <p>soporte@piggywallet.com</p>
+      </div>
+      <div class="col-md-4">
+        <p>© 2024 Piggy Wallet. Todos los derechos reservados.</p>
+        <p>Organiza y controla tus finanzas personales con facilidad y seguridad.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

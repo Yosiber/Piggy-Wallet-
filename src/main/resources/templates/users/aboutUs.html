@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sobre Nosotros</title>
+  <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="text-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <img class="simple-piggy-bank-money-logo" src="/img/LogoF.png" alt="Logo" >
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link " th:href="@{/inicio}">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Sobre Nosotros</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/contactUs}">Contactenos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-light text-dark" th:href="@{/login}">Iniciar Sesión</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Section -->
+<section class="container my-5">
+  <div class="row align-items-center">
+    <div class="col-lg-6">
+      <img src="/img/Team.jpeg" class="img-team" alt="Piggy Wallet">
+    </div>
+    <div class="col-lg-6 d-flex align-items-center">
+      <div>
+        <h1>PIGGY WALLET</h1>
+        <p>Fundada en 2024, Piggy Wallet nació con el propósito de simplificar la administración financiera para personas comunes y familias, independientemente de sus conocimientos en finanzas. Sabemos que llevar un control del dinero puede ser complicado, por eso hemos diseñado una plataforma intuitiva que te permite ver y analizar tus finanzas en un solo lugar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Valores Section -->
+<section class="container my-5">
+  <h2>Nuestros Valores</h2>
+  <div class="row">
+    <div class="col-lg-12 mb-3">
+      <p><i class="bi bi-check-circle-fill icon-check"></i> Simplicidad: Hacemos que la administración financiera sea fácil y accesible.</p>
+    </div>
+    <div class="col-lg-12 mb-3">
+      <p><i class="bi bi-check-circle-fill icon-check"></i> Seguridad: Tus datos siempre están protegidos con los más altos estándares.</p>
+    </div>
+    <div class="col-lg-12">
+      <p><i class="bi bi-check-circle-fill icon-check"></i> Transparencia: Ofrecemos una herramienta clara y directa, sin complicaciones ni cargos ocultos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Misión y Vision Section -->
+<section class="container my-5">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h3>MISIÓN</h3>
+        <p>En Piggy Wallet, creemos que todos merecen tener el control total de sus finanzas. Nuestra misión es proporcionar una herramienta fácil de usar y segura que ayude a las personas a gestionar sus ingresos, gastos y metas financieras de manera eficiente.</p>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h3>VISIÓN</h3>
+        <p>Nuestra visión es convertirnos en la plataforma líder para la gestión de finanzas personales, siendo accesibles para todos, desde principiantes hasta aquellos con experiencia en planificación financiera.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Nuestro Equipo Section -->
+<section class="container my-5">
+  <div class="row align-items-right">
+    <div class="col-lg-6">
+      <h2>Nuestro Equipo</h2>
+      <p>Nuestro equipo está formado por expertos en finanzas y tecnología que comparten la pasión por ayudar a otros a mejorar su bienestar financiero. A lo largo de los años, hemos aprendido que con la información adecuada y las herramientas correctas, cualquiera puede transformar su relación con el dinero.</p>
+    </div>
+    <div class="col-lg-6">
+      <img src="/img/Team.jpeg" class="img-team" alt="Nuestro Equipo">
+    </div>
+  </div>
+</section>
+
+
+<!-- Footer -->
+<footer class=" text-center py-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 text-start">
+        <img src="/img/LogoF.png" alt="Contact Image">
+        <div class="social-icons mt-3">
+          <a href="#"><i class="bi bi-google"></i></a>
+          <a href="#"><i class="bi bi-twitter"></i></a>
+          <a href="#"><i class="bi bi-linkedin"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <p>Contact Us</p>
+        <p>(+57) 320 1231232</p>
+        <p>pigsrWallet@gmail.com</p>
+        <p>soporte@piggywallet.com</p>
+      </div>
+      <div class="col-md-4">
+        <p>© 2024 Piggy Wallet. Todos los derechos reservados.</p>
+        <p>Organiza y controla tus finanzas personales con facilidad y seguridad.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

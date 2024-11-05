@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Transacciones</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="body-profile">
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-md-block sidebar">
+            <div class="text-center">
+                <a class="navbar-brand" href="#">
+                    <i class="bi bi-house-door-fill nav-icon"></i>
+                    <span class="nav-text">Piggy Wallet</span>
+                </a>
+            </div>
+            <ul class="nav flex-column mt-4">
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/finance/dashboard}">
+                        <i class="bi bi-grid-1x2-fill nav-icon"></i>
+                        <span class="nav-text">Informe</span>
+                    </a>
+                </li>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-piggy-bank-fill nav-icon"></i>
+                        <span class="nav-text">Transacciones</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/finance/analysis}">
+                        <i class="bi bi-cash-stack nav-icon"></i>
+                        <span class="nav-text">Análisis</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/finance/categories}">
+                        <i class="bi bi-bar-chart-line nav-icon"></i>
+                        <span class="nav-text">Categorías</span>
+                    </a>
+                </li>
+            </ul>
+            <hr class="text-white">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-person-fill nav-icon"></i>
+                        <span class="nav-text">Perfil</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/finance/config}">
+                    <i class="bi bi-gear-fill nav-icon"></i>
+                        <span class="nav-text">Configuraciones</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/login}">
+                        <i class="bi bi-box-arrow-right nav-icon"></i>
+                        <span class="nav-text">Salir</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="col-md-10 col-lg-10 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-3 pb-2 mb-3">
+                <h2>Transacciones</h2>
+                <div class="btn-toolbar">
+                </div>
+            </div>
+
+            <div class="balance-card text-center text-white">
+                <h4>Saldo total</h4>
+                <div class="amount">231,000.00$</div>
+                <hr>
+                <div class="row mt-3">
+                    <div class="col">
+                        <p><span style="color: green;">↑</span> Ingresos: 0.00$</p>
+                    </div>
+                    <div class="col">
+                        <p><span style="color: red;">↓</span> Gastos: 0.00$</p>
+                    </div>
+                    <div class="col">
+                        <p>Balance: 0.00$</p>
+                    </div>
+                </div>
+
+                <div class="dropdown mt-3">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        Gestionar transacciones
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#ingresoModal">Ingresar Ingreso</a></li>
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#gastoModal">Ingresar Gasto</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Modal para Ingresos -->
+            <div class="modal fade" id="ingresoModal" tabindex="-1" aria-labelledby="ingresoModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="ingresoModalLabel">Registrar Ingreso</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="ingresoValor" class="form-label">Valor</label>
+                                    <input type="number" class="form-control" id="ingresoValor" placeholder="Ingresa el valor">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="ingresoCategoria" class="form-label">Categoría</label>
+                                    <select class="form-select" id="ingresoCategoria">
+                                        <option selected>Seleccionar categoría</option>
+                                        <option value="Salario">Salario</option>
+                                        <option value="Inversiones">Inversiones</option>
+                                        <option value="Otros">Otros</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="ingresoFecha" class="form-label">Fecha</label>
+                                    <input type="date" class="form-control" id="ingresoFecha">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="ingresoDetalles" class="form-label">Detalles</label>
+                                    <textarea class="form-control" id="ingresoDetalles" rows="3" placeholder="Agrega detalles"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary">Guardar Ingreso</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para Gastos -->
+            <div class="modal fade" id="gastoModal" tabindex="-1" aria-labelledby="gastoModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="gastoModalLabel">Registrar Gasto</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3 ">
+                                    <label for="gastoValor" class="form-label">Valor</label>
+                                    <input type="number" class="form-control" id="gastoValor" placeholder="Ingresa el valor">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="gastoCategoria" class="form-label">Categoría</label>
+                                    <select class="form-select" id="gastoCategoria">
+                                        <option selected>Seleccionar categoría</option>
+                                        <option value="Alimentos">Alimentos</option>
+                                        <option value="Transporte">Transporte</option>
+                                        <option value="Entretenimiento">Entretenimiento</option>
+                                        <option value="Otros">Otros</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="gastoFecha" class="form-label">Fecha</label>
+                                    <input type="date" class="form-control" id="gastoFecha">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="gastoDetalles" class="form-label">Detalles</label>
+                                    <textarea class="form-control" id="gastoDetalles" rows="3" placeholder="Agrega detalles"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary">Guardar Gasto</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/graphics.js"></script>
+</body>
+</html>
