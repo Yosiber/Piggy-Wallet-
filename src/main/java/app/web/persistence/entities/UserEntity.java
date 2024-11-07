@@ -1,9 +1,7 @@
 package app.web.persistence.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,8 +28,9 @@ public class UserEntity {
     @Column(unique = true, name = "apodo")
     private String username;
 
-
     @Column(nullable = false, name = "contraseña")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -42,4 +41,7 @@ public class UserEntity {
     )
     private Set<RoleEntity> roles = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CategoryEntity> categories = new HashSet<>();
 }
+

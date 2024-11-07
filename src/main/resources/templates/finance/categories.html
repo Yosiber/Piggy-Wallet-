@@ -87,59 +87,40 @@
                     </li>
                 </ul>
 
-                <!-- Contenido de las pestañas -->
-                <div class="tab-content" id="myTabContent">
-                    <!-- Sección de Ingresos -->
-                    <div class="tab-pane fade show active" id="ingresos" role="tabpanel" aria-labelledby="ingresos-tab">
-                        <ul class="list-group mt-3">
-                            <!-- Itera sobre cada categoría y muestra el id (o nombre) en un único <li> -->
-                            <li th:each="category : ${Categories}" class="list-group-item" th:text="${category.catName}">ID</li>
-                        </ul>
-                    </div>
-                </div>
+                <!-- Botón flotante para agregar categoría -->
+                <div class="floating-btn" data-bs-toggle="modal" data-bs-target="#addCategoryModal">+</div>
 
-                    <!-- Sección de Gastos -->
-                    <div class="tab-pane fade" id="gastos" role="tabpanel" aria-labelledby="gastos-tab">
-                        <ul class="list-group mt-3">
-                            <li class="list-group-item">Alimentos</li>
-                            <li class="list-group-item">Facturas</li>
-                            <li class="list-group-item">Transporte</li>
-                            <li class="list-group-item">Compras</li>
-                            <li class="list-group-item">Regalos</li>
-                            <li class="list-group-item">Educación</li>
-                            <li class="list-group-item">Renta</li>
-                            <li class="list-group-item">Viajes</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Botón flotante para agregar categoría -->
-            <div class="floating-btn" data-bs-toggle="modal" data-bs-target="#addCategoryModal">+</div>
-
-            <!-- Modal para agregar nueva categoría -->
-            <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addCategoryModalLabel">Agregar Nueva Categoría</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form th:action="@{/categories}" id="categoryForm">
-                                <div class="mb-3">
-                                    <label for="categoryName" class="form-label">Nombre de la Categoría</label>
-                                    <input type="text" class="form-control" id="categoryName" placeholder="Ej. Entretenimiento">
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button"  class="btn btn-primary" onclick="addCategory()">Agregar</button>
+                <!-- Modal para agregar nueva categoría -->
+                <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addCategoryModalLabel">Agregar Nueva Categoría</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="categoryForm">
+                                    <div class="mb-3">
+                                        <label for="categoryName" class="form-label">Nombre de la Categoría</label>
+                                        <input type="text" class="form-control" id="categoryName" placeholder="Ej. Entretenimiento">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" onclick="addCategory()">Agregar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- Mostrar categorías -->
+                <div class="container mt-4">
+                    <ul id="categoriesList" class="list-group">
+                        <!-- Aquí se cargarán las categorías -->
+                        <li th:each="category : ${categories}" th:text="${category.name}" class="list-group-item"></li>
+                    </ul>
+                </div>
         </main>
     </div>
 </div>
