@@ -6,6 +6,7 @@
     <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+
 </head>
 <body class="body-profile">
 <div class="container-fluid">
@@ -91,13 +92,11 @@
                     <!-- Sección de Ingresos -->
                     <div class="tab-pane fade show active" id="ingresos" role="tabpanel" aria-labelledby="ingresos-tab">
                         <ul class="list-group mt-3">
-                            <li class="list-group-item">Salario</li>
-                            <li class="list-group-item">Venta de productos</li>
-                            <li class="list-group-item">Inversiones</li>
-                            <li class="list-group-item">Renta</li>
-                            <li class="list-group-item">Regalos</li>
+                            <!-- Itera sobre cada categoría y muestra el id (o nombre) en un único <li> -->
+                            <li th:each="category : ${Categories}" class="list-group-item" th:text="${category.catName}">ID</li>
                         </ul>
                     </div>
+                </div>
 
                     <!-- Sección de Gastos -->
                     <div class="tab-pane fade" id="gastos" role="tabpanel" aria-labelledby="gastos-tab">
@@ -127,7 +126,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="categoryForm">
+                            <form th:action="@{/categories}" id="categoryForm">
                                 <div class="mb-3">
                                     <label for="categoryName" class="form-label">Nombre de la Categoría</label>
                                     <input type="text" class="form-control" id="categoryName" placeholder="Ej. Entretenimiento">
@@ -136,7 +135,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-primary" onclick="addCategory()">Agregar</button>
+                            <button type="button"  class="btn btn-primary" onclick="addCategory()">Agregar</button>
                         </div>
                     </div>
                 </div>

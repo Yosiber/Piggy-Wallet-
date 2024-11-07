@@ -2,6 +2,7 @@ package app.web.security;
 import app.web.Service.Impl.UserDetailServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -19,18 +20,22 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests((request)-> request
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/finance/categories")  // Deshabilita CSRF solo para esta ruta
+                )
+                .authorizeRequests((request) -> request
+                        .requestMatchers(HttpMethod.POST, "/finance/categories").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/finance/categories").permitAll()
                         .requestMatchers("/users/**").authenticated()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .anyRequest().permitAll()
                 )
-                .formLogin((form)-> form
+                .formLogin((form) -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/access")
-                        .permitAll())
-
-                .logout((logout)-> logout.permitAll());
-
+                        .permitAll()
+                )
+                .logout((logout) -> logout.permitAll());
 
         return http.build();
     }

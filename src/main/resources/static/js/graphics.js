@@ -104,15 +104,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function addCategory() {
     var categoryName = document.getElementById('categoryName').value;
+
     if (categoryName) {
+        // Crear la nueva categoría en la interfaz
         var activeTab = document.querySelector('.tab-pane.active');
         var newCategory = document.createElement('li');
         newCategory.classList.add('list-group-item');
         newCategory.textContent = categoryName;
         activeTab.querySelector('.list-group').appendChild(newCategory);
+
+        // Limpiar el campo de entrada y cerrar el modal
         document.getElementById('categoryName').value = '';
         var modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
         modal.hide();
+
+        // Enviar la nueva categoría al backend
+        fetch('/finance/categories', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ catName: categoryName })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al guardar la categoría');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Categoría guardada:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al guardar la categoría en el servidor.');
+            });
     } else {
         alert('Por favor, ingrese un nombre para la categoría');
     }
