@@ -20,16 +20,16 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link " href="home.html">Inicio</a>
+                    <a class="nav-link" th:href="@{/home}">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="aboutUs.html">Sobre Nosotros</a>
+                    <a class="nav-link" th:href="@{/aboutUs}">Sobre Nosotros</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="#">Contáctenos</a>
+                    <a class="nav-link" th:href="@{/contactUs}">Contactenos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link btn btn-light text-dark" href="login.html">Iniciar Sesión</a>
+                    <a class="nav-link btn btn-light text-dark" th:href="@{/login}">Iniciar Sesión</a>
                 </li>
             </ul>
         </div>
@@ -65,6 +65,7 @@
             <i class="bi bi-lock-fill icono-login"></i>
             <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required autocomplete="off">
         </div>
+
 
 
 

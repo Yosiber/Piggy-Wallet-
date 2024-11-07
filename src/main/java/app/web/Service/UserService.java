@@ -11,6 +11,8 @@ public interface UserService {
 
     UserEntity saveUser(UserEntity user);
 
-    Optional<UserEntity> getUserById(Long id);
-    Optional<UserEntity> getUserByUsername(String username);
+    UserEntity getUserById(Long id);
+    UserEntity getUserByUsername(String username);
+
+    UserEntity getCurrentSession();
 }

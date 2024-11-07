@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registe(UserEntity user){
+    public String register(UserEntity user){
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userService.createUser(user);
         return "redirect:/login";
@@ -58,11 +59,12 @@ public class UserController {
 
 
     @GetMapping("/access")
-    public String access(HttpSession session) {
-        Optional<UserEntity> optionalUser = userService.getUserById(Long.parseLong(session.getAttribute("user_session_id").toString()));
+    public String access(Model model) {
+        UserEntity user = userService.getCurrentSession();
+        boolean isAdminOrUser = user.getRoles().stream()
+                .anyMatch(role -> "ADMIN".equals(role.getRolName()) || "USER".equals(role.getRolName()));
 
-        if (optionalUser.isPresent()) {
-            session.setAttribute("user_session_id", optionalUser.get().getId());
+        if (isAdminOrUser) {
             return "redirect:/finance/dashboard";
         } else {
             return "redirect:/login";
