@@ -104,13 +104,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function addCategory() {
     const categoryName = document.getElementById("categoryName").value;
+    const categoryTypeSelect = document.getElementById("categoryType");
+    const categoryType = categoryTypeSelect.value === "true";
+
+    // Log para debug
+    console.log("Enviando datos:");
+    console.log("Nombre:", categoryName);
+    console.log("Tipo (value):", categoryTypeSelect.value);
+    console.log("Tipo (convertido):", categoryType);
 
     if (!categoryName.trim()) {
         alert("Por favor ingresa un nombre para la categoría.");
         return;
     }
 
-    const categoryData = { name: categoryName };
+    const categoryData = {
+        name: categoryName,
+        income: categoryType
+    };
+
+    // Log del objeto final
+    console.log("Datos a enviar:", JSON.stringify(categoryData));
 
     try {
         const response = await fetch("/finance/categories", {
@@ -123,26 +137,42 @@ async function addCategory() {
 
         if (response.ok) {
             const newCategory = await response.json();
-            addCategoryToList(newCategory); // Agrega la categoría a la lista
+            console.log("Categoría creada:", newCategory); // Log de respuesta
+
+            addCategoryToList(newCategory);
             document.getElementById("categoryForm").reset();
-            const addCategoryModal = new bootstrap.Modal(document.getElementById("addCategoryModal"));
-            addCategoryModal.hide();
+
+            const addCategoryModal = document.getElementById("addCategoryModal");
+            const modal = bootstrap.Modal.getInstance(addCategoryModal);
+            modal.hide();
         } else {
+            const errorData = await response.text();
+            console.error("Error response:", errorData);
             alert("Error al agregar la categoría.");
         }
     } catch (error) {
         console.error("Error:", error);
         alert("Error al agregar la categoría.");
     }
+}
 
+function addCategoryToList(category) {
+    console.log("Agregando categoría a la lista:", category); // Log para debug
 
-    function addCategoryToList(category) {
-        const categoriesList = document.getElementById("categoriesList");
-        const newCategoryItem = document.createElement("li");
-        newCategoryItem.classList.add("list-group-item");
-        newCategoryItem.textContent = category.name;
-        categoriesList.appendChild(newCategoryItem);
+    // Obtener la lista correcta basada en el tipo de categoría
+    const tabPane = category.income ?
+        document.getElementById("ingresos") :
+        document.getElementById("gastos");
+
+    const categoriesList = tabPane.querySelector("ul");
+
+    if (!categoriesList) {
+        console.error("No se encontró la lista para la categoría:", category);
+        return;
     }
 
-
+    const newCategoryItem = document.createElement("li");
+    newCategoryItem.classList.add("list-group-item");
+    newCategoryItem.textContent = category.name;
+    categoriesList.appendChild(newCategoryItem);
 }

@@ -20,6 +20,9 @@ public class CategoryEntity {
     @Column(name = "catName")
     private String name;
 
+    @Column(name = "is_income", nullable = false)
+    private boolean isIncome; // true = Ingreso, false = Gasto
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;

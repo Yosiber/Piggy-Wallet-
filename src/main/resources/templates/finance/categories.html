@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Categorias</title>
+    <title>Categorías</title>
     <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-
 </head>
 <body class="body-profile">
 <div class="container-fluid">
@@ -26,7 +25,6 @@
                         <span class="nav-text">Informe</span>
                     </a>
                 </li>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/finance/transactions}">
                         <i class="bi bi-piggy-bank-fill nav-icon"></i>
@@ -39,7 +37,6 @@
                         <span class="nav-text">Análisis</span>
                     </a>
                 </li>
-
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="bi bi-bar-chart-line nav-icon"></i>
@@ -57,7 +54,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/finance/config}">
-                    <i class="bi bi-gear-fill nav-icon"></i>
+                        <i class="bi bi-gear-fill nav-icon"></i>
                         <span class="nav-text">Configuraciones</span>
                     </a>
                 </li>
@@ -71,7 +68,6 @@
         </nav>
 
         <main class="col-md-10 col-lg-10 main-content">
-
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-3 pb-2 mb-3">
                 <h2>Categorías</h2>
             </div>
@@ -104,6 +100,13 @@
                                         <label for="categoryName" class="form-label">Nombre de la Categoría</label>
                                         <input type="text" class="form-control" id="categoryName" placeholder="Ej. Entretenimiento">
                                     </div>
+                                    <div class="mb-3">
+                                        <label for="categoryType" class="form-label">Tipo de Categoría</label>
+                                        <select class="form-select" id="categoryType" required>
+                                            <option value="true">Ingreso</option>
+                                            <option value="false">Gasto</option>
+                                        </select>
+                                    </div>
                                 </form>
                             </div>
                             <div class="modal-footer">
@@ -114,13 +117,27 @@
                     </div>
                 </div>
 
-                <!-- Mostrar categorías -->
-                <div class="container mt-4">
-                    <ul id="categoriesList" class="list-group">
-                        <!-- Aquí se cargarán las categorías -->
-                        <li th:each="category : ${categories}" th:text="${category.name}" class="list-group-item"></li>
-                    </ul>
+                <!-- Contenido de las pestañas -->
+                <div class="tab-content" id="myTabContent">
+                    <!-- Ingresos -->
+                    <div id="ingresos" class="tab-pane fade show active" role="tabpanel" aria-labelledby="ingresos-tab">
+                        <div class="mt-3">
+                            <ul class="list-group">
+                                <li th:each="ingreso : ${ingresos}" th:text="${ingreso.name}" class="list-group-item"></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Gastos -->
+                    <div id="gastos" class="tab-pane fade" role="tabpanel" aria-labelledby="gastos-tab">
+                        <div class="mt-3">
+                            <ul class="list-group">
+                                <li th:each="gasto : ${gastos}" th:text="${gasto.name}" class="list-group-item"></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
+            </div>
         </main>
     </div>
 </div>
