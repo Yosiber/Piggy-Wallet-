@@ -21,10 +21,6 @@ public class CashFlowEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @Column(name = "caf_transaction")
-    private Boolean Transaction;
-
     @Column(name = "caf_value")
     private Float value;
 
@@ -34,10 +30,11 @@ public class CashFlowEntity {
     @Column(name = "caf_detalles")
     private String description;
 
-
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CategoryEntity category;
 
-
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private UserEntity user;
 }

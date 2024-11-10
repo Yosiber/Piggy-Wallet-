@@ -57,4 +57,9 @@ public class CategoryServiceImpl implements CategoryService {
 
         return savedCategory;
     }
+
+    @Override
+    public Optional<CategoryEntity> findById(Long id) {
+        return categoryRepository.findById(id);
+    }
 }

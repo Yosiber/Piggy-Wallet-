@@ -21,7 +21,8 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/finance/categories")  // Deshabilita CSRF solo para esta ruta
+                        .ignoringRequestMatchers("/finance/categories")
+                        .ignoringRequestMatchers("/finance/transactions") // Deshabilita CSRF solo para esta ruta
                 )
                 .authorizeRequests((request) -> request
                         .requestMatchers(HttpMethod.POST, "/finance/categories").permitAll()

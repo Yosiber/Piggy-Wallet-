@@ -25,7 +25,6 @@
                         <span class="nav-text">Informe</span>
                     </a>
                 </li>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="bi bi-piggy-bank-fill nav-icon"></i>
@@ -55,7 +54,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/finance/config}">
-                    <i class="bi bi-gear-fill nav-icon"></i>
+                        <i class="bi bi-gear-fill nav-icon"></i>
                         <span class="nav-text">Configuraciones</span>
                     </a>
                 </li>
@@ -71,23 +70,21 @@
         <main class="col-md-10 col-lg-10 main-content">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-3 pb-2 mb-3">
                 <h2>Transacciones</h2>
-                <div class="btn-toolbar">
-                </div>
             </div>
 
-            <div class="balance-card text-center text-white">
+            <div class="balance-card text-center text-white mb-4">
                 <h4>Saldo total</h4>
                 <div class="amount">231,000.00$</div>
                 <hr>
                 <div class="row mt-3">
                     <div class="col">
-                        <p><span style="color: green;">↑</span> Ingresos: 0.00$</p>
+                        <p><span style="color: green;">↑</span> Ingresos: <span th:text="${totalIngresos}"></span> $</p>
                     </div>
                     <div class="col">
-                        <p><span style="color: red;">↓</span> Gastos: 0.00$</p>
+                        <p><span style="color: red;">↓</span> Gastos: <span th:text="${totalGastos}"></span> $</p>
                     </div>
                     <div class="col">
-                        <p>Balance: 0.00$</p>
+                        <p>Balance: <span th:text="${balance}"></span> $</p>
                     </div>
                 </div>
 
@@ -102,6 +99,27 @@
                 </div>
             </div>
 
+            <!-- Tabla de Transacciones -->
+            <div class="table-responsive mb-4">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Monto</th>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="transaction : ${transactions}">
+                        <td th:text="${transaction.value}"></td>
+                        <td th:text="${transaction.description}"></td>
+                        <td th:text="${transaction.category.name}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modales para Ingresos y Gastos (mismos que tenías, con un solo cambio en th:each) -->
             <!-- Modal para Ingresos -->
             <div class="modal fade" id="ingresoModal" tabindex="-1" aria-labelledby="ingresoModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -111,7 +129,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form>
+                            <form id="ingresoForm">
                                 <div class="mb-3">
                                     <label for="ingresoValor" class="form-label">Valor</label>
                                     <input type="number" class="form-control" id="ingresoValor" placeholder="Ingresa el valor">
@@ -120,7 +138,8 @@
                                     <label for="ingresoCategoria" class="form-label">Categoría</label>
                                     <select class="form-select" id="ingresoCategoria">
                                         <option selected>Seleccionar categoría</option>
-                                        <option value="Salario"></option>
+                                        <!-- Itera sobre las categorías -->
+                                        <option th:each="ingreso : ${ingresos}" th:value="${ingreso.id}" th:text="${ingreso.name}"></option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
@@ -135,7 +154,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-primary">Guardar Ingreso</button>
+                            <button type="button" class="btn btn-primary" onclick="guardarIngreso()">Guardar Ingreso</button>
                         </div>
                     </div>
                 </div>
@@ -151,7 +170,7 @@
                         </div>
                         <div class="modal-body">
                             <form>
-                                <div class="mb-3 ">
+                                <div class="mb-3">
                                     <label for="gastoValor" class="form-label">Valor</label>
                                     <input type="number" class="form-control" id="gastoValor" placeholder="Ingresa el valor">
                                 </div>
@@ -159,10 +178,8 @@
                                     <label for="gastoCategoria" class="form-label">Categoría</label>
                                     <select class="form-select" id="gastoCategoria">
                                         <option selected>Seleccionar categoría</option>
-                                        <option value="Alimentos">Alimentos</option>
-                                        <option value="Transporte">Transporte</option>
-                                        <option value="Entretenimiento">Entretenimiento</option>
-                                        <option value="Otros">Otros</option>
+                                        <!-- Aquí se muestran las categorías de gasto -->
+                                        <option th:each="gasto : ${gastos}" th:value="${gasto.id}" th:text="${gasto.name}"></option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
@@ -182,11 +199,52 @@
                     </div>
                 </div>
             </div>
+
         </main>
     </div>
 </div>
 
 
+            <script>
+                function guardarIngreso() {
+                    const amount = parseFloat(document.getElementById("ingresoValor").value);
+                    const selectedCategoryId = parseInt(document.getElementById("ingresoCategoria").value);
+                    const description = document.getElementById("ingresoDetalles").value;
+                    const date = document.getElementById("ingresoFecha").value;
+
+                    // Formatea la fecha si es necesario
+                    const formattedDate = `${date} 00:00:00`;
+
+                    fetch('/finance/transactions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            value: amount,
+                            description: description,
+                            categoryId: selectedCategoryId,
+                            date: formattedDate
+                        })
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                alert("Ingreso guardado con éxito.");
+                                document.getElementById("ingresoForm").reset();
+                                const modal = bootstrap.Modal.getInstance(document.getElementById('ingresoModal'));
+                                modal.hide();
+                            } else {
+                                return response.json().then(data => {
+                                    alert("Error al guardar el ingreso: " + (data.error || "Error desconocido"));
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                            alert("Error al guardar el ingreso.");
+                        });
+                }
+            </script>
 <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/graphics.js"></script>
