@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -30,10 +31,12 @@ public class CashFlowEntity {
     @Column(name = "caf_detalles")
     private String description;
 
-    @ManyToOne
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY) // o FetchType.EAGER
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CategoryEntity category;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;

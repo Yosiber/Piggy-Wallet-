@@ -13,6 +13,5 @@ import java.util.Set;
 public interface CashFlowService {
     CashFlowEntity saveTransaction(CashFlowEntity cashFlow);
     List<CashFlowEntity> getTransactionsByUser(UserEntity user);
-    List<CashFlowEntity> getTransactionsByPeriod(LocalDateTime startDate, LocalDateTime endDate, UserEntity user);
-    Map<String, Double> getBalanceSummary(UserEntity user);
+    Map<String, Object> getBalanceSummary(UserEntity user);
 }

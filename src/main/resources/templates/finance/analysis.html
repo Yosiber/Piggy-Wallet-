@@ -95,90 +95,66 @@
         </div>
       </div>
 
+
       <div class="row mb-4">
+        <!-- Tabla de Ingresos -->
         <div class="col-md-6">
           <div class="card flex-fill">
             <div class="card-body">
-              <h5 class="card-title">Transacciones Recientes</h5>
-              <table class="table text-light">
-                <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Valor</th>
-                  <th>Descripción</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                  <td>Enero</td>
-                  <td>$2,320.00</td>
-                  <td>John Doe</td>
-                </tr>
-                <tr>
-                  <td>Febrero</td>
-                  <td>$2,320.00</td>
-                  <td>John Doe</td>
-                </tr>
-                <tr>
-                  <td>Marzo</td>
-                  <td>$2,320.00</td>
-                  <td>John Doe</td>
-                </tr>
-                <tr>
-                  <td>Abril</td>
-                  <td>$2,320.00</td>
-                  <td>John Doe</td>
-                </tr>
-                </tbody>
-              </table>
+              <h5 class="card-title">Ingresos Recientes</h5>
+              <div class="table-responsive mb-4">
+                <table class="table table-striped table-hover">
+                  <thead class="table-dark">
+                  <tr>
+                    <th>Monto</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Fecha</th>
+                  </tr>
+                  </thead>
+                  <tbody id="ingresosTableBody">
+                  <tr th:each="ingreso : ${transaccionesIngresos}">
+                    <td th:text="${ingreso.value}"></td>
+                    <td th:text="${ingreso.description}"></td>
+                    <td th:text="${ingreso.category.name}"></td>
+                    <td th:text="${ingreso.date}"></td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- Tabla de Gastos -->
         <div class="col-md-6">
           <div class="card flex-fill">
             <div class="card-body">
-              <h5 class="card-title">Gasto por meses</h5>
-              <table class="table text-light">
-                <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Valor</th>
-                  <th>Descripción</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                  <td>Enero</td>
-                  <td>-$29.90</td>
-                  <td>YouTube Premium</td>
-
-
-                </tr>
-                <tr>
-                  <td>Febrero</td>
-                  <td>-$29.90</td>
-                  <td>YouTube Premium</td>
-                </tr>
-                <tr>
-                  <td>Marzo</td>
-                  <td>-$29.90</td>
-                  <td>YouTube Premium</td>
-                </tr>
-                <tr>
-                  <td>Abril</td>
-                  <td>-$29.90</td>
-                  <td>YouTube Premium</td>
-                </tr>
-                </tbody>
-              </table>
+              <h5 class="card-title">Gastos Recientes</h5>
+              <div class="table-responsive mb-4">
+                <table class="table table-striped table-hover">
+                  <thead class="table-dark">
+                  <tr>
+                    <th>Monto</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Fecha</th>
+                  </tr>
+                  </thead>
+                  <tbody id="gastosTableBody">
+                  <tr th:each="gasto : ${transaccionesGastos}">
+                    <td th:text="${gasto.value}"></td>
+                    <td th:text="${gasto.description}"></td>
+                    <td th:text="${gasto.category.name}"></td>
+                    <td th:text="${gasto.date}"></td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </main>
-  </div>
-</div>
 
 
 <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>

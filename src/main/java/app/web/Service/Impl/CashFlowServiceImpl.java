@@ -32,27 +32,42 @@ public class CashFlowServiceImpl implements CashFlowService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    public CashFlowServiceImpl(CashFlowRepository cashFlowRepository,
+                               CategoryRepository categoryRepository) {
+        this.cashFlowRepository = cashFlowRepository;
+        this.categoryRepository = categoryRepository;
+    }
+
     @Override
     public CashFlowEntity saveTransaction(CashFlowEntity cashFlow) {
-        UserEntity currentUser = userService.getCurrentSession();
-        cashFlow.setUser(currentUser);
-        cashFlow.setDate(new Timestamp(System.currentTimeMillis()));
+        // Obtener la categoría y validar
+        CategoryEntity category = categoryRepository.findById(cashFlow.getCategory().getId())
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+
+        // Validar que la categoría pertenezca al usuario
+        if (!category.getUser().getId().equals(cashFlow.getUser().getId())) {
+            throw new RuntimeException("La categoría no pertenece al usuario");
+        }
+
+        // Ajustar el valor según el tipo de transacción (ingreso o gasto)
+        if (category.isIncome()) {
+            cashFlow.setValue(Math.abs(cashFlow.getValue()));
+        } else {
+            cashFlow.setValue(-Math.abs(cashFlow.getValue()));
+        }
+
         return cashFlowRepository.save(cashFlow);
     }
 
     @Override
     public List<CashFlowEntity> getTransactionsByUser(UserEntity user) {
-        return cashFlowRepository.findByUser(user);
+        return cashFlowRepository.findByUserOrderByDateDesc(user);
     }
 
     @Override
-    public List<CashFlowEntity> getTransactionsByPeriod(LocalDateTime startDate, LocalDateTime endDate, UserEntity user) {
-        return cashFlowRepository.findByUserAndDateBetween(user, startDate, endDate);
-    }
-
-    @Override
-    public Map<String, Double> getBalanceSummary(UserEntity user) {
-        List<CashFlowEntity> transactions = cashFlowRepository.findByUser(user);
+    public Map<String, Object> getBalanceSummary(UserEntity user) {
+        List<CashFlowEntity> transactions = getTransactionsByUser(user);
 
         double totalIncome = transactions.stream()
                 .filter(t -> t.getCategory().isIncome())
@@ -61,15 +76,13 @@ public class CashFlowServiceImpl implements CashFlowService {
 
         double totalExpenses = transactions.stream()
                 .filter(t -> !t.getCategory().isIncome())
-                .mapToDouble(CashFlowEntity::getValue)
+                .mapToDouble(t -> Math.abs(t.getValue()))
                 .sum();
 
-        Map<String, Double> summary = new HashMap<>();
+        Map<String, Object> summary = new HashMap<>();
         summary.put("totalIncome", totalIncome);
         summary.put("totalExpenses", totalExpenses);
         summary.put("balance", totalIncome - totalExpenses);
-
-        log.info("Balance calculado para usuario {}: {}", user.getUsername(), summary);
 
         return summary;
     }

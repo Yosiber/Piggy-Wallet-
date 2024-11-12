@@ -176,3 +176,100 @@ function addCategoryToList(category) {
     newCategoryItem.textContent = category.name;
     categoriesList.appendChild(newCategoryItem);
 }
+
+
+async function guardarTransaccion(isIncome) {
+    const prefix = isIncome ? 'Ingreso' : 'Gasto';
+    const formId = isIncome ? 'ingresoForm' : 'gastoForm';
+    const form = document.getElementById(formId);
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const monto = parseFloat(document.getElementById(`monto${prefix}`).value);
+    const descripcion = document.getElementById(`descripcion${prefix}`).value.trim();
+    const categoriaId = parseInt(document.getElementById(`categoria${prefix}`).value, 10);
+    const fechaInput = document.getElementById(`fecha${prefix}`).value;
+
+    // Convertir el formato de fecha a 'yyyy-MM-dd HH:mm:ss'
+    const fecha = fechaInput.replace("T", " ") + ":00";
+
+    const transactionData = {
+        value: isIncome ? Math.abs(monto) : -Math.abs(monto),
+        description: descripcion,
+        categoryId: categoriaId,
+        date: fecha,
+    };
+
+    try {
+        const response = await fetch("/finance/transactions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(transactionData)
+        });
+
+        if (response.ok) {
+            const savedTransaction = await response.json();
+            const modalId = isIncome ? 'ingresoModal' : 'gastoModal';
+            const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+            modal.hide();
+            form.reset();
+            actualizarListaTransacciones(savedTransaction);
+        } else {
+            const errorData = await response.text();
+            console.error("Error del servidor:", errorData);
+            alert("Error al guardar la transacción.");
+        }
+    } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+        alert("Error al guardar la transacción.");
+    }
+}
+
+// Helper function to format the date by month and year
+function formatDateToMonth(dateString) {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'long' };
+    return date.toLocaleDateString(undefined, options); // "November 2024"
+}
+
+// Function to update the transaction list on the page, grouped by month
+function actualizarListaTransacciones(transaction) {
+    console.log("Actualizando lista con nueva transacción:", transaction);
+
+    const tableBody = document.getElementById("transactionsTableBody");
+
+    // Get the formatted month for the transaction date
+    const transactionMonth = formatDateToMonth(transaction.date);
+
+    // Check if a table row already exists for this month
+    let monthRow = document.getElementById(`month-${transactionMonth}`);
+    if (!monthRow) {
+        // Create a new row for this month if it doesn't exist
+        monthRow = document.createElement("tr");
+        monthRow.id = `month-${transactionMonth}`;
+        monthRow.innerHTML = `
+            <td colspan="4"><strong>${transactionMonth}</strong></td>
+        `;
+        tableBody.appendChild(monthRow);
+    }
+
+    // Add the new transaction row under the month row
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+        <td>${transaction.value.toFixed(2)}</td>
+        <td>${transaction.description}</td>
+        <td>${transaction.category.name}</td>
+        <td>${transaction.date}</td>
+    `;
+    tableBody.appendChild(newRow);
+}
+
+
+
+
+
