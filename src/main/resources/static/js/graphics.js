@@ -1,54 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Gráfico de barras
-    var ctxBar = document.getElementById('myBarChartIncome').getContext('2d');
-    var myBarChart = new Chart(ctxBar, {
-        type: 'bar',
-        data: {
-            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
-            datasets: [{
-                label: 'Ingresos',
-                data: [12000, 15000, 13000, 14000, 17000],
-                backgroundColor: 'rgba(40, 167, 69, 0.5)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-
-    // Gráfico de barras
-    var ctxBar = document.getElementById('myBarChartSpending').getContext('2d');
-    var myBarChart = new Chart(ctxBar, {
-        type: 'bar',
-        data: {
-            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
-            datasets: [{
-                label: 'Gastos',
-                data: [12000, 15000, 13000, 14000, 17000],
-                backgroundColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-
-});
-
-
-document.addEventListener('DOMContentLoaded', function() {
     // Balance Summary Chart
     const balanceCtx = document.getElementById('balanceChart').getContext('2d');
     const balanceChart = new Chart(balanceCtx, {
@@ -56,12 +6,12 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: ['Mar 1', 'Mar 5', 'Mar 10', 'Mar 14'],
             datasets: [{
-                label: 'Income',
+                label: 'Ingreso',
                 data: [1000, 2000, 1500, 2200],
                 borderColor: 'rgba(75, 192, 192, 1)',
                 fill: false
             }, {
-                label: 'Spending',
+                label: 'Gasto',
                 data: [500, 700, 1200, 1000],
                 borderColor: 'rgba(255, 99, 132, 1)',
                 fill: false
@@ -177,6 +127,24 @@ function addCategoryToList(category) {
     categoriesList.appendChild(newCategoryItem);
 }
 
+// Función para formatear números grandes sin notación científica
+function formatearNumero(numero) {
+    // Si el número es null o undefined, retornamos 0
+    if (numero == null) return '0';
+
+    // Convertimos a número por si acaso viene como string
+    const num = typeof numero === 'string' ? parseFloat(numero) : numero;
+
+    // Verificamos si es un número válido
+    if (isNaN(num)) return '0';
+
+    // Formateamos el número con separadores de miles y dos decimales
+    return num.toLocaleString('es-ES', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true // Esto agrega los separadores de miles
+    });
+}
 
 async function guardarTransaccion(isIncome) {
     const prefix = isIncome ? 'Ingreso' : 'Gasto';
@@ -214,11 +182,35 @@ async function guardarTransaccion(isIncome) {
 
         if (response.ok) {
             const savedTransaction = await response.json();
+            // Cerrar el modal
             const modalId = isIncome ? 'ingresoModal' : 'gastoModal';
             const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
             modal.hide();
+
+            // Resetear el formulario
             form.reset();
-            actualizarListaTransacciones(savedTransaction);
+
+            // Actualizar las tablas y gráficas
+            const tableBody = document.getElementById(isIncome ? 'ingresosTableBody' : 'gastosTableBody');
+            if (tableBody) {
+                // Crear nueva fila
+                const row = tableBody.insertRow(0); // Insertar al inicio de la tabla
+
+                // Insertar celdas
+                const montoCell = row.insertCell(0);
+                const descripcionCell = row.insertCell(1);
+                const categoriaCell = row.insertCell(2);
+                const fechaCell = row.insertCell(3);
+
+                // Asignar valores
+                montoCell.textContent = savedTransaction.value.toLocaleString();
+                descripcionCell.textContent = savedTransaction.description;
+                categoriaCell.textContent = savedTransaction.category.name; // Asumiendo que la respuesta incluye la categoría
+                fechaCell.textContent = formatDateToMonth(savedTransaction.date);
+
+                // Actualizar las gráficas
+                formatearTodasLasFechas();
+            }
         } else {
             const errorData = await response.text();
             console.error("Error del servidor:", errorData);
@@ -230,44 +222,169 @@ async function guardarTransaccion(isIncome) {
     }
 }
 
-// Helper function to format the date by month and year
+// Función para formatear la fecha a solo mes
 function formatDateToMonth(dateString) {
-    const date = new Date(dateString);
-    const options = { year: 'numeric', month: 'long' };
-    return date.toLocaleDateString(undefined, options); // "November 2024"
-}
+    try {
+        // Primero verificamos si la fecha ya es un mes
+        if (['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+            'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'].includes(dateString.toLowerCase())) {
+            return dateString;
+        }
 
-// Function to update the transaction list on the page, grouped by month
-function actualizarListaTransacciones(transaction) {
-    console.log("Actualizando lista con nueva transacción:", transaction);
-
-    const tableBody = document.getElementById("transactionsTableBody");
-
-    // Get the formatted month for the transaction date
-    const transactionMonth = formatDateToMonth(transaction.date);
-
-    // Check if a table row already exists for this month
-    let monthRow = document.getElementById(`month-${transactionMonth}`);
-    if (!monthRow) {
-        // Create a new row for this month if it doesn't exist
-        monthRow = document.createElement("tr");
-        monthRow.id = `month-${transactionMonth}`;
-        monthRow.innerHTML = `
-            <td colspan="4"><strong>${transactionMonth}</strong></td>
-        `;
-        tableBody.appendChild(monthRow);
+        // Si no es un mes, intentamos convertir la fecha
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            // Si la fecha no es válida, asumimos que es el nombre del mes
+            return dateString;
+        }
+        const options = { month: 'long' };
+        return date.toLocaleDateString('es-ES', options);
+    } catch (error) {
+        console.error('Error en formatDateToMonth:', error);
+        return dateString; // Retornamos el string original si hay error
     }
-
-    // Add the new transaction row under the month row
-    const newRow = document.createElement("tr");
-    newRow.innerHTML = `
-        <td>${transaction.value.toFixed(2)}</td>
-        <td>${transaction.description}</td>
-        <td>${transaction.category.name}</td>
-        <td>${transaction.date}</td>
-    `;
-    tableBody.appendChild(newRow);
 }
+
+// Función para agrupar transacciones por mes y calcular totales
+function agruparPorMes(tableRows) {
+    const totalesPorMes = {};
+
+    // Convertir HTMLCollection a Array
+    Array.from(tableRows).forEach(row => {
+        const mes = row.cells[3].textContent.toLowerCase().trim();
+        const monto = parseFloat(row.cells[0].textContent.replace(/[^\d.-]/g, ''));
+
+        if (!isNaN(monto)) {
+            if (!totalesPorMes[mes]) {
+                totalesPorMes[mes] = 0;
+            }
+            totalesPorMes[mes] += monto;
+        }
+    });
+
+    return totalesPorMes;
+}
+
+// Función para formatear todas las fechas en las tablas
+function formatearTodasLasFechas() {
+    const ingresosTable = document.getElementById('ingresosTableBody');
+    const gastosTable = document.getElementById('gastosTableBody');
+
+    if (ingresosTable && gastosTable) {
+        formatearFechasEnTabla(ingresosTable);
+        formatearFechasEnTabla(gastosTable);
+
+        // Procesar datos para las gráficas
+        const ingresosPorMes = agruparPorMes(ingresosTable.getElementsByTagName('tr'));
+        const gastosPorMes = agruparPorMes(gastosTable.getElementsByTagName('tr'));
+
+        // Crear gráficas con los datos procesados
+        crearGraficas(ingresosPorMes, gastosPorMes);
+    }
+}
+
+function formatearFechasEnTabla(tableBody) {
+    if (!tableBody) return;
+
+    Array.from(tableBody.getElementsByTagName('tr')).forEach(row => {
+        const dateCell = row.cells[3];
+        if (dateCell && dateCell.textContent) {
+            dateCell.textContent = formatDateToMonth(dateCell.textContent.trim());
+        }
+    });
+}
+
+function crearGraficas(ingresosPorMes, gastosPorMes) {
+    // Definir el orden correcto de los meses
+    const ordenMeses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+    // Obtener todos los meses únicos y ordenarlos
+    const meses = [...new Set([...Object.keys(ingresosPorMes), ...Object.keys(gastosPorMes)])];
+    meses.sort((a, b) => {
+        return ordenMeses.indexOf(a.toLowerCase()) - ordenMeses.indexOf(b.toLowerCase());
+    });
+
+    // Gráfico de Ingresos
+    const ctxIngresos = document.getElementById('myBarChartIncome').getContext('2d');
+    new Chart(ctxIngresos, {
+        type: 'bar',
+        data: {
+            labels: meses,
+            datasets: [{
+                label: 'Ingresos',
+                data: meses.map(mes => ingresosPorMes[mes] || 0),
+                backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + context.raw.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de Gastos
+    const ctxGastos = document.getElementById('myBarChartSpending').getContext('2d');
+    new Chart(ctxGastos, {
+        type: 'bar',
+        data: {
+            labels: meses,
+            datasets: [{
+                label: 'Gastos',
+                data: meses.map(mes => Math.abs(gastosPorMes[mes]) || 0),
+                backgroundColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + context.raw.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Ejecutar cuando el documento esté listo
+document.addEventListener('DOMContentLoaded', formatearTodasLasFechas);
+
+
+
 
 
 

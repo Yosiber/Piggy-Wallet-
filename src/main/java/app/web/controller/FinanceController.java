@@ -141,17 +141,7 @@ public class FinanceController {
     @ResponseBody
     public ResponseEntity<CategoryEntity> createCategory(@AuthenticationPrincipal User user, @RequestBody CategoryEntity category) {
         try {
-            // Logs para debug
-            System.out.println("Datos recibidos:");
-            System.out.println("Nombre categoría: " + category.getName());
-            System.out.println("isIncome (antes): " + category.isIncome());
-
             CategoryEntity savedCategory = categoryService.createCategory(category, user);
-
-            System.out.println("Categoría guardada:");
-            System.out.println("ID: " + savedCategory.getId());
-            System.out.println("Nombre: " + savedCategory.getName());
-            System.out.println("isIncome (después): " + savedCategory.isIncome());
 
             return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -164,38 +154,28 @@ public class FinanceController {
 
     @GetMapping("/analysis")
     public String analysis(@AuthenticationPrincipal User springUser, Model model) {
-        // Obtener el UserEntity para el cashFlowService
         UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
 
-        // Obtener categorías usando el User de Spring Security
-        Set<CategoryEntity> allCategories = categoryService.getCategoriesByUser(springUser);
-
-        // Separar categorías en ingresos y gastos
-        Map<Boolean, List<CategoryEntity>> categoriesByType = allCategories.stream()
-                .collect(Collectors.groupingBy(CategoryEntity::isIncome));
-
-        // Obtener todas las transacciones del usuario
         List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
 
-        // Filtrar las transacciones de ingresos y gastos
+        // Ordenar las transacciones por fecha descendente (más recientes primero)
+        transactions.sort((a, b) -> b.getDate().compareTo(a.getDate()));
+
         List<CashFlowEntity> ingresos = transactions.stream()
-                .filter(transaction -> transaction.getValue() > 0) // Asumiendo que los ingresos tienen un valor positivo
+                .filter(transaction -> transaction.getValue() > 0)
                 .collect(Collectors.toList());
 
         List<CashFlowEntity> gastos = transactions.stream()
-                .filter(transaction -> transaction.getValue() < 0) // Asumiendo que los gastos tienen un valor negativo
+                .filter(transaction -> transaction.getValue() < 0)
                 .collect(Collectors.toList());
 
-        // Obtener balance
-        Map<String, Object> balance = cashFlowService.getBalanceSummary(currentUser);
+        // Si quieres limitar el número de transacciones mostradas
+        int limiteMostrar = 10; // Ajusta este número según necesites
+        ingresos = ingresos.stream().limit(limiteMostrar).collect(Collectors.toList());
+        gastos = gastos.stream().limit(limiteMostrar).collect(Collectors.toList());
 
-        // Agregar atributos al modelo
-        model.addAttribute("ingresos", categoriesByType.getOrDefault(true, new ArrayList<>()));
-        model.addAttribute("gastos", categoriesByType.getOrDefault(false, new ArrayList<>()));
-        model.addAttribute("transaccionesIngresos", ingresos); // Solo ingresos
-        model.addAttribute("transaccionesGastos", gastos); // Solo gastos
-        model.addAttribute("totalIngresos", balance.get("totalIncome"));
-        model.addAttribute("totalGastos", balance.get("totalExpenses"));
+        model.addAttribute("transaccionesIngresos", ingresos);
+        model.addAttribute("transaccionesGastos", gastos);
 
         return "finance/analysis";
     }
