@@ -8,6 +8,14 @@ import app.web.Service.UserService;
 import app.web.persistence.entities.CashFlowEntity;
 import app.web.persistence.entities.CategoryEntity;
 import app.web.persistence.entities.UserEntity;
+import app.web.persistence.entities.dto.TransactionDTO;
+//import app.web.persistence.entities.dto.TransactionRequestDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -18,7 +26,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -53,32 +64,41 @@ public class FinanceController {
 
     @GetMapping("/transactions")
     public String mostrarTransacciones(@AuthenticationPrincipal User springUser, Model model) {
-        // Obtener el UserEntity para el cashFlowService
         UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
-
-        // Obtener categorías usando el User de Spring Security
         Set<CategoryEntity> allCategories = categoryService.getCategoriesByUser(springUser);
 
-        // Separar categorías en ingresos y gastos
         Map<Boolean, List<CategoryEntity>> categoriesByType = allCategories.stream()
                 .collect(Collectors.groupingBy(CategoryEntity::isIncome));
 
-        // Obtener transacciones y balance usando UserEntity
         List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
+
+        // Limitar a 10 transacciones
+        List<CashFlowEntity> limitedTransactions = transactions.size() > 10
+                ? transactions.subList(0, 10)
+                : transactions;
+
         Map<String, Object> balance = cashFlowService.getBalanceSummary(currentUser);
 
-        // Agregar atributos al modelo
+        // Convertir a String para evitar notación científica
+        model.addAttribute("totalIngresos", ((BigDecimal) balance.get("totalIncome")).toPlainString());
+        model.addAttribute("totalGastos", ((BigDecimal) balance.get("totalExpenses")).toPlainString());
+        model.addAttribute("balance", ((BigDecimal) balance.get("balance")).toPlainString());
+
         model.addAttribute("ingresos", categoriesByType.getOrDefault(true, new ArrayList<>()));
         model.addAttribute("gastos", categoriesByType.getOrDefault(false, new ArrayList<>()));
-        model.addAttribute("transactions", transactions);
-        model.addAttribute("totalIngresos", balance.get("totalIncome"));
-        model.addAttribute("totalGastos", balance.get("totalExpenses"));
-        model.addAttribute("balance", balance.get("balance"));
+        model.addAttribute("transactions", limitedTransactions); // Solo las primeras 10 transacciones
 
         return "finance/transactions";
     }
 
     @PostMapping("/transactions")
+    @Operation(summary = "Crear una nueva transacción", description = "Permite a un usuario autenticado crear una nueva transacción, asociándola con una categoría específica.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Transacción creada con éxito",
+                    content = @Content(schema = @Schema(implementation = CashFlowEntity.class))),
+            @ApiResponse(responseCode = "400", description = "Error en la solicitud",
+                    content = @Content(schema = @Schema(example = "{\"error\": \"Categoría no encontrada\"}")))
+    })
     @ResponseBody
     public ResponseEntity<?> createTransaction(
             @RequestBody Map<String, Object> requestData,
@@ -87,35 +107,90 @@ public class FinanceController {
         try {
             UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
 
-            // Crear nueva transacción
-            CashFlowEntity cashFlow = new CashFlowEntity();
-            cashFlow.setUser(currentUser);
-            cashFlow.setValue(Float.parseFloat(requestData.get("value").toString()));
-            cashFlow.setDescription(requestData.get("description").toString());
-            cashFlow.setDate(Timestamp.valueOf(requestData.get("date").toString()));
+            // Validar y parsear los datos de la transacción
+            if (!requestData.containsKey("value") || !requestData.containsKey("description") || !requestData.containsKey("date") || !requestData.containsKey("categoryId")) {
+                throw new IllegalArgumentException("Faltan datos requeridos en la solicitud");
+            }
 
-            // Obtener y validar categoría usando el servicio existente
+            Float value = Float.parseFloat(requestData.get("value").toString());
+            String description = requestData.get("description").toString();
+            Timestamp date = Timestamp.valueOf(requestData.get("date").toString());
             Long categoryId = Long.parseLong(requestData.get("categoryId").toString());
+
+            // Buscar y validar la categoría
             CategoryEntity category = categoryService.findById(categoryId)
                     .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
-
-            // Validar que la categoría pertenece al usuario
             if (!category.getUser().getUsername().equals(springUser.getUsername())) {
                 throw new RuntimeException("La categoría no pertenece al usuario");
             }
 
+            // Crear y guardar la transacción
+            CashFlowEntity cashFlow = new CashFlowEntity();
+            cashFlow.setUser(currentUser);
+            cashFlow.setValue(value);
+            cashFlow.setDescription(description);
+            cashFlow.setDate(date);
             cashFlow.setCategory(category);
-
-            // Guardar transacción
             CashFlowEntity savedTransaction = cashFlowService.saveTransaction(cashFlow);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedTransaction);
+            // Crear el DTO para la respuesta
+            TransactionDTO transactionDTO = TransactionDTO.builder()
+                    .formattedValue(String.format("%.2f", savedTransaction.getValue()))
+                    .value(savedTransaction.getValue())
+                    .description(savedTransaction.getDescription())
+                    .category(savedTransaction.getCategory())
+                    .date(savedTransaction.getDate().toLocalDateTime())
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(transactionDTO);
 
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", e.getMessage()));
         }
     }
+
+    @GetMapping("/analysis")
+    public String analysis(@AuthenticationPrincipal User springUser, Model model) {
+        UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
+        List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
+
+        // Ordenar las transacciones por fecha descendente
+        transactions.sort((a, b) -> b.getDate().compareTo(a.getDate()));
+
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        df.setDecimalFormatSymbols(new DecimalFormatSymbols(new Locale("es", "ES")));
+
+        List<TransactionDTO> ingresos = transactions.stream()
+                .filter(transaction -> transaction.getValue() > 0)
+                .map(transaction -> TransactionDTO.builder()
+                        .formattedValue(df.format(transaction.getValue()))
+                        .value(transaction.getValue())
+                        .description(transaction.getDescription())
+                        .category(transaction.getCategory())
+                        .date(transaction.getDate().toLocalDateTime())  // Convertir Timestamp a LocalDateTime
+                        .build())
+                .limit(10)
+                .collect(Collectors.toList());
+
+        List<TransactionDTO> gastos = transactions.stream()
+                .filter(transaction -> transaction.getValue() < 0)
+                .map(transaction -> TransactionDTO.builder()
+                        .formattedValue(df.format(Math.abs(transaction.getValue())))
+                        .value(transaction.getValue())
+                        .description(transaction.getDescription())
+                        .category(transaction.getCategory())
+                        .date(transaction.getDate().toLocalDateTime())  // Convertir Timestamp a LocalDateTime
+                        .build())
+                .limit(10)
+                .collect(Collectors.toList());
+
+        model.addAttribute("transaccionesIngresos", ingresos);
+        model.addAttribute("transaccionesGastos", gastos);
+
+        return "finance/analysis";
+    }
+
 
 
     @GetMapping("/categories")
@@ -137,9 +212,23 @@ public class FinanceController {
         return "finance/categories";  // Asegúrate de que la vista esté en la ruta correcta
     }
 
+
+    @Operation(summary = "Crear una nueva categoría", description = "Permite a un usuario autenticado crear una nueva categoría asociada a su cuenta.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Categoría creada con éxito",
+                    content = @Content(schema = @Schema(implementation = CategoryEntity.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(schema = @Schema(example = "{\"error\": \"Descripción del error interno\"}")))
+    })
     @PostMapping("/categories")
     @ResponseBody
-    public ResponseEntity<CategoryEntity> createCategory(@AuthenticationPrincipal User user, @RequestBody CategoryEntity category) {
+    public ResponseEntity<CategoryEntity> createCategory(
+            @AuthenticationPrincipal User user,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(schema = @Schema(
+                            example = "{\"name\": \"Compras\", \"description\": \"Gastos relacionados a compras\"}")))
+            @RequestBody CategoryEntity category) {
         try {
             CategoryEntity savedCategory = categoryService.createCategory(category, user);
 
@@ -152,33 +241,6 @@ public class FinanceController {
 
 
 
-    @GetMapping("/analysis")
-    public String analysis(@AuthenticationPrincipal User springUser, Model model) {
-        UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
-
-        List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
-
-        // Ordenar las transacciones por fecha descendente (más recientes primero)
-        transactions.sort((a, b) -> b.getDate().compareTo(a.getDate()));
-
-        List<CashFlowEntity> ingresos = transactions.stream()
-                .filter(transaction -> transaction.getValue() > 0)
-                .collect(Collectors.toList());
-
-        List<CashFlowEntity> gastos = transactions.stream()
-                .filter(transaction -> transaction.getValue() < 0)
-                .collect(Collectors.toList());
-
-        // Si quieres limitar el número de transacciones mostradas
-        int limiteMostrar = 10; // Ajusta este número según necesites
-        ingresos = ingresos.stream().limit(limiteMostrar).collect(Collectors.toList());
-        gastos = gastos.stream().limit(limiteMostrar).collect(Collectors.toList());
-
-        model.addAttribute("transaccionesIngresos", ingresos);
-        model.addAttribute("transaccionesGastos", gastos);
-
-        return "finance/analysis";
-    }
 
     @GetMapping("/config")
     public String config() {

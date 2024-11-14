@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -69,20 +70,23 @@ public class CashFlowServiceImpl implements CashFlowService {
     public Map<String, Object> getBalanceSummary(UserEntity user) {
         List<CashFlowEntity> transactions = getTransactionsByUser(user);
 
-        double totalIncome = transactions.stream()
+        BigDecimal totalIncome = transactions.stream()
                 .filter(t -> t.getCategory().isIncome())
-                .mapToDouble(CashFlowEntity::getValue)
-                .sum();
+                .map(CashFlowEntity::getValue)
+                .map(BigDecimal::valueOf)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        double totalExpenses = transactions.stream()
+        BigDecimal totalExpenses = transactions.stream()
                 .filter(t -> !t.getCategory().isIncome())
-                .mapToDouble(t -> Math.abs(t.getValue()))
-                .sum();
+                .map(t -> BigDecimal.valueOf(Math.abs(t.getValue())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal balance = totalIncome.subtract(totalExpenses);
 
         Map<String, Object> summary = new HashMap<>();
         summary.put("totalIncome", totalIncome);
         summary.put("totalExpenses", totalExpenses);
-        summary.put("balance", totalIncome - totalExpenses);
+        summary.put("balance", balance);
 
         return summary;
     }

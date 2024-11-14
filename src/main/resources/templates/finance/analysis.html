@@ -2,6 +2,8 @@
 <html lang="en"  xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <title>Analisis</title>
   <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
@@ -114,10 +116,12 @@
                   </thead>
                   <tbody id="ingresosTableBody">
                   <tr th:each="ingreso : ${transaccionesIngresos}">
-                    <td th:text="${ingreso.value}"></td>
+                    <td th:text="${ingreso.formattedValue}"></td>
                     <td th:text="${ingreso.description}"></td>
                     <td th:text="${ingreso.category.name}"></td>
                     <td th:text="${ingreso.date}"></td>
+                    <!-- Agregar un data attribute con el valor original para las gráficas -->
+                    <td style="display:none;" th:data-value="${ingreso.value}"></td>
                   </tr>
                   </tbody>
                 </table>
@@ -141,12 +145,15 @@
                     <th>Fecha</th>
                   </tr>
                   </thead>
+                  <!-- Tabla de Gastos -->
                   <tbody id="gastosTableBody">
                   <tr th:each="gasto : ${transaccionesGastos}">
-                    <td th:text="${gasto.value}"></td>
+                    <td th:text="${gasto.formattedValue}"></td>
                     <td th:text="${gasto.description}"></td>
                     <td th:text="${gasto.category.name}"></td>
                     <td th:text="${gasto.date}"></td>
+                    <!-- Agregar un data attribute con el valor original para las gráficas -->
+                    <td style="display:none;" th:data-value="${gasto.value}"></td>
                   </tr>
                   </tbody>
                 </table>

@@ -52,6 +52,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+// Obtener el token CSRF y el nombre del header de los meta tags
+const token = document.querySelector("meta[name='_csrf']").getAttribute('content');
+const headerName = document.querySelector("meta[name='_csrf_header']").getAttribute('content');
+console.log('Token disponible:', !!token);
+console.log('Nombre del header disponible:', !!headerName);
+
 async function addCategory() {
     const categoryName = document.getElementById("categoryName").value;
     const categoryTypeSelect = document.getElementById("categoryType");
@@ -77,11 +83,16 @@ async function addCategory() {
     console.log("Datos a enviar:", JSON.stringify(categoryData));
 
     try {
+        // Crear el objeto de headers
+        const headers = {
+            "Content-Type": "application/json"
+        };
+        // Agregar el header CSRF dinámicamente
+        headers[headerName] = token;
+
         const response = await fetch("/finance/categories", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: headers,
             body: JSON.stringify(categoryData)
         });
 
@@ -127,25 +138,32 @@ function addCategoryToList(category) {
     categoriesList.appendChild(newCategoryItem);
 }
 
-// Función para formatear números grandes sin notación científica
-function formatearNumero(numero) {
-    // Si el número es null o undefined, retornamos 0
-    if (numero == null) return '0';
 
-    // Convertimos a número por si acaso viene como string
-    const num = typeof numero === 'string' ? parseFloat(numero) : numero;
+
+// Función para formatear números sin notación científica
+function formatNumber(number) {
+    // Si el número es null o undefined, retornamos 0
+    if (number == null) return '0,00';
+
+    // Convertimos a número si es string
+    const num = typeof number === 'string' ? parseFloat(number) : number;
 
     // Verificamos si es un número válido
-    if (isNaN(num)) return '0';
+    if (isNaN(num)) return '0,00';
 
-    // Formateamos el número con separadores de miles y dos decimales
-    return num.toLocaleString('es-ES', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-        useGrouping: true // Esto agrega los separadores de miles
-    });
+    try {
+        return num.toLocaleString('es-ES', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+            useGrouping: true // Para usar separadores de miles
+        });
+    } catch (error) {
+        console.error('Error al formatear número:', error);
+        return num.toString();
+    }
 }
 
+// Función principal para guardar transacciones
 async function guardarTransaccion(isIncome) {
     const prefix = isIncome ? 'Ingreso' : 'Gasto';
     const formId = isIncome ? 'ingresoForm' : 'gastoForm';
@@ -156,12 +174,11 @@ async function guardarTransaccion(isIncome) {
         return;
     }
 
-    const monto = parseFloat(document.getElementById(`monto${prefix}`).value);
+
+    const monto = parseFloat(document.getElementById(`monto${prefix}`).value.replace(/[^\d.-]/g, ''));
     const descripcion = document.getElementById(`descripcion${prefix}`).value.trim();
     const categoriaId = parseInt(document.getElementById(`categoria${prefix}`).value, 10);
     const fechaInput = document.getElementById(`fecha${prefix}`).value;
-
-    // Convertir el formato de fecha a 'yyyy-MM-dd HH:mm:ss'
     const fecha = fechaInput.replace("T", " ") + ":00";
 
     const transactionData = {
@@ -172,53 +189,113 @@ async function guardarTransaccion(isIncome) {
     };
 
     try {
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+
+        if (token && headerName) {
+            headers[headerName] = token;
+        }
+
         const response = await fetch("/finance/transactions", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: headers,
             body: JSON.stringify(transactionData)
         });
 
-        if (response.ok) {
-            const savedTransaction = await response.json();
-            // Cerrar el modal
-            const modalId = isIncome ? 'ingresoModal' : 'gastoModal';
-            const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
-            modal.hide();
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-            // Resetear el formulario
-            form.reset();
+        const savedTransaction = await response.json();
 
-            // Actualizar las tablas y gráficas
-            const tableBody = document.getElementById(isIncome ? 'ingresosTableBody' : 'gastosTableBody');
-            if (tableBody) {
-                // Crear nueva fila
-                const row = tableBody.insertRow(0); // Insertar al inicio de la tabla
+        // Cerrar el modal
+        const modalId = isIncome ? 'ingresoModal' : 'gastoModal';
+        const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+        modal.hide();
 
-                // Insertar celdas
-                const montoCell = row.insertCell(0);
-                const descripcionCell = row.insertCell(1);
-                const categoriaCell = row.insertCell(2);
-                const fechaCell = row.insertCell(3);
+        // Resetear el formulario
+        form.reset();
 
-                // Asignar valores
-                montoCell.textContent = savedTransaction.value.toLocaleString();
-                descripcionCell.textContent = savedTransaction.description;
-                categoriaCell.textContent = savedTransaction.category.name; // Asumiendo que la respuesta incluye la categoría
-                fechaCell.textContent = formatDateToMonth(savedTransaction.date);
+        // Actualizar la interfaz sin recargar la página
+        await actualizarInterfaz(savedTransaction);
 
-                // Actualizar las gráficas
-                formatearTodasLasFechas();
-            }
-        } else {
-            const errorData = await response.text();
-            console.error("Error del servidor:", errorData);
-            alert("Error al guardar la transacción.");
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error al guardar la transacción. Por favor, intente nuevamente.");
+    }
+}
+
+// Función para actualizar toda la interfaz
+async function actualizarInterfaz(savedTransaction) {
+    try {
+        // Actualizar la tabla de transacciones
+        actualizarTablaTransacciones(savedTransaction);
+
+        // Actualizar el balance
+        await actualizarBalanceCompleto();
+
+        // Actualizar las gráficas si existen
+        if (typeof formatearTodasLasFechas === 'function') {
+            formatearTodasLasFechas();
         }
     } catch (error) {
-        console.error("Error al conectar con el servidor:", error);
-        alert("Error al guardar la transacción.");
+        console.error("Error al actualizar la interfaz:", error);
+    }
+}
+
+
+// Función para actualizar la tabla de transacciones
+function actualizarTablaTransacciones(transaction) {
+    const tableBody = document.getElementById('transactionsTableBody');
+    if (tableBody) {
+        const row = tableBody.insertRow(0);
+
+        // Crear las celdas
+        const valueCell = row.insertCell(0);
+        const descriptionCell = row.insertCell(1);
+        const categoryCell = row.insertCell(2);
+        const dateCell = row.insertCell(3);
+
+        // Formatear y asignar los valores
+        valueCell.textContent = formatNumber(transaction.value);
+        descriptionCell.textContent = transaction.description;
+        categoryCell.textContent = transaction.category.name;
+        dateCell.textContent = formatDateToMonth(transaction.date);
+
+        // Agregar clases para el estilo
+        valueCell.className = transaction.value >= 0 ? 'text-success' : 'text-danger';
+    }
+}
+
+
+
+// Función para actualizar el balance completo
+async function actualizarBalanceCompleto() {
+    try {
+        const response = await fetch('/finance/balance');
+        if (!response.ok) {
+            throw new Error('Error al obtener el balance');
+        }
+
+        const balance = await response.json();
+
+        // Asignar y formatear los valores del balance
+        const elementos = {
+            'totalIngresos': balance.income,
+            'totalGastos': Math.abs(balance.expenses),
+            'saldoTotal': balance.total
+        };
+
+        // Actualizar los elementos con el formato deseado
+        for (const [id, valor] of Object.entries(elementos)) {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                elemento.textContent = `${formatNumber(valor)} $`;  // Formateamos y agregamos el símbolo de moneda
+            }
+        }
+    } catch (error) {
+        console.error('Error al actualizar el balance:', error);
     }
 }
 
@@ -245,14 +322,19 @@ function formatDateToMonth(dateString) {
     }
 }
 
-// Función para agrupar transacciones por mes y calcular totales
 function agruparPorMes(tableRows) {
     const totalesPorMes = {};
 
     // Convertir HTMLCollection a Array
     Array.from(tableRows).forEach(row => {
         const mes = row.cells[3].textContent.toLowerCase().trim();
-        const monto = parseFloat(row.cells[0].textContent.replace(/[^\d.-]/g, ''));
+        // Limpiamos el string de cualquier formato (puntos, comas, espacios y símbolos de moneda)
+        const montoStr = row.cells[0].textContent
+            .replace(/\./g, '') // Eliminar puntos de miles
+            .replace(/,/g, '.') // Reemplazar coma decimal por punto
+            .replace(/[^\d.-]/g, ''); // Eliminar todo excepto números, punto decimal y signo negativo
+
+        const monto = parseFloat(montoStr);
 
         if (!isNaN(monto)) {
             if (!totalesPorMes[mes]) {
@@ -264,6 +346,7 @@ function agruparPorMes(tableRows) {
 
     return totalesPorMes;
 }
+
 
 // Función para formatear todas las fechas en las tablas
 function formatearTodasLasFechas() {
@@ -294,16 +377,24 @@ function formatearFechasEnTabla(tableBody) {
     });
 }
 
+// Y en las gráficas, asegurémonos de formatear los números correctamente
 function crearGraficas(ingresosPorMes, gastosPorMes) {
-    // Definir el orden correcto de los meses
     const ordenMeses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
         'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
-    // Obtener todos los meses únicos y ordenarlos
     const meses = [...new Set([...Object.keys(ingresosPorMes), ...Object.keys(gastosPorMes)])];
     meses.sort((a, b) => {
         return ordenMeses.indexOf(a.toLowerCase()) - ordenMeses.indexOf(b.toLowerCase());
     });
+
+    // Función auxiliar para formatear números en las gráficas
+    const formatearNumeroGrafica = (valor) => {
+        return new Intl.NumberFormat('es-ES', {
+            style: 'decimal',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(valor);
+    };
 
     // Gráfico de Ingresos
     const ctxIngresos = document.getElementById('myBarChartIncome').getContext('2d');
@@ -325,7 +416,7 @@ function crearGraficas(ingresosPorMes, gastosPorMes) {
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return '$' + value.toLocaleString();
+                            return '$' + formatearNumeroGrafica(value);
                         }
                     }
                 }
@@ -334,7 +425,7 @@ function crearGraficas(ingresosPorMes, gastosPorMes) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return '$' + context.raw.toLocaleString();
+                            return '$' + formatearNumeroGrafica(context.raw);
                         }
                     }
                 }
@@ -342,7 +433,7 @@ function crearGraficas(ingresosPorMes, gastosPorMes) {
         }
     });
 
-    // Gráfico de Gastos
+    // Gráfico de Gastos (mismo patrón que el de Ingresos)
     const ctxGastos = document.getElementById('myBarChartSpending').getContext('2d');
     new Chart(ctxGastos, {
         type: 'bar',
@@ -362,7 +453,7 @@ function crearGraficas(ingresosPorMes, gastosPorMes) {
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return '$' + value.toLocaleString();
+                            return '$' + formatearNumeroGrafica(value);
                         }
                     }
                 }
@@ -371,7 +462,7 @@ function crearGraficas(ingresosPorMes, gastosPorMes) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return '$' + context.raw.toLocaleString();
+                            return '$' + formatearNumeroGrafica(context.raw);
                         }
                     }
                 }
@@ -380,9 +471,20 @@ function crearGraficas(ingresosPorMes, gastosPorMes) {
     });
 }
 
-// Ejecutar cuando el documento esté listo
+
 document.addEventListener('DOMContentLoaded', formatearTodasLasFechas);
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Formatear todos los números en la tabla al cargar
+    const numberCells = document.querySelectorAll('#transactionsTableBody td:first-child');
+    numberCells.forEach(cell => {
+        const value = parseFloat(cell.textContent);
+        if (!isNaN(value)) {
+            cell.textContent = formatNumber(value);
+            cell.className = value >= 0 ? 'text-success' : 'text-danger';
+        }
+    });
+});
 
 
 

@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Transacciones</title>
     <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
@@ -72,6 +74,7 @@
                 <h2>Transacciones</h2>
             </div>
 
+
             <!-- Tarjeta de Balance -->
             <div class="balance-card text-center text-white mb-4 p-4 bg-dark rounded">
                 <h4>Saldo Total</h4>
@@ -108,6 +111,7 @@
                         <th>Monto</th>
                         <th>Descripción</th>
                         <th>Categoría</th>
+                        <th>Fecha</th>
                     </tr>
                     </thead>
                     <tbody id="transactionsTableBody">
@@ -115,6 +119,7 @@
                         <td th:text="${transaction.value}"></td>
                         <td th:text="${transaction.description}"></td>
                         <td th:text="${transaction.category.name}"></td>
+                        <td th:text="${transaction.date}"></td>
                     </tr>
                     </tbody>
                 </table>
