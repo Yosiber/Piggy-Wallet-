@@ -1,62 +1,76 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Balance Summary Chart
-    const balanceCtx = document.getElementById('balanceChart').getContext('2d');
-    const balanceChart = new Chart(balanceCtx, {
-        type: 'line',
-        data: {
-            labels: ['Mar 1', 'Mar 5', 'Mar 10', 'Mar 14'],
-            datasets: [{
-                label: 'Ingreso',
-                data: [1000, 2000, 1500, 2200],
-                borderColor: 'rgba(75, 192, 192, 1)',
-                fill: false
-            }, {
-                label: 'Gasto',
-                data: [500, 700, 1200, 1000],
-                borderColor: 'rgba(255, 99, 132, 1)',
-                fill: false
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    // Spending Donut Chart
-    const spendingCtx = document.getElementById('spendingDonut').getContext('2d');
-    const spendingDonut = new Chart(spendingCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Food', 'Shopping', 'Media', 'Transport'],
-            datasets: [{
-                data: [42, 36, 15, 5],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.7)',
-                    'rgba(54, 162, 235, 0.7)',
-                    'rgba(255, 206, 86, 0.7)',
-                    'rgba(75, 192, 192, 0.7)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-        }
-    });
-
-});
-
-
 // Obtener el token CSRF y el nombre del header de los meta tags
 const token = document.querySelector("meta[name='_csrf']").getAttribute('content');
 const headerName = document.querySelector("meta[name='_csrf_header']").getAttribute('content');
 console.log('Token disponible:', !!token);
 console.log('Nombre del header disponible:', !!headerName);
+
+
+    function crearGraficasDashboard(ingresosPorMes, gastosPorMes) {
+        const ordenMeses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+            'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+        const meses = [...new Set([...Object.keys(ingresosPorMes), ...Object.keys(gastosPorMes)])];
+        meses.sort((a, b) => {
+            return ordenMeses.indexOf(a.toLowerCase()) - ordenMeses.indexOf(b.toLowerCase());
+        });
+
+        // Función auxiliar para formatear números en las gráficas
+        const formatearNumeroGrafica = (valor) => {
+            return new Intl.NumberFormat('es-ES', {
+                style: 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(valor);
+        };
+
+        // Gráfico de Ingresos y Gastos
+        const ctxBalanceChart = document.getElementById('balanceChart').getContext('2d');
+        new Chart(ctxBalanceChart, {
+            type: 'bar',
+            data: {
+                labels: meses,
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: meses.map(mes => ingresosPorMes[mes] || 0),
+                        backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Gastos',
+                        data: meses.map(mes => Math.abs(gastosPorMes[mes]) || 0),
+                        backgroundColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + formatearNumeroGrafica(value);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + formatearNumeroGrafica(context.raw);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+
 
 async function addCategory() {
     const categoryName = document.getElementById("categoryName").value;
@@ -363,6 +377,8 @@ function formatearTodasLasFechas() {
 
         // Crear gráficas con los datos procesados
         crearGraficas(ingresosPorMes, gastosPorMes);
+
+        crearGraficasDashboard(ingresosPorMes, gastosPorMes)
     }
 }
 

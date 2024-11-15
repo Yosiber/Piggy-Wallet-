@@ -58,7 +58,34 @@ public class FinanceController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard() {
+    public String getDashboardData(@AuthenticationPrincipal User springUser, Model model) {
+        UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
+        List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
+
+        // Formateador para valores numéricos
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        df.setDecimalFormatSymbols(new DecimalFormatSymbols(new Locale("es", "ES")));
+
+        // Separar ingresos y gastos y agrupar por fecha (usando Map<String, Double> para la serialización)
+        Map<String, Double> ingresosPorMes = new HashMap<>();
+        Map<String, Double> gastosPorMes = new HashMap<>();
+
+        transactions.forEach(transaction -> {
+            // Convertir la fecha a formato ISO para que JavaScript pueda procesarla
+            String fechaISO = transaction.getDate().toLocalDateTime().toLocalDate().toString();
+            double value = transaction.getValue();
+
+            if (value > 0) {
+                ingresosPorMes.merge(fechaISO, value, Double::sum);
+            } else {
+                gastosPorMes.merge(fechaISO, Math.abs(value), Double::sum);
+            }
+        });
+
+        // Pasar los datos al modelo
+        model.addAttribute("ingresosPorMes", ingresosPorMes);
+        model.addAttribute("gastosPorMes", gastosPorMes);
+
         return "/finance/dashboard";
     }
 

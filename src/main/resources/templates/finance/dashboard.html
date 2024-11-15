@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>dashboard</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>Dashboard</title>
     <!--- Bootstrap CSS --->
     <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
@@ -25,7 +27,6 @@
                         <i class="bi bi-grid-1x2-fill nav-icon"></i>
                         <span class="nav-text">Informe</span>
                     </a>
-                </li>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/finance/transactions}">
@@ -56,7 +57,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/finance/config}">
-                    <i class="bi bi-gear-fill nav-icon"></i>
+                        <i class="bi bi-gear-fill nav-icon"></i>
                         <span class="nav-text">Configuraciones</span>
                     </a>
                 </li>
@@ -82,6 +83,11 @@
                             <h5 class="card-title">Comportamiento </h5>
                             <p>Mensual</p>
                             <canvas id="balanceChart"></canvas>
+                            <!-- Mostrar ingresos y gastos -->
+                            <div class="mt-3">
+                                <p><strong>Total de Ingresos:</strong> $<span th:text="${totalIncome}">0.00</span></p>
+                                <p><strong>Total de Gastos:</strong> $<span th:text="${totalExpenses}">0.00</span></p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -105,7 +111,7 @@
                     <div class="card flex-fill">
                         <div class="card-body">
                             <h5 class="card-title">Transacciones Recientes</h5>
-                            <table class="table text-light ">
+                            <table class="table text-light">
                                 <thead>
                                 <tr>
                                     <th>Descripción</th>
@@ -133,36 +139,6 @@
                                     <td>Finance</td>
                                     <td>$3,400.00</td>
                                 </tr>
-                                <tr>
-                                    <td>Mocupus Coffee</td>
-                                    <td>Mar 12</td>
-                                    <td>Food</td>
-                                    <td>-$5.50</td>
-                                </tr>
-                                <tr>
-                                    <td>Tax Return</td>
-                                    <td>Mar 10</td>
-                                    <td>Finance</td>
-                                    <td>$3,400.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Mocupus Coffee</td>
-                                    <td>Mar 12</td>
-                                    <td>Food</td>
-                                    <td>-$5.50</td>
-                                </tr>
-                                <tr>
-                                    <td>Mocupus Coffee</td>
-                                    <td>Mar 12</td>
-                                    <td>Food</td>
-                                    <td>-$5.50</td>
-                                </tr>
-                                <tr>
-                                    <td>Tax Return</td>
-                                    <td>Mar 10</td>
-                                    <td>Finance</td>
-                                    <td>$3,400.00</td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -174,8 +150,8 @@
                     <div class="card mb-3 flex-fill">
                         <div class="card-body">
                             <h5 class="card-title">Próximos pagos</h5>
-                            <ul class="list-group ">
-                                <li class="list-group-item d-flex justify-content-between align-items-center ">
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
                                     YouTube Premium
                                     <span>-$29.90</span>
                                 </li>
@@ -186,10 +162,6 @@
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     Rent
                                     <span>-$2,100.00</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Spotify
-                                    <span>-$11.99</span>
                                 </li>
                             </ul>
                         </div>
@@ -208,10 +180,43 @@
                 </div>
             </div>
         </main>
-
-
     </div>
 </div>
+
+<!-- Agregar esto al final del archivo para pasar los datos del servidor al JavaScript -->
+<script th:inline="javascript">
+    // Obtener los datos del modelo de Thymeleaf
+    const ingresosPorMesServer = /*[[${ingresosPorMes}]]*/ {};
+    const gastosPorMesServer = /*[[${gastosPorMes}]]*/ {};
+
+    // Función para convertir fecha ISO a nombre de mes en español
+    function convertirFechaAMes(fecha) {
+        const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+            'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+        const date = new Date(fecha);
+        return meses[date.getMonth()];
+    }
+
+    // Procesar los datos para la gráfica
+    const ingresosPorMes = {};
+    const gastosPorMes = {};
+
+    // Convertir los datos del servidor al formato necesario
+    Object.entries(ingresosPorMesServer).forEach(([fecha, valor]) => {
+        const mes = convertirFechaAMes(fecha);
+        ingresosPorMes[mes] = (ingresosPorMes[mes] || 0) + valor;
+    });
+
+    Object.entries(gastosPorMesServer).forEach(([fecha, valor]) => {
+        const mes = convertirFechaAMes(fecha);
+        gastosPorMes[mes] = (gastosPorMes[mes] || 0) + valor;
+    });
+
+    // Inicializar la gráfica cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        crearGraficasDashboard(ingresosPorMes, gastosPorMes);
+    });
+</script>
 
 <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -24,25 +24,35 @@ import java.util.*;
 @Slf4j
 public class CashFlowServiceImpl implements CashFlowService {
 
-    @Autowired
-    private CashFlowRepository cashFlowRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private UserService userService;
+    private final CashFlowRepository cashFlowRepository;
+    private final CategoryRepository categoryRepository;
+    private final UserService userService;
 
     @Autowired
     public CashFlowServiceImpl(CashFlowRepository cashFlowRepository,
-                               CategoryRepository categoryRepository) {
+                               CategoryRepository categoryRepository,
+                               UserService userService) {
         this.cashFlowRepository = cashFlowRepository;
         this.categoryRepository = categoryRepository;
+        this.userService = userService;
     }
 
     @Override
     public CashFlowEntity saveTransaction(CashFlowEntity cashFlow) {
-        // Obtener la categoría y validar
+        // Validar y obtener la categoría
+        CategoryEntity category = validateCategory(cashFlow);
+
+        // Ajustar el valor según el tipo de transacción (ingreso o gasto)
+        if (category.isIncome()) {
+            cashFlow.setValue(Math.abs(cashFlow.getValue().floatValue()));
+        } else {
+            cashFlow.setValue(-Math.abs(cashFlow.getValue().floatValue()));
+        }
+
+        return cashFlowRepository.save(cashFlow);
+    }
+
+    private CategoryEntity validateCategory(CashFlowEntity cashFlow) {
         CategoryEntity category = categoryRepository.findById(cashFlow.getCategory().getId())
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
@@ -51,14 +61,11 @@ public class CashFlowServiceImpl implements CashFlowService {
             throw new RuntimeException("La categoría no pertenece al usuario");
         }
 
-        // Ajustar el valor según el tipo de transacción (ingreso o gasto)
-        if (category.isIncome()) {
-            cashFlow.setValue(Math.abs(cashFlow.getValue()));
-        } else {
-            cashFlow.setValue(-Math.abs(cashFlow.getValue()));
-        }
+        return category;
+    }
 
-        return cashFlowRepository.save(cashFlow);
+    private double adjustTransactionValue(boolean isIncome, double value) {
+        return isIncome ? Math.abs(value) : -Math.abs(value);
     }
 
     @Override
@@ -72,13 +79,12 @@ public class CashFlowServiceImpl implements CashFlowService {
 
         BigDecimal totalIncome = transactions.stream()
                 .filter(t -> t.getCategory().isIncome())
-                .map(CashFlowEntity::getValue)
-                .map(BigDecimal::valueOf)
+                .map(t -> BigDecimal.valueOf(t.getValue())) // Convertir el valor de Float a BigDecimal
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalExpenses = transactions.stream()
                 .filter(t -> !t.getCategory().isIncome())
-                .map(t -> BigDecimal.valueOf(Math.abs(t.getValue())))
+                .map(t -> BigDecimal.valueOf(Math.abs(t.getValue()))) // Convertir el valor a BigDecimal y tomar valor absoluto
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal balance = totalIncome.subtract(totalExpenses);
