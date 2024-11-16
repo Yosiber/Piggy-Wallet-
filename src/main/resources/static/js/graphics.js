@@ -5,6 +5,8 @@ console.log('Token disponible:', !!token);
 console.log('Nombre del header disponible:', !!headerName);
 
 
+
+
     function crearGraficasDashboard(ingresosPorMes, gastosPorMes) {
         const ordenMeses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
             'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
@@ -68,6 +70,8 @@ console.log('Nombre del header disponible:', !!headerName);
             }
         });
     }
+
+
 
 
 
@@ -502,7 +506,110 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Función para convertir fecha ISO a nombre de mes en español
+function convertirFechaAMes(fecha) {
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const date = new Date(fecha); // Asume que 'fecha' es una cadena en formato ISO
+    return meses[date.getMonth()];
+}
 
+// Procesar los datos para la gráfica de ingresos y gastos por mes
+const ingresosPorMes = {};
+const gastosPorMes = {};
+
+Object.entries(ingresosPorMesServer).forEach(([fecha, valor]) => {
+    const mes = convertirFechaAMes(fecha);
+    ingresosPorMes[mes] = (ingresosPorMes[mes] || 0) + valor;
+});
+
+Object.entries(gastosPorMesServer).forEach(([fecha, valor]) => {
+    const mes = convertirFechaAMes(fecha);
+    gastosPorMes[mes] = (gastosPorMes[mes] || 0) + valor;
+});
+
+// Inicializar la gráfica de ingresos y gastos
+document.addEventListener('DOMContentLoaded', function() {
+    crearGraficasDashboard(ingresosPorMes, gastosPorMes);
+});
+
+// Colores para el gráfico de dona
+const colors = [
+    'rgba(255, 99, 132, 0.7)',
+    'rgba(54, 162, 235, 0.7)',
+    'rgba(255, 206, 86, 0.7)',
+    'rgba(75, 192, 192, 0.7)',
+    'rgba(153, 102, 255, 0.7)',
+    'rgba(255, 159, 64, 0.7)',
+    'rgba(199, 199, 199, 0.7)',
+    'rgba(83, 102, 255, 0.7)'
+];
+
+// Crear el gráfico de dona para gastos por categoría
+document.addEventListener('DOMContentLoaded', function() {
+    const spendingCtx = document.getElementById('spendingDonut').getContext('2d');
+    const labels = Object.keys(gastosPorCategoria);
+    const data = Object.values(gastosPorCategoria).map(value => parseFloat(value));
+
+    const spendingDonut = new Chart(spendingCtx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors.slice(0, labels.length),
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw;
+                            return new Intl.NumberFormat('es-ES', {
+                                style: 'currency',
+                                currency: 'EUR'
+                            }).format(value);
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+
+// Obtener elementos
+const paymentList = document.getElementById('paymentList');
+const addPaymentForm = document.getElementById('addPaymentForm');
+const paymentNameInput = document.getElementById('paymentName');
+const paymentAmountInput = document.getElementById('paymentAmount');
+
+// Manejar el formulario de agregar pago
+addPaymentForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    // Obtener valores del formulario
+    const paymentName = paymentNameInput.value.trim();
+    const paymentAmount = parseFloat(paymentAmountInput.value).toFixed(2);
+
+    // Crear un nuevo elemento de la lista
+    const newPayment = document.createElement('li');
+    newPayment.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+    newPayment.innerHTML = `${paymentName} <span>-$${paymentAmount}</span>`;
+
+    // Agregar el nuevo pago a la lista
+    paymentList.appendChild(newPayment);
+
+    // Limpiar el formulario
+    paymentNameInput.value = '';
+    paymentAmountInput.value = '';
+
+    // Cerrar el modal
+    const addPaymentModal = bootstrap.Modal.getInstance(document.getElementById('addPaymentModal'));
+    addPaymentModal.hide();
+});
 
 
 

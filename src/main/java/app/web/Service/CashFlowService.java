@@ -5,6 +5,7 @@ import app.web.persistence.entities.CategoryEntity;
 import app.web.persistence.entities.UserEntity;
 import org.springframework.security.core.userdetails.User;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -14,4 +15,5 @@ public interface CashFlowService {
     CashFlowEntity saveTransaction(CashFlowEntity cashFlow);
     List<CashFlowEntity> getTransactionsByUser(UserEntity user);
     Map<String, Object> getBalanceSummary(UserEntity user);
+    Map<String, BigDecimal> getExpensesByCategory(UserEntity user);
 }

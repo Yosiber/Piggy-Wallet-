@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -95,6 +96,21 @@ public class CashFlowServiceImpl implements CashFlowService {
         summary.put("balance", balance);
 
         return summary;
+    }
+
+    @Override
+    public Map<String, BigDecimal> getExpensesByCategory(UserEntity user) {
+        List<CashFlowEntity> transactions = getTransactionsByUser(user);
+
+        return transactions.stream()
+                .filter(t -> !t.getCategory().isIncome()) // Solo gastos
+                .collect(Collectors.groupingBy(
+                        t -> t.getCategory().getName(),
+                        Collectors.mapping(
+                                t -> BigDecimal.valueOf(Math.abs(t.getValue())),
+                                Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
+                        )
+                ));
     }
 }
 

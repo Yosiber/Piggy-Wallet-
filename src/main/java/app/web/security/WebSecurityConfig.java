@@ -22,13 +22,10 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        // Mantener CSRF habilitado pero configurar el token adecuadamente
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
                 .authorizeRequests((request) -> request
-                        .requestMatchers(HttpMethod.POST, "/finance/categories").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/finance/categories").permitAll()
-                        .requestMatchers("/users/**").authenticated()
+                        .requestMatchers("/finance/**").hasAnyAuthority("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .anyRequest().permitAll()
                 )
@@ -37,7 +34,13 @@ public class WebSecurityConfig {
                         .defaultSuccessUrl("/access")
                         .permitAll()
                 )
-                .logout((logout) -> logout.permitAll());
+                .logout((logout) -> logout
+                        .logoutUrl("/logout") // Ruta para cerrar sesión
+                        .logoutSuccessUrl("/login?logout") // Redirección tras cierre de sesión exitoso
+                        .deleteCookies("JSESSIONID") // Eliminar cookies de sesión
+                        .invalidateHttpSession(true) // Invalidar sesión
+                        .permitAll()
+                );
 
         return http.build();
     }
@@ -46,7 +49,6 @@ public class WebSecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailServiceImpl userDetailsService) {
@@ -60,5 +62,4 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 }

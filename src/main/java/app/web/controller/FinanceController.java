@@ -61,6 +61,7 @@ public class FinanceController {
     public String getDashboardData(@AuthenticationPrincipal User springUser, Model model) {
         UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
         List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
+        Set<CategoryEntity> allCategories = categoryService.getCategoriesByUser(springUser);
 
         // Formateador para valores numéricos
         DecimalFormat df = new DecimalFormat("#,##0.00");
@@ -82,9 +83,31 @@ public class FinanceController {
             }
         });
 
+        List<CashFlowEntity> recentTransactions = cashFlowService.getTransactionsByUser(currentUser);
+
+        // Limitar a 10 transacciones
+        List<CashFlowEntity> limitedTransactions = recentTransactions.size() > 5
+                ? recentTransactions.subList(0, 5)
+                : recentTransactions;
+
+        // Obtener gastos por categoría
+        Map<String, BigDecimal> gastosPorCategoria = cashFlowService.getExpensesByCategory(currentUser);
+
+
+        // Convertir BigDecimal a String para evitar notación científica
+        Map<String, String> gastosPorCategoriaString = gastosPorCategoria.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().toPlainString()
+                ));
+
+        model.addAttribute("gastosPorCategoria", gastosPorCategoriaString);
+
         // Pasar los datos al modelo
         model.addAttribute("ingresosPorMes", ingresosPorMes);
         model.addAttribute("gastosPorMes", gastosPorMes);
+        model.addAttribute("transactions", limitedTransactions); // Solo las primeras 10 transacciones
+
 
         return "/finance/dashboard";
     }
@@ -96,6 +119,7 @@ public class FinanceController {
 
         Map<Boolean, List<CategoryEntity>> categoriesByType = allCategories.stream()
                 .collect(Collectors.groupingBy(CategoryEntity::isIncome));
+
 
         List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
 

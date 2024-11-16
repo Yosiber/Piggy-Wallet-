@@ -43,5 +43,8 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CategoryEntity> categories = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UpcomingPaymentsEntity> upcomingPayments = new ArrayList<>();
 }
 
