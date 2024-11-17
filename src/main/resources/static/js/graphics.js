@@ -580,35 +580,104 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Obtener elementos
-const paymentList = document.getElementById('paymentList');
-const addPaymentForm = document.getElementById('addPaymentForm');
-const paymentNameInput = document.getElementById('paymentName');
-const paymentAmountInput = document.getElementById('paymentAmount');
+async function addPayment() {
+    const paymentName = document.getElementById("paymentName").value.trim();
+    const paymentAmount = parseFloat(document.getElementById("paymentAmount").value);
 
-// Manejar el formulario de agregar pago
-addPaymentForm.addEventListener('submit', (event) => {
-    event.preventDefault();
+    if (!paymentName || isNaN(paymentAmount)) {
+        alert("Por favor completa todos los campos correctamente.");
+        return;
+    }
 
-    // Obtener valores del formulario
-    const paymentName = paymentNameInput.value.trim();
-    const paymentAmount = parseFloat(paymentAmountInput.value).toFixed(2);
+    const paymentData = {
+        name: paymentName,
+        value: Number(paymentAmount.toFixed(2))
+    };
 
-    // Crear un nuevo elemento de la lista
-    const newPayment = document.createElement('li');
-    newPayment.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-    newPayment.innerHTML = `${paymentName} <span>-$${paymentAmount}</span>`;
+    try {
+        const headers = {
+            "Content-Type": "application/json",
+            [headerName]: token
+        };
 
-    // Agregar el nuevo pago a la lista
+        const response = await fetch("/finance/dashboard", {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(paymentData)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Error response:", {
+                status: response.status,
+                statusText: response.statusText,
+                body: errorText
+            });
+            throw new Error(errorText || `Error ${response.status}: ${response.statusText}`);
+        }
+
+        const newPayment = await response.json();
+        if (!newPayment || !newPayment.name || !newPayment.value) {
+            throw new Error('Respuesta del servidor inválida');
+        }
+
+        addPaymentToList(newPayment);
+        document.getElementById("addPaymentForm").reset();
+        const addPaymentModal = bootstrap.Modal.getInstance(document.getElementById("addPaymentModal"));
+        addPaymentModal.hide();
+    } catch (error) {
+        console.error("Error completo:", error);
+        alert(`Error al agregar el pago: ${error.message}`);
+    }
+}
+
+function addPaymentToList(payment) {
+    const paymentList = document.getElementById("paymentList");
+
+    const newPayment = document.createElement("li");
+    newPayment.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+    newPayment.innerHTML = `
+        ${payment.name}
+        <span class="badge bg-danger">-$${payment.value.toFixed(2)}</span>
+    `;
     paymentList.appendChild(newPayment);
+}
 
-    // Limpiar el formulario
-    paymentNameInput.value = '';
-    paymentAmountInput.value = '';
+function loadUpcomingPayments() {
+    const paymentList = document.getElementById("paymentList");
+    if (!paymentList) return;
 
-    // Cerrar el modal
-    const addPaymentModal = bootstrap.Modal.getInstance(document.getElementById('addPaymentModal'));
-    addPaymentModal.hide();
+    // Obtener los datos del servidor
+    fetch('/finance/dashboard')
+        .then(response => response.json())
+        .then(payments => {
+            paymentList.innerHTML = '';
+            if (payments.length === 0) {
+                const emptyMessage = document.createElement("li");
+                emptyMessage.classList.add("list-group-item", "text-center");
+                emptyMessage.textContent = "No hay pagos próximos registrados";
+                paymentList.appendChild(emptyMessage);
+                return;
+            }
+
+            payments.forEach(payment => {
+                const newPayment = document.createElement("li");
+                newPayment.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+                newPayment.innerHTML = `
+                    <span>${payment.name}</span>
+                    <span class="badge bg-danger">-$${payment.value.toFixed(2)}</span>
+                `;
+                paymentList.appendChild(newPayment);
+            });
+        })
+        .catch(error => {
+            console.error('Error cargando pagos:', error);
+        });
+}
+
+// Llamar a la función cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    loadUpcomingPayments();
 });
 
 

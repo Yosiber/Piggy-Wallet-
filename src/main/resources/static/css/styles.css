@@ -573,6 +573,7 @@ blockquote {
 
 .body-profile h5{
     color: white;
+    margin-top: 10px;
 }
 
 .body-profile .card{
@@ -589,6 +590,13 @@ blockquote {
 .body-profile .balance-card h4 {
     font-size: 2rem;
 }
+
+.body-profile .btn-primary {
+    background-color: #F8D57E;
+    color: #333333;
+    border: none;
+}
+
 
 .body-profile .balance-card .amount {
     font-size: 3rem;

@@ -4,18 +4,22 @@ import app.web.Service.CashFlowService;
 import app.web.Service.CategoryService;
 
 import app.web.Service.Impl.CashFlowServiceImpl;
+import app.web.Service.UpcomingPaymentsService;
 import app.web.Service.UserService;
 import app.web.persistence.entities.CashFlowEntity;
 import app.web.persistence.entities.CategoryEntity;
+import app.web.persistence.entities.UpcomingPaymentsEntity;
 import app.web.persistence.entities.UserEntity;
 import app.web.persistence.entities.dto.TransactionDTO;
 //import app.web.persistence.entities.dto.TransactionRequestDTO;
+import app.web.persistence.entities.dto.UpcomingPaymentsDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -36,6 +40,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
+@Slf4j
 @RequestMapping("/finance")
 public class FinanceController {
 
@@ -49,6 +54,9 @@ public class FinanceController {
     private UserService userService;
 
     @Autowired
+    private UpcomingPaymentsService upcomingPaymentsService;
+
+    @Autowired
     public FinanceController(CashFlowService cashFlowService,
                              CategoryService categoryService,
                              UserService userService) {
@@ -59,20 +67,27 @@ public class FinanceController {
 
     @GetMapping("/dashboard")
     public String getDashboardData(@AuthenticationPrincipal User springUser, Model model) {
+        // Obtener el usuario actual desde el servicio
         UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
+
+        // Obtener todas las transacciones asociadas al usuario
         List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
+
+        // Obtener todas las categorías asociadas al usuario
         Set<CategoryEntity> allCategories = categoryService.getCategoriesByUser(springUser);
+
+        // Obtener pagos próximos usando el DTO directamente
+        List<UpcomingPaymentsDTO> upcomingPayments = upcomingPaymentsService.getUpcomingPaymentsByUser(springUser);
 
         // Formateador para valores numéricos
         DecimalFormat df = new DecimalFormat("#,##0.00");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(new Locale("es", "ES")));
 
-        // Separar ingresos y gastos y agrupar por fecha (usando Map<String, Double> para la serialización)
+        // Separar ingresos y gastos y agrupar por fecha
         Map<String, Double> ingresosPorMes = new HashMap<>();
         Map<String, Double> gastosPorMes = new HashMap<>();
 
         transactions.forEach(transaction -> {
-            // Convertir la fecha a formato ISO para que JavaScript pueda procesarla
             String fechaISO = transaction.getDate().toLocalDateTime().toLocalDate().toString();
             double value = transaction.getValue();
 
@@ -83,9 +98,8 @@ public class FinanceController {
             }
         });
 
+        // Obtener las transacciones recientes (limitado a las últimas 5)
         List<CashFlowEntity> recentTransactions = cashFlowService.getTransactionsByUser(currentUser);
-
-        // Limitar a 10 transacciones
         List<CashFlowEntity> limitedTransactions = recentTransactions.size() > 5
                 ? recentTransactions.subList(0, 5)
                 : recentTransactions;
@@ -93,23 +107,41 @@ public class FinanceController {
         // Obtener gastos por categoría
         Map<String, BigDecimal> gastosPorCategoria = cashFlowService.getExpensesByCategory(currentUser);
 
-
-        // Convertir BigDecimal a String para evitar notación científica
+        // Convertir BigDecimal a String
         Map<String, String> gastosPorCategoriaString = gastosPorCategoria.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         e -> e.getValue().toPlainString()
                 ));
 
+        // Añadir todos los atributos al modelo
+        model.addAttribute("upcomingPayments", upcomingPayments);
         model.addAttribute("gastosPorCategoria", gastosPorCategoriaString);
-
-        // Pasar los datos al modelo
         model.addAttribute("ingresosPorMes", ingresosPorMes);
         model.addAttribute("gastosPorMes", gastosPorMes);
-        model.addAttribute("transactions", limitedTransactions); // Solo las primeras 10 transacciones
-
-
+        model.addAttribute("transactions", limitedTransactions);
         return "/finance/dashboard";
+    }
+
+    @PostMapping("/dashboard")
+    public ResponseEntity<UpcomingPaymentsDTO> createUpcomingPayments(
+            @AuthenticationPrincipal User user,
+            @RequestBody UpcomingPaymentsEntity upcomingPayments) {
+        try {
+            UpcomingPaymentsEntity savedPayment = upcomingPaymentsService.createUpcomingPayments(upcomingPayments, user);
+
+            // Convertir a DTO
+            UpcomingPaymentsDTO dto = new UpcomingPaymentsDTO(
+                    savedPayment.getId(),
+                    savedPayment.getName(),
+                    savedPayment.getValue()
+            );
+
+            return new ResponseEntity<>(dto, HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Error creating upcoming payment: ", e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/transactions")
@@ -143,30 +175,19 @@ public class FinanceController {
     }
 
     @PostMapping("/transactions")
-    @Operation(summary = "Crear una nueva transacción", description = "Permite a un usuario autenticado crear una nueva transacción, asociándola con una categoría específica.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Transacción creada con éxito",
-                    content = @Content(schema = @Schema(implementation = CashFlowEntity.class))),
-            @ApiResponse(responseCode = "400", description = "Error en la solicitud",
-                    content = @Content(schema = @Schema(example = "{\"error\": \"Categoría no encontrada\"}")))
-    })
-    @ResponseBody
-    public ResponseEntity<?> createTransaction(
-            @RequestBody Map<String, Object> requestData,
-            @AuthenticationPrincipal User springUser) {
+    public String createTransaction(
+            @RequestParam Map<String, String> requestParams,
+            @AuthenticationPrincipal User springUser,
+            Model model) {
 
         try {
             UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
 
             // Validar y parsear los datos de la transacción
-            if (!requestData.containsKey("value") || !requestData.containsKey("description") || !requestData.containsKey("date") || !requestData.containsKey("categoryId")) {
-                throw new IllegalArgumentException("Faltan datos requeridos en la solicitud");
-            }
-
-            Float value = Float.parseFloat(requestData.get("value").toString());
-            String description = requestData.get("description").toString();
-            Timestamp date = Timestamp.valueOf(requestData.get("date").toString());
-            Long categoryId = Long.parseLong(requestData.get("categoryId").toString());
+            Float value = Float.parseFloat(requestParams.get("value"));
+            String description = requestParams.get("description");
+            Timestamp date = Timestamp.valueOf(requestParams.get("date"));
+            Long categoryId = Long.parseLong(requestParams.get("categoryId"));
 
             // Buscar y validar la categoría
             CategoryEntity category = categoryService.findById(categoryId)
@@ -182,23 +203,14 @@ public class FinanceController {
             cashFlow.setDescription(description);
             cashFlow.setDate(date);
             cashFlow.setCategory(category);
-            CashFlowEntity savedTransaction = cashFlowService.saveTransaction(cashFlow);
+            cashFlowService.saveTransaction(cashFlow);
 
-            // Crear el DTO para la respuesta
-            TransactionDTO transactionDTO = TransactionDTO.builder()
-                    .formattedValue(String.format("%.2f", savedTransaction.getValue()))
-                    .value(savedTransaction.getValue())
-                    .description(savedTransaction.getDescription())
-                    .category(savedTransaction.getCategory())
-                    .date(savedTransaction.getDate().toLocalDateTime())
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(transactionDTO);
-
+            model.addAttribute("successMessage", "Transacción creada con éxito");
         } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", e.getMessage()));
+            model.addAttribute("errorMessage", e.getMessage());
         }
+
+        return "redirect:/transactions";
     }
 
     @GetMapping("/analysis")

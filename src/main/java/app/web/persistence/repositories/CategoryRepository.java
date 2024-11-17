@@ -15,5 +15,4 @@ import java.util.Set;
 @Repository
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
     Set<CategoryEntity> findByUserUsername(String catName);
-    Set<CategoryEntity> findByUser(UserEntity user);
 }

@@ -27,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
     private UserRepository userRepository;
 
     @Override
-    public Set<CategoryEntity> getCategoriesByUser(org.springframework.security.core.userdetails.User user) {
+    public Set<CategoryEntity> getCategoriesByUser(User user) {
         Set<CategoryEntity> categories = categoryRepository.findByUserUsername(user.getUsername());
         System.out.println("Categorías encontradas para el usuario: " + categories);
         return categories;
