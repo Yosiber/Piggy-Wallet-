@@ -12,27 +12,32 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
-    <a class="navbar-brand" href="#">
-      <img class="simple-piggy-bank-money-logo" src="/img/LogoF.png" alt="Logo" >
+    <a class="navbar-brand" th:href="@{/}">
+      <img class="simple-piggy-bank-money-logo" th:src="@{/img/LogoF.png}" alt="Logo">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link active" href="#">Inicio</a>
+          <a class="nav-link active" th:text="#{navbar.home}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/aboutUs}">Sobre Nosotros</a>
+          <a class="nav-link" th:href="@{/aboutUs}" th:text="#{navbar.about}">Sobre Nosotros</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/contactUs}">Contactenos</a>
+          <a class="nav-link" th:href="@{/contactUs}" th:text="#{navbar.contact}">Contáctenos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link btn btn-light text-dark" th:href="@{/login}">Iniciar Sesión</a>
+          <a class="nav-link btn btn-light text-dark" th:href="@{/login}" th:text="#{navbar.login}">Iniciar Sesión</a>
         </li>
       </ul>
+      <!-- Selector de idioma -->
+      <div class="ms-3">
+        <a th:href="@{''(lang=es)}" class="btn btn-sm btn-outline-light">ES</a>
+        <a th:href="@{''(lang=en)}" class="btn btn-sm btn-outline-light">EN</a>
+      </div>
     </div>
   </div>
 </nav>
@@ -41,17 +46,13 @@
 <section class="container mt-5">
   <div class="row">
     <div class="col-md-6">
-      <h1>Piggy Wallet</h1>
-      <p>
-        Gestiona tu dinero de manera fácil y eficiente con Piggy Wallet, tu asistente personal de finanzas.
-        Nuestra plataforma te permite controlar tus ingresos, gastos y presupuestos desde una interfaz simple y segura.
-        Automatiza tus ahorros, organiza tus metas financieras y toma decisiones inteligentes sobre tus finanzas, todo en un solo lugar.
-        ¡Empieza hoy y transforma tu relación con el dinero!
-      </p>
-      <button type="button" class="btn btn-warning" onclick="window.location.href='/login'">Empieza Ahora</button>
+      <h1 th:text="#{hero.title}">Título</h1>
+      <p th:text="#{hero.description}">Descripción</p>
+      <button type="button" class="btn btn-warning" th:text="#{hero.button}"
+              onclick="window.location.href='/login'">Botón</button>
     </div>
     <div class="col-md-6">
-      <img src="/img/Graficas%20-%20copia.png" class="img-graphics" alt="Dashboard">
+      <img th:src="@{/img/Graficas - copia.png}" class="img-graphics" alt="Dashboard">
     </div>
   </div>
 </section>
@@ -114,7 +115,7 @@
 </section>
 
 <!-- Footer -->
-<footer class=" text-center py-4">
+<footer class="text-center py-4">
   <div class="container">
     <div class="row">
       <div class="col-md-4 text-start">
@@ -127,18 +128,18 @@
         </div>
       </div>
       <div class="col-md-4">
-        <p>Contact Us</p>
+        <p th:text="#{footer.contact}"></p>
         <p>(+57) 320 1231232</p>
         <p>pigsrWallet@gmail.com</p>
         <p>soporte@piggywallet.com</p>
       </div>
       <div class="col-md-4">
-        <p>© 2024 Piggy Wallet. Todos los derechos reservados.</p>
-        <p>Organiza y controla tus finanzas personales con facilidad y seguridad.</p>
+        <p th:text="#{footer.copyright}"></p>
       </div>
     </div>
   </div>
 </footer>
+
 
 <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>

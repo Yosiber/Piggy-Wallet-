@@ -1,14 +1,16 @@
 package app.web.persistence.entities.dto;
 
+import app.web.persistence.entities.CategoryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class CategoryDTO {
     private Long id;
     private String name;
-    private boolean isIncome;
+
+    public static CategoryDTO fromEntity(CategoryEntity entity) {
+        return new CategoryDTO(entity.getId(), entity.getName());
+    }
 }

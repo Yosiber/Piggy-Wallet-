@@ -581,7 +581,7 @@ blockquote {
     border: none;
 }
 .body-profile .balance-card{
-    background-color: #333333;
+    background-color: #2b2b2b;
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 20px;
@@ -681,7 +681,7 @@ blockquote {
     background-color: #2b5e2d;
 }
 
-.body-dashboard #gastoModal .btn-primary {
+.body-profile #gastoModal .btn-primary {
     background-color: #a83a3a;
     border-color: #a83a3a;
 }
@@ -780,6 +780,142 @@ blockquote {
     color: #f0f0f0;
 }
 
+canvas#spendingDonut {
+    width: 100%;
+    max-height: 300px; /* Ajusta el tamaño según tu diseño */
+    height: 300px;    /* Ajusta el tamaño según tu diseño */
+    margin-top: 5%;
+}
+/* Estilos base de la card */
+.card {
+    background-color: #1e1e2d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1rem 1.5rem;
+}
+
+.card-header h5 {
+    color: #e2e8f0;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Sobrescribir estilos de Bootstrap para la tabla */
+.table {
+    --bs-table-bg: #1e1e2d !important; /* Fondo base de la tabla */
+    --bs-table-color: #e2e8f0 !important; /* Color de texto principal */
+    --bs-table-striped-bg: #252532 !important; /* Fondo para filas alternadas */
+    --bs-table-striped-color: #e2e8f0 !important;
+    --bs-table-hover-bg: #2d2d44 !important; /* Color de hover */
+    --bs-table-hover-color: #ffffff !important;
+    margin: 0;
+    border-collapse: separate; /* Espaciado más limpio entre celdas */
+    border-spacing: 0 0.5rem; /* Espaciado entre filas */
+}
+
+/* Encabezados de la tabla */
+.table thead th {
+    background-color: #27293d !important; /* Fondo oscuro para encabezados */
+    color: #ffffff !important; /* Texto blanco */
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+    border: none !important;
+    text-align: center; /* Centrar el texto */
+}
+
+/* Celdas de la tabla */
+.table td {
+    background-color: #1e1e2d !important;
+    border: none !important;
+    padding: 0.75rem 1rem !important;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+}
+
+/* Filas alternadas */
+.table-striped tbody tr:nth-of-type(odd) td {
+    background-color: #252532 !important;
+}
+
+.table-striped tbody tr:nth-of-type(even) td {
+    background-color: #1e1e2d !important;
+}
+
+/* Efecto hover */
+.table-hover tbody tr:hover td {
+    background-color: #2d2d44 !important;
+}
+
+/* Valores positivos y negativos */
+.text-success  {
+    color: #1ecb8c !important; /* Verde brillante para ingresos */
+    font-weight: bold;
+}
+
+.text-danger {
+    color: #ff6b6b !important; /* Rojo suave para gastos */
+    font-weight: bold;
+}
+
+/* Contenedor responsive */
+.table-responsive {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+
+/* Animaciones */
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+/* Cantidades */
+.table td:nth-child(1) {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* Categorías */
+.table td:nth-child(3) {
+    font-weight: bold;
+    color: #5dade2; /* Azul suave para categorías */
+    text-align: center;
+}
+
+.table td:nth-child(2){
+    font-weight: bold;
+    color: #5dade2 ;
+    text-align: center;
+}
+
+/* Fechas */
+.table td:nth-child(4) {
+    color: #adb5bd; /* Gris para fechas */
+    text-align: center;
+}
+
+.body-profile .btn-xs {
+    font-size: 0.75rem; /* Tamaño del texto más pequeño */
+    padding: 0.2rem 0.4rem; /* Menos relleno */
+    border-radius: 0.2rem; /* Ajusta el borde si es necesario */
+
+}
+
+.body-profile .row.mb-4 {
+    min-height: 400px; /* Ajusta según el diseño */
+}
+
 @media (max-width: 768px) {
     .footer-right {
         text-align: center;
@@ -788,6 +924,10 @@ blockquote {
 
     .footer-contact {
         text-align: center;
+    }
+
+    .footer p{
+        font-size: 10px;
     }
 
     .body-profile .spending-chart{
@@ -816,12 +956,13 @@ blockquote {
     .footer-right {
         text-align: left;
         margin-top: 20px;
+
     }
 
     .body-login .login-container{
         margin: 10px;
-
     }
+
 
     .body-login{
         padding: 0;

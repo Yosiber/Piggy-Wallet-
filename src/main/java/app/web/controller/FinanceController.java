@@ -12,6 +12,7 @@ import app.web.persistence.entities.UpcomingPaymentsEntity;
 import app.web.persistence.entities.UserEntity;
 import app.web.persistence.entities.dto.TransactionDTO;
 //import app.web.persistence.entities.dto.TransactionRequestDTO;
+import app.web.persistence.entities.dto.TransactionRequestDTO;
 import app.web.persistence.entities.dto.UpcomingPaymentsDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,6 +35,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -152,7 +154,6 @@ public class FinanceController {
         Map<Boolean, List<CategoryEntity>> categoriesByType = allCategories.stream()
                 .collect(Collectors.groupingBy(CategoryEntity::isIncome));
 
-
         List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
 
         // Limitar a 10 transacciones
@@ -160,38 +161,46 @@ public class FinanceController {
                 ? transactions.subList(0, 10)
                 : transactions;
 
-        Map<String, Object> balance = cashFlowService.getBalanceSummary(currentUser);
+        // Obtener el balance original
+        Map<String, Object> balanceData = cashFlowService.getBalanceSummary(currentUser);
+        BigDecimal rawBalanceBigDecimal = balanceData.get("balance") != null
+                ? (BigDecimal) balanceData.get("balance")
+                : BigDecimal.ZERO;
 
-        // Convertir a String para evitar notación científica
-        model.addAttribute("totalIngresos", ((BigDecimal) balance.get("totalIncome")).toPlainString());
-        model.addAttribute("totalGastos", ((BigDecimal) balance.get("totalExpenses")).toPlainString());
-        model.addAttribute("balance", ((BigDecimal) balance.get("balance")).toPlainString());
+        // Convertir a double
+        double rawBalance = rawBalanceBigDecimal.doubleValue();
 
+        // Formatear el balance original
+        NumberFormat currencyFormat = NumberFormat.getInstance();
+        String formattedBalance = currencyFormat.format(rawBalance);
+
+        // Calcular saldo total (balance sin negativos)
+        double totalBalance = Math.max(rawBalance, 0);
+        String formattedTotalBalance = currencyFormat.format(totalBalance);
+
+        // Pasar valores al modelo
+        model.addAttribute("balance", formattedBalance); // Balance original (puede ser negativo)
+        model.addAttribute("saldoTotal", formattedTotalBalance); // Balance sin negativos
+        model.addAttribute("totalIngresos", currencyFormat.format(balanceData.get("totalIncome")));
+        model.addAttribute("totalGastos", currencyFormat.format(balanceData.get("totalExpenses")));
         model.addAttribute("ingresos", categoriesByType.getOrDefault(true, new ArrayList<>()));
         model.addAttribute("gastos", categoriesByType.getOrDefault(false, new ArrayList<>()));
         model.addAttribute("transactions", limitedTransactions); // Solo las primeras 10 transacciones
 
         return "finance/transactions";
     }
-
     @PostMapping("/transactions")
-    public String createTransaction(
-            @RequestParam Map<String, String> requestParams,
-            @AuthenticationPrincipal User springUser,
-            Model model) {
-
+    @ResponseBody
+    public ResponseEntity<?> createTransaction(
+            @Valid @RequestBody TransactionRequestDTO requestDTO,
+            @AuthenticationPrincipal User springUser) {
         try {
             UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
 
-            // Validar y parsear los datos de la transacción
-            Float value = Float.parseFloat(requestParams.get("value"));
-            String description = requestParams.get("description");
-            Timestamp date = Timestamp.valueOf(requestParams.get("date"));
-            Long categoryId = Long.parseLong(requestParams.get("categoryId"));
-
             // Buscar y validar la categoría
-            CategoryEntity category = categoryService.findById(categoryId)
+            CategoryEntity category = categoryService.findById(requestDTO.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+
             if (!category.getUser().getUsername().equals(springUser.getUsername())) {
                 throw new RuntimeException("La categoría no pertenece al usuario");
             }
@@ -199,19 +208,27 @@ public class FinanceController {
             // Crear y guardar la transacción
             CashFlowEntity cashFlow = new CashFlowEntity();
             cashFlow.setUser(currentUser);
-            cashFlow.setValue(value);
-            cashFlow.setDescription(description);
-            cashFlow.setDate(date);
+            cashFlow.setValue(requestDTO.getValue());
+            cashFlow.setDescription(requestDTO.getDescription());
+            cashFlow.setDate(Timestamp.valueOf(requestDTO.getDate()));
             cashFlow.setCategory(category);
-            cashFlowService.saveTransaction(cashFlow);
+            CashFlowEntity savedTransaction = cashFlowService.saveTransaction(cashFlow);
 
-            model.addAttribute("successMessage", "Transacción creada con éxito");
+            // Crear el DTO para la respuesta
+            TransactionDTO transactionDTO = TransactionDTO.builder()
+                    .formattedValue(String.format("%.2f", savedTransaction.getValue()))
+                    .value(savedTransaction.getValue())
+                    .description(savedTransaction.getDescription())
+                    .category(savedTransaction.getCategory())
+                    .date(savedTransaction.getDate().toLocalDateTime())
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(transactionDTO);
         } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
-
-        return "redirect:/transactions";
     }
+
 
     @GetMapping("/analysis")
     public String analysis(@AuthenticationPrincipal User springUser, Model model) {
@@ -276,21 +293,10 @@ public class FinanceController {
     }
 
 
-    @Operation(summary = "Crear una nueva categoría", description = "Permite a un usuario autenticado crear una nueva categoría asociada a su cuenta.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Categoría creada con éxito",
-                    content = @Content(schema = @Schema(implementation = CategoryEntity.class))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
-                    content = @Content(schema = @Schema(example = "{\"error\": \"Descripción del error interno\"}")))
-    })
     @PostMapping("/categories")
     @ResponseBody
     public ResponseEntity<CategoryEntity> createCategory(
             @AuthenticationPrincipal User user,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    content = @Content(schema = @Schema(
-                            example = "{\"name\": \"Compras\", \"description\": \"Gastos relacionados a compras\"}")))
             @RequestBody CategoryEntity category) {
         try {
             CategoryEntity savedCategory = categoryService.createCategory(category, user);

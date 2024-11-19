@@ -9,8 +9,7 @@ import app.web.persistence.entities.CashFlowEntity;
 import app.web.persistence.entities.CategoryEntity;
 import app.web.persistence.entities.UpcomingPaymentsEntity;
 import app.web.persistence.entities.UserEntity;
-import app.web.persistence.entities.dto.TransactionDTO;
-import app.web.persistence.entities.dto.UpcomingPaymentsDTO;
+import app.web.persistence.entities.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -29,6 +28,8 @@ import org.springframework.security.core.userdetails.User;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -267,5 +268,146 @@ public class FinanceApiController {
         }
     }
 
+
+    @GetMapping("/analysis")
+    @Operation(
+            summary = "Obtener análisis financiero",
+            description = "Proporciona un resumen de los ingresos y gastos del usuario autenticado, ordenados por fecha descendente. Devuelve las últimas 10 transacciones de cada tipo (ingresos y gastos)."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Análisis financiero obtenido con éxito",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = FinancialAnalysisDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "No autorizado. El usuario no ha iniciado sesión.",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Error interno del servidor",
+                    content = @Content
+            )
+    })
+    public ResponseEntity<FinancialAnalysisDTO> analysis(@AuthenticationPrincipal User springUser) {
+        try {
+            UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
+            List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
+
+            // Ordenar las transacciones por fecha descendente
+            transactions.sort((a, b) -> b.getDate().compareTo(a.getDate()));
+
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+            df.setDecimalFormatSymbols(new DecimalFormatSymbols(new Locale("es", "ES")));
+
+            List<TransactionDTO> ingresos = transactions.stream()
+                    .filter(transaction -> transaction.getValue() > 0)
+                    .map(transaction -> TransactionDTO.builder()
+                            .formattedValue(df.format(transaction.getValue()))
+                            .value(transaction.getValue())
+                            .description(transaction.getDescription())
+                            .category(transaction.getCategory())
+                            .date(transaction.getDate().toLocalDateTime()) // Convertir Timestamp a LocalDateTime
+                            .build())
+                    .limit(10)
+                    .collect(Collectors.toList());
+
+            List<TransactionDTO> gastos = transactions.stream()
+                    .filter(transaction -> transaction.getValue() < 0)
+                    .map(transaction -> TransactionDTO.builder()
+                            .formattedValue(df.format(Math.abs(transaction.getValue())))
+                            .value(transaction.getValue())
+                            .description(transaction.getDescription())
+                            .category(transaction.getCategory())
+                            .date(transaction.getDate().toLocalDateTime()) // Convertir Timestamp a LocalDateTime
+                            .build())
+                    .limit(10)
+                    .collect(Collectors.toList());
+
+            FinancialAnalysisDTO analysis = new FinancialAnalysisDTO(ingresos, gastos);
+
+            return ResponseEntity.ok(analysis);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+
+
+    @GetMapping("/categories")
+    @Operation(
+            summary = "Obtener categorías del usuario",
+            description = "Devuelve las categorías del usuario autenticado, clasificadas en 'Ingresos' y 'Gastos'."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Categorías obtenidas con éxito",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CategoriesDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "No autorizado. El usuario no ha iniciado sesión.",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Error interno del servidor.",
+                    content = @Content
+            )
+    })
+    public ResponseEntity<CategoriesDTO> getCategories(@AuthenticationPrincipal org.springframework.security.core.userdetails.User user) {
+        Set<CategoryEntity> categories = categoryService.getCategoriesByUser(user);
+
+        // Clasificar categorías
+        Set<CategoryDTO> ingresos = categories.stream()
+                .filter(CategoryEntity::isIncome)
+                .map(CategoryDTO::fromEntity)
+                .collect(Collectors.toSet());
+
+        Set<CategoryDTO> gastos = categories.stream()
+                .filter(category -> !category.isIncome())
+                .map(CategoryDTO::fromEntity)
+                .collect(Collectors.toSet());
+
+        CategoriesDTO response = new CategoriesDTO(ingresos, gastos);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Crear una nueva categoría", description = "Permite a un usuario autenticado crear una nueva categoría asociada a su cuenta.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Categoría creada con éxito",
+                    content = @Content(schema = @Schema(implementation = CategoryEntity.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(schema = @Schema(example = "{\"error\": \"Descripción del error interno\"}")))
+    })
+    @PostMapping("/categories")
+    @ResponseBody
+    public ResponseEntity<CategoryEntity> createCategory(
+            @AuthenticationPrincipal User user,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(schema = @Schema(
+                            example = "{\"name\": \"Compras\", \"description\": \"Gastos relacionados a compras\"}")))
+            @RequestBody CategoryEntity category) {
+        try {
+            CategoryEntity savedCategory = categoryService.createCategory(category, user);
+
+            return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

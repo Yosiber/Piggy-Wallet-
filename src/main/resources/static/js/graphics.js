@@ -181,7 +181,8 @@ function formatNumber(number) {
     }
 }
 
-// Función principal para guardar transacciones
+
+//  Función para guardar transacción
 async function guardarTransaccion(isIncome) {
     const prefix = isIncome ? 'Ingreso' : 'Gasto';
     const formId = isIncome ? 'ingresoForm' : 'gastoForm';
@@ -192,12 +193,15 @@ async function guardarTransaccion(isIncome) {
         return;
     }
 
-
+    // Obtener y formatear los datos del formulario
     const monto = parseFloat(document.getElementById(`monto${prefix}`).value.replace(/[^\d.-]/g, ''));
     const descripcion = document.getElementById(`descripcion${prefix}`).value.trim();
     const categoriaId = parseInt(document.getElementById(`categoria${prefix}`).value, 10);
     const fechaInput = document.getElementById(`fecha${prefix}`).value;
-    const fecha = fechaInput.replace("T", " ") + ":00";
+
+    // Formatear la fecha correctamente para el backend
+    // Asegurarse de que la fecha esté en formato ISO
+    const fecha = new Date(fechaInput).toISOString().slice(0, 19).replace('T', ' ');
 
     const transactionData = {
         value: isIncome ? Math.abs(monto) : -Math.abs(monto),
@@ -222,76 +226,77 @@ async function guardarTransaccion(isIncome) {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            console.error("Error en la respuesta del servidor:", errorData);
+            throw new Error(errorData.error || "Error inesperado");
         }
 
         const savedTransaction = await response.json();
 
-        // Cerrar el modal
+        // Cerrar el modal y resetear el formulario
         const modalId = isIncome ? 'ingresoModal' : 'gastoModal';
         const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
         modal.hide();
-
-        // Resetear el formulario
         form.reset();
 
-        // Actualizar la interfaz sin recargar la página
+        // Actualizar la interfaz
         await actualizarInterfaz(savedTransaction);
 
     } catch (error) {
-        console.error("Error:", error);
-        alert("Error al guardar la transacción. Por favor, intente nuevamente.");
+        console.error("Error al guardar la transacción:", error);
+        alert(`Error al guardar la transacción: ${error.message}`);
     }
 }
 
-// Función para actualizar toda la interfaz
 async function actualizarInterfaz(savedTransaction) {
     try {
-        // Actualizar la tabla de transacciones
+        // Actualizar la tabla
         actualizarTablaTransacciones(savedTransaction);
+
+        // Reaplicar formateos
+        formatearTodasLasFechas();
 
         // Actualizar el balance
         await actualizarBalanceCompleto();
-
-        // Actualizar las gráficas si existen
-        if (typeof formatearTodasLasFechas === 'function') {
-            formatearTodasLasFechas();
-        }
     } catch (error) {
         console.error("Error al actualizar la interfaz:", error);
     }
 }
 
 
+
 // Función para actualizar la tabla de transacciones
 function actualizarTablaTransacciones(transaction) {
     const tableBody = document.getElementById('transactionsTableBody');
-    if (tableBody) {
-        const row = tableBody.insertRow(0);
+    if (!tableBody) return;
 
-        // Crear las celdas
-        const valueCell = row.insertCell(0);
-        const descriptionCell = row.insertCell(1);
-        const categoryCell = row.insertCell(2);
-        const dateCell = row.insertCell(3);
+    const row = tableBody.insertRow(0);
 
-        // Formatear y asignar los valores
-        valueCell.textContent = formatNumber(transaction.value);
-        descriptionCell.textContent = transaction.description;
-        categoryCell.textContent = transaction.category.name;
-        dateCell.textContent = formatDateToMonth(transaction.date);
+    // Crear las celdas
+    const cells = {
+        value: row.insertCell(0),
+        description: row.insertCell(1),
+        category: row.insertCell(2),
+        date: row.insertCell(3)
+    };
 
-        // Agregar clases para el estilo
-        valueCell.className = transaction.value >= 0 ? 'text-success' : 'text-danger';
-    }
+    // Formatear y asignar los valores
+    cells.value.textContent = formatNumber(transaction.value);
+    cells.description.textContent = transaction.description;
+    cells.category.textContent = transaction.category.name;
+
+    // Formatear la fecha usando la función existente de formatDateToMonth
+    const fecha = new Date(transaction.date);
+    cells.date.textContent = formatDateToMonth(fecha.toISOString());
+
+    // Aplicar clases de estilo
+    cells.value.className = transaction.value >= 0 ? 'text-success' : 'text-danger';
 }
-
-
 
 // Función para actualizar el balance completo
 async function actualizarBalanceCompleto() {
     try {
-        const response = await fetch('/finance/balance');
+        const response = await fetch('/finance/transactions');
         if (!response.ok) {
             throw new Error('Error al obtener el balance');
         }
@@ -370,6 +375,7 @@ function agruparPorMes(tableRows) {
 function formatearTodasLasFechas() {
     const ingresosTable = document.getElementById('ingresosTableBody');
     const gastosTable = document.getElementById('gastosTableBody');
+
 
     if (ingresosTable && gastosTable) {
         formatearFechasEnTabla(ingresosTable);
@@ -494,6 +500,7 @@ function crearGraficas(ingresosPorMes, gastosPorMes) {
 
 document.addEventListener('DOMContentLoaded', formatearTodasLasFechas);
 
+// Al cargar la página, formatear los números en la tabla
 document.addEventListener('DOMContentLoaded', function() {
     // Formatear todos los números en la tabla al cargar
     const numberCells = document.querySelectorAll('#transactionsTableBody td:first-child');
@@ -504,15 +511,22 @@ document.addEventListener('DOMContentLoaded', function() {
             cell.className = value >= 0 ? 'text-success' : 'text-danger';
         }
     });
+
+    // Formatear las fechas al cargar
+    const dateCells = document.querySelectorAll('#transactionsTableBody td:nth-child(4)'); // Asumiendo que la fecha está en la 4ª columna
+    dateCells.forEach(cell => {
+        const formattedDate = formatDateToMonth(cell.textContent);
+        cell.textContent = formattedDate;
+    });
 });
 
-// Función para convertir fecha ISO a nombre de mes en español
-function convertirFechaAMes(fecha) {
-    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-    const date = new Date(fecha); // Asume que 'fecha' es una cadena en formato ISO
-    return meses[date.getMonth()];
-}
+    // Función para convertir fecha ISO a nombre de mes en español
+    function convertirFechaAMes(fecha) {
+        const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+            'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+        const date = new Date(fecha); // Asume que 'fecha' es una cadena en formato ISO
+        return meses[date.getMonth()];
+    }
 
 // Procesar los datos para la gráfica de ingresos y gastos por mes
 const ingresosPorMes = {};
@@ -536,7 +550,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Colores para el gráfico de dona
 const colors = [
     'rgba(255, 99, 132, 0.7)',
-    'rgba(54, 162, 235, 0.7)',
+    'rgba(6,129,196,0.7)',
     'rgba(255, 206, 86, 0.7)',
     'rgba(75, 192, 192, 0.7)',
     'rgba(153, 102, 255, 0.7)',
@@ -681,6 +695,31 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+document.addEventListener('DOMContentLoaded', function () {
+    const ingresoModal = document.getElementById('ingresoModal');
+    const gastoModal = document.getElementById('gastoModal');
+    const mainContent = document.querySelector('main');
 
+    ingresoModal.addEventListener('show.bs.modal', function () {
+        ingresoModal.removeAttribute('aria-hidden');
+        mainContent.setAttribute('inert', '');
+        document.getElementById('montoIngreso').focus();
+    });
 
+    ingresoModal.addEventListener('hide.bs.modal', function () {
+        ingresoModal.setAttribute('aria-hidden', 'true');
+        mainContent.removeAttribute('inert');
+    });
+
+    gastoModal.addEventListener('show.bs.modal', function () {
+        gastoModal.removeAttribute('aria-hidden');
+        mainContent.setAttribute('inert', '');
+        document.getElementById('montoGasto').focus();
+    });
+
+    gastoModal.addEventListener('hide.bs.modal', function () {
+        gastoModal.setAttribute('aria-hidden', 'true');
+        mainContent.removeAttribute('inert');
+    });
+});
 

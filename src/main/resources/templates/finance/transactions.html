@@ -74,134 +74,136 @@
                 <h2>Transacciones</h2>
             </div>
 
+            <div class="card-header">
+                <!-- Tarjeta de Balance -->
+                <div class="balance-card text-center text-white mb-4 p-4 rounded ">
+                    <h4>Saldo Total</h4>
+                    <div class="amount fs-3" id="totalBalance"> <span th:text="${saldoTotal}"></span>
+                        $
+                    </div>
+                    <hr>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <p><span style="color: green;">↑</span> Ingresos: <span th:text="${totalIngresos}"></span> $</p>
+                        </div>
+                        <div class="col">
+                            <p><span style="color: red;">↓</span> Gastos: <span th:text="${totalGastos}"></span> $</p>
+                        </div>
+                        <div class="col">
+                            <p>Balance: <span th:text="${balance}"></span> $</p>
+                        </div>
+                    </div>
 
-            <!-- Tarjeta de Balance -->
-            <div class="balance-card text-center text-white mb-4 p-4 bg-dark rounded">
-                <h4>Saldo Total</h4>
-                <div class="amount fs-3" id="totalBalance" > <span th:text="${balance}"></span> $</div>
-                <hr>
-                <div class="row mt-3">
-                    <div class="col">
-                        <p><span style="color: green;">↑</span> Ingresos: <span th:text="${totalIngresos}"></span> $</p>
+                    <div class="dropdown mt-3">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            Gestionar Transacciones
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#ingresoModal">Ingresar Ingreso</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#gastoModal">Ingresar Gasto</a></li>
+                        </ul>
                     </div>
-                    <div class="col">
-                        <p><span style="color: red;">↓</span> Gastos: <span th:text="${totalGastos}"></span> $</p>
-                    </div>
-                    <div class="col">
-                        <p>Balance: <span th:text="${balance}"></span> $</p>
+                </div>
+
+                <!-- Tabla de Transacciones -->
+                <div class="table-responsive mb-4">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Monto</th>
+                            <th>Descripción</th>
+                            <th>Categoría</th>
+                            <th>Fecha</th>
+                        </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                        <tr th:each="transaction : ${transactions}">
+                            <td th:text="${transaction.value}"></td>
+                            <td th:text="${transaction.description}"></td>
+                            <td th:text="${transaction.category.name}"></td>
+                            <td th:text="${transaction.date}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal para Ingresos -->
+                <div class="modal fade" id="ingresoModal" tabindex="-1" aria-labelledby="ingresoModalLabel" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="ingresoModalLabel">Nuevo Ingreso</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="ingresoForm">
+                                    <div class="mb-3">
+                                        <label for="montoIngreso" class="form-label">Monto</label>
+                                        <input type="number" class="form-control" id="montoIngreso" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="descripcionIngreso" class="form-label">Descripción</label>
+                                        <input type="text" class="form-control" id="descripcionIngreso" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="categoriaIngreso" class="form-label">Categoría</label>
+                                        <select class="form-select" id="categoriaIngreso" required>
+                                            <option value="">Seleccione una categoría</option>
+                                            <th:block th:each="categoria : ${ingresos}">
+                                                <option th:value="${categoria.id}" th:text="${categoria.name}"></option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fechaIngreso" class="form-label">Fecha</label>
+                                        <input type="datetime-local" class="form-control" id="fechaIngreso" required>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-primary" onclick="guardarTransaccion(true)">Guardar</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="dropdown mt-3">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        Gestionar Transacciones
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#ingresoModal">Ingresar Ingreso</a></li>
-                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#gastoModal">Ingresar Gasto</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Tabla de Transacciones -->
-            <div class="table-responsive mb-4">
-                <table class="table table-striped table-hover">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>Monto</th>
-                        <th>Descripción</th>
-                        <th>Categoría</th>
-                        <th>Fecha</th>
-                    </tr>
-                    </thead>
-                    <tbody id="transactionsTableBody">
-                    <tr th:each="transaction : ${transactions}">
-                        <td th:text="${transaction.value}"></td>
-                        <td th:text="${transaction.description}"></td>
-                        <td th:text="${transaction.category.name}"></td>
-                        <td th:text="${transaction.date}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Modal para Ingresos -->
-            <div class="modal fade" id="ingresoModal" tabindex="-1" aria-labelledby="ingresoModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="ingresoModalLabel">Nuevo Ingreso</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="ingresoForm">
-                                <div class="mb-3">
-                                    <label for="montoIngreso" class="form-label">Monto</label>
-                                    <input type="number" class="form-control" id="montoIngreso" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="descripcionIngreso" class="form-label">Descripción</label>
-                                    <input type="text" class="form-control" id="descripcionIngreso" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="categoriaIngreso" class="form-label">Categoría</label>
-                                    <select class="form-select" id="categoriaIngreso" required>
-                                        <option value="">Seleccione una categoría</option>
-                                        <th:block th:each="categoria : ${ingresos}">
-                                            <option th:value="${categoria.id}" th:text="${categoria.name}"></option>
-                                        </th:block>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="fechaIngreso" class="form-label">Fecha</label>
-                                    <input type="datetime-local" class="form-control" id="fechaIngreso" required>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-primary" onclick="guardarTransaccion(true)">Guardar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal para Gastos -->
-            <div class="modal fade" id="gastoModal" tabindex="-1" aria-labelledby="gastoModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="gastoModalLabel">Nuevo Gasto</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="gastoForm">
-                                <div class="mb-3">
-                                    <label for="montoGasto" class="form-label">Monto</label>
-                                    <input type="number" class="form-control" id="montoGasto" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="descripcionGasto" class="form-label">Descripción</label>
-                                    <input type="text" class="form-control" id="descripcionGasto" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="categoriaGasto" class="form-label">Categoría</label>
-                                    <select class="form-select" id="categoriaGasto" required>
-                                        <option value="">Seleccione una categoría</option>
-                                        <th:block th:each="categoria : ${gastos}">
-                                            <option th:value="${categoria.id}" th:text="${categoria.name}"></option>
-                                        </th:block>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="fechaGasto" class="form-label">Fecha</label>
-                                    <input type="datetime-local" class="form-control" id="fechaGasto" required>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-primary" onclick="guardarTransaccion(false)">Guardar</button>
+                <!-- Modal para Gastos -->
+                <div class="modal fade" id="gastoModal" tabindex="-1" aria-labelledby="gastoModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="gastoModalLabel">Nuevo Gasto</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="gastoForm">
+                                    <div class="mb-3">
+                                        <label for="montoGasto" class="form-label">Monto</label>
+                                        <input type="number" class="form-control" id="montoGasto" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="descripcionGasto" class="form-label">Descripción</label>
+                                        <input type="text" class="form-control" id="descripcionGasto" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="categoriaGasto" class="form-label">Categoría</label>
+                                        <select class="form-select" id="categoriaGasto" required>
+                                            <option value="">Seleccione una categoría</option>
+                                            <th:block th:each="categoria : ${gastos}">
+                                                <option th:value="${categoria.id}" th:text="${categoria.name}"></option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fechaGasto" class="form-label">Fecha</label>
+                                        <input type="datetime-local" class="form-control" id="fechaGasto" required>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-primary" onclick="guardarTransaccion(false)">Guardar</button>
                         </div>
                     </div>
                 </div>
@@ -209,6 +211,9 @@
         </main>
     </div>
 </div>
+
+
+
 
 <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

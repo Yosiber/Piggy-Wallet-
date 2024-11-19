@@ -74,8 +74,10 @@
       <div class="row mb-4">
         <div class="col-md-6">
           <div class="card">
-            <div class="card-body">
+            <div class="card-header">
               <h5 class="card-title">Ingresos</h5>
+            </div>
+            <div class="card-body">
               <p>Mensual</p>
               <div class="d-flex justify-content-center">
                 <canvas id="myBarChartIncome"></canvas>
@@ -86,8 +88,10 @@
 
         <div class="col-md-6">
           <div class="card">
-            <div class="card-body">
+            <div class="card-header">
               <h5 class="card-title">Gastos</h5>
+            </div>
+            <div class="card-body">
               <p>Mensual</p>
               <div class="d-flex justify-content-center">
                 <canvas id="myBarChartSpending"></canvas>
@@ -97,13 +101,14 @@
         </div>
       </div>
 
-
       <div class="row mb-4">
         <!-- Tabla de Ingresos -->
-        <div class="col-md-6">
+        <div class="col-lg-6 col-12">
           <div class="card flex-fill">
-            <div class="card-body">
+            <div class="card-header">
               <h5 class="card-title">Ingresos Recientes</h5>
+            </div>
+            <div class="card-body">
               <div class="table-responsive mb-4">
                 <table class="table table-striped table-hover">
                   <thead class="table-dark">
@@ -116,12 +121,10 @@
                   </thead>
                   <tbody id="ingresosTableBody">
                   <tr th:each="ingreso : ${transaccionesIngresos}">
-                    <td th:text="${ingreso.formattedValue}"></td>
+                    <td style=" color: #20c997;" th:text="${ingreso.formattedValue}"></td>
                     <td th:text="${ingreso.description}"></td>
                     <td th:text="${ingreso.category.name}"></td>
                     <td th:text="${ingreso.date}"></td>
-                    <!-- Agregar un data attribute con el valor original para las gráficas -->
-                    <td style="display:none;" th:data-value="${ingreso.value}"></td>
                   </tr>
                   </tbody>
                 </table>
@@ -131,10 +134,12 @@
         </div>
 
         <!-- Tabla de Gastos -->
-        <div class="col-md-6">
+        <div class="col-lg-6 col-12">
           <div class="card flex-fill">
-            <div class="card-body">
+            <div class="card-header">
               <h5 class="card-title">Gastos Recientes</h5>
+            </div>
+            <div class="card-body">
               <div class="table-responsive mb-4">
                 <table class="table table-striped table-hover">
                   <thead class="table-dark">
@@ -145,15 +150,12 @@
                     <th>Fecha</th>
                   </tr>
                   </thead>
-                  <!-- Tabla de Gastos -->
                   <tbody id="gastosTableBody">
                   <tr th:each="gasto : ${transaccionesGastos}">
-                    <td th:text="${gasto.formattedValue}"></td>
+                    <td style=" color: #ff6b6b;" th:text="${gasto.formattedValue}"></td>
                     <td th:text="${gasto.description}"></td>
                     <td th:text="${gasto.category.name}"></td>
                     <td th:text="${gasto.date}"></td>
-                    <!-- Agregar un data attribute con el valor original para las gráficas -->
-                    <td style="display:none;" th:data-value="${gasto.value}"></td>
                   </tr>
                   </tbody>
                 </table>
