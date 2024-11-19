@@ -25,7 +25,7 @@ public class UserController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
-    @GetMapping("/record")
+    @GetMapping("/register")
     public String recordPage() {
         return "/users/register";
     }

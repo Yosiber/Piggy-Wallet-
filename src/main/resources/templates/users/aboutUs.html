@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Piggy Wallet about us page">
+    <meta name="viewport" content="width=device-width">
     <title>Sobre Nosotros</title>
   <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
@@ -12,30 +14,49 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
-    <a class="navbar-brand" href="#">
-      <img class="simple-piggy-bank-money-logo" src="/img/LogoF.png" alt="Logo" >
+    <a class="navbar-brand" th:href="@{/}">
+      <img class="simple-piggy-bank-money-logo" th:src="@{/img/LogoF.png}" alt="Logo">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/home}">Inicio</a>
+          <a class="nav-link " th:text="#{navbar.link.home}" th:href="@{/}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="#">Sobre Nosotros</a>
+          <a class="nav-link active" th:text="#{navbar.link.aboutUs}" th:href="@{/aboutUs}">Sobre Nosotros</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/contactUs}">Contactenos</a>
+          <a class="nav-link" th:text="#{navbar.link.contactUs}" th:href="@{/contactUs}">Contáctenos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link btn btn-light text-dark" th:href="@{/login}">Iniciar Sesión</a>
+          <a class="nav-link btn btn-light text-dark" th:text="#{navbar.link.login}" th:href="@{/login}">Iniciar Sesión</a>
+        </li>
+        <!-- Dropdown para idiomas -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-translate"></i>
+            <span th:text="#{navbar.language}"></span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+            <li>
+              <a class="dropdown-item" th:href="@{''(lang='es')}" th:text="#{navbar.language.es}">Español</a>
+            </li>
+            <li>
+              <a class="dropdown-item" th:href="@{''(lang='en')}" th:text="#{navbar.language.en}">English</a>
+            </li>
+            <li>
+              <a class="dropdown-item" th:href="@{''(lang='fr')}" th:text="#{navbar.language.fr}">Français</a>
+            </li>
+          </ul>
         </li>
       </ul>
     </div>
   </div>
 </nav>
+
 
 <!-- Main Section -->
 <section class="container my-5">
@@ -72,13 +93,13 @@
 <section class="container my-5">
   <div class="row">
     <div class="col-lg-6">
-      <div class="card p-3">
+      <div class="card card-aboutUs p-3">
         <h3>MISIÓN</h3>
         <p>En Piggy Wallet, creemos que todos merecen tener el control total de sus finanzas. Nuestra misión es proporcionar una herramienta fácil de usar y segura que ayude a las personas a gestionar sus ingresos, gastos y metas financieras de manera eficiente.</p>
       </div>
     </div>
     <div class="col-lg-6">
-      <div class="card p-3">
+      <div class="card card-aboutUs p-3">
         <h3>VISIÓN</h3>
         <p>Nuestra visión es convertirnos en la plataforma líder para la gestión de finanzas personales, siendo accesibles para todos, desde principiantes hasta aquellos con experiencia en planificación financiera.</p>
       </div>
@@ -105,12 +126,20 @@
   <div class="container">
     <div class="row">
       <div class="col-md-4 text-start">
-        <img src="/img/LogoF.png" alt="Contact Image">
+        <img th:src="@{/img/LogoF.png}" alt="Contact Image">
         <div class="social-icons mt-3">
-          <a href="#"><i class="bi bi-google"></i></a>
-          <a href="#"><i class="bi bi-twitter"></i></a>
-          <a href="#"><i class="bi bi-linkedin"></i></a>
-          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="https://gmail.com" aria-label="Contact us on Gmail">
+            <i class="bi bi-google"></i>
+          </a>
+          <a href="https://x.com/home" aria-label="Visit us on X (formerly Twitter)">
+            <i class="bi bi-twitter"></i>
+          </a>
+          <a href="https://linkedin.com" aria-label="Find us on LinkedIn">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a href="https://instagram.com" aria-label="Follow us on Instagram">
+            <i class="bi bi-instagram"></i>
+          </a>
         </div>
       </div>
       <div class="col-md-4">
@@ -125,6 +154,7 @@
     </div>
   </div>
 </footer>
+
 <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

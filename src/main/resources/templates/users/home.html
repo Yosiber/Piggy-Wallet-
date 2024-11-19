@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Inicio</title>
+  <meta charset="UTF-8">
+  <meta name="description" content="Piggy Wallet">
+  <meta name="viewport" content="width=device-width">
+  <title>Inicio</title>
   <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/styles.css}">
@@ -21,23 +23,36 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link active" th:text="#{navbar.home}">Inicio</a>
+          <a class="nav-link active" th:text="#{navbar.link.home}" th:href="@{/}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/aboutUs}" th:text="#{navbar.about}">Sobre Nosotros</a>
+          <a class="nav-link" th:text="#{navbar.link.aboutUs}" th:href="@{/aboutUs}">Sobre Nosotros</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/contactUs}" th:text="#{navbar.contact}">Contáctenos</a>
+          <a class="nav-link" th:text="#{navbar.link.contactUs}" th:href="@{/contactUs}">Contáctenos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link btn btn-light text-dark" th:href="@{/login}" th:text="#{navbar.login}">Iniciar Sesión</a>
+          <a class="nav-link btn btn-light text-dark" th:text="#{navbar.link.login}" th:href="@{/login}">Iniciar Sesión</a>
+        </li>
+        <!-- Dropdown para idiomas -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-translate"></i>
+            <span th:text="#{navbar.language}"></span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+            <li>
+              <a class="dropdown-item" th:href="@{''(lang='es')}" th:text="#{navbar.language.es}">Español</a>
+            </li>
+            <li>
+              <a class="dropdown-item" th:href="@{''(lang='en')}" th:text="#{navbar.language.en}">English</a>
+            </li>
+            <li>
+              <a class="dropdown-item" th:href="@{''(lang='fr')}" th:text="#{navbar.language.fr}">Français</a>
+            </li>
+          </ul>
         </li>
       </ul>
-      <!-- Selector de idioma -->
-      <div class="ms-3">
-        <a th:href="@{''(lang=es)}" class="btn btn-sm btn-outline-light">ES</a>
-        <a th:href="@{''(lang=en)}" class="btn btn-sm btn-outline-light">EN</a>
-      </div>
     </div>
   </div>
 </nav>
@@ -48,8 +63,7 @@
     <div class="col-md-6">
       <h1 th:text="#{hero.title}">Título</h1>
       <p th:text="#{hero.description}">Descripción</p>
-      <button type="button" class="btn btn-warning" th:text="#{hero.button}"
-              onclick="window.location.href='/login'">Botón</button>
+      <button type="button" class="btn btn-warning" th:text="#{hero.button.start}" onclick="window.location.href='/login'">Botón</button>
     </div>
     <div class="col-md-6">
       <img th:src="@{/img/Graficas - copia.png}" class="img-graphics" alt="Dashboard">
@@ -60,28 +74,31 @@
 <!-- Dashboard Image -->
 <section class="dashboard-section text-center py-5">
   <div class="container">
-    <img src="/img/Dashboard.png" class="img-dashboard" alt="Dashboard">
+    <img th:src="@{/img/Dashboard.png}" class="img-dashboard" alt="Dashboard">
   </div>
 </section>
 
 <!-- Features Section -->
-<section class="features-section text-center py-5 ">
+<section class="features-section text-center py-5">
   <div class="container">
     <div class="row">
       <div class="col-md-4">
         <i class="bi bi-piggy-bank-fill icon1"></i>
-        <h3>Gestión de ingresos y gastos</h3>
-        <p class="txt-cards">Registra y clasifica tus ingresos y gastos de manera personalizada. Con Piggy Wallet, tienes el control total sobre tus finanzas, pudiendo categorizar tus movimientos de acuerdo a tus necesidades específicas.</p>
+        <h2 class="title-cards" th:text="#{features.title1}"></h2>
+        <p class="txt-cards" th:text="#{features.description1}">
+        </p>
       </div>
       <div class="col-md-4">
         <i class="bi bi-coin icon2"></i>
-        <h3>Presupuestos automáticos</h3>
-        <p class="txt-cards">Establece presupuestos inteligentes que se ajustan automáticamente a tus hábitos de gasto. Piggy Wallet te ayuda a seguir tus metas financieras mes a mes sin complicaciones.</p>
+        <h2 class="title-cards" th:text="#{features.title2}"></h2>
+        <p class="txt-cards" th:text="#{features.description2}">
+        </p>
       </div>
       <div class="col-md-4">
-        <i class="bi bi-file-richtext-fill icon3" ></i>
-        <h3>Informes financieros detallados</h3>
-        <p class="txt-cards">Obtén informes detallados y visualiza gráficos interactivos que te permitirán entender mejor tus finanzas. Monitorea tu progreso y toma decisiones informadas con Piggy Wallet.</p>
+        <i class="bi bi-file-richtext-fill icon3"></i>
+        <h2 class="title-cards" th:text="#{features.title3}"></h2>
+        <p class="txt-cards" th:text="#{features.description3}">
+        </p>
       </div>
     </div>
   </div>
@@ -91,9 +108,11 @@
 <section class="testimonial-section py-5 text-center">
   <div class="container col-md-6">
     <blockquote class="blockquote">
-      <img src="/img/Cita.png" alt="img-cita">
-      <p class="mb-0">"Piggy Wallet me ha ayudado a simplificar mi vida financiera. Puedo ver todos mis ingresos y gastos en un solo lugar, lo que me permite ahorrar y planificar mejor. ¡Es el asistente financiero que siempre necesitaba!"</p>
-      <footer class="blockquote-footer">Laura Sánchez</footer>
+      <img th:src="@{/img/Cita.png}" alt="img-cita">
+      <p class="mb-0" th:text="#{testimonial.quote}">
+        "Piggy Wallet me ha ayudado a simplificar mi vida financiera."
+      </p>
+      <footer class="blockquote-footer" th:text="#{testimonial.author}">Laura Sánchez</footer>
     </blockquote>
   </div>
 </section>
@@ -102,14 +121,14 @@
 <section class="container mt-5">
   <div class="row">
     <div class="col-md-6">
-      <h2>Necesitas ayuda? Contáctanos</h2>
-      <p>
-        Contáctenos, disponible las 24 horas, los 7 días de la semana. ¡Siempre estaremos encantados de ayudarle!
+      <h2 th:text="#{contact.title}">¿Necesitas ayuda? Contáctanos</h2>
+      <p th:text="#{contact.description}">
+        Contáctenos, disponible las 24 horas, los 7 días de la semana.
       </p>
-      <button type="button" class="btn btn-warning" onclick="window.location.href='/contactUs'" >Contáctenos</button>
+      <button type="button" class="btn btn-warning" th:text="#{contact.button}" onclick="window.location.href='/contactUs'">Contáctenos</button>
     </div>
     <div class="col-md-6">
-      <img class="img-contact" src="/img/Contact.png" alt="contact">
+      <img th:src="@{/img/Contact.png}" class="img-contact" alt="contact">
     </div>
   </div>
 </section>
@@ -119,27 +138,35 @@
   <div class="container">
     <div class="row">
       <div class="col-md-4 text-start">
-        <img src="/img/LogoF.png" alt="Contact Image">
+        <img th:src="@{/img/LogoF.png}" alt="Contact Image">
         <div class="social-icons mt-3">
-          <a href="#"><i class="bi bi-google"></i></a>
-          <a href="#"><i class="bi bi-twitter"></i></a>
-          <a href="#"><i class="bi bi-linkedin"></i></a>
-          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="https://gmail.com" aria-label="Contact us on Gmail">
+            <i class="bi bi-google"></i>
+          </a>
+          <a href="https://x.com/home" aria-label="Visit us on X (formerly Twitter)">
+            <i class="bi bi-twitter"></i>
+          </a>
+          <a href="https://linkedin.com" aria-label="Find us on LinkedIn">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a href="https://instagram.com" aria-label="Follow us on Instagram">
+            <i class="bi bi-instagram"></i>
+          </a>
         </div>
       </div>
       <div class="col-md-4">
-        <p th:text="#{footer.contact}"></p>
+        <p th:text="#{footer.contact}">Contáctenos</p>
         <p>(+57) 320 1231232</p>
         <p>pigsrWallet@gmail.com</p>
         <p>soporte@piggywallet.com</p>
       </div>
       <div class="col-md-4">
-        <p th:text="#{footer.copyright}"></p>
+        <p th:text="#{footer.rights}">© 2024 Piggy Wallet. Todos los derechos reservados.</p>
+        <p th:text="#{footer.slogan}">Organiza y controla tus finanzas personales.</p>
       </div>
     </div>
   </div>
 </footer>
-
 
 <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>

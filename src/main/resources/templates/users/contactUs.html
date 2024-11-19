@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Piggy Wallet contact page">
+    <meta name="viewport" content="width=device-width">
     <title>Contactanos</title>
   <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
@@ -12,25 +14,43 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
-    <a class="navbar-brand" href="#">
-      <img class="simple-piggy-bank-money-logo" src="/img/LogoF.png" alt="Logo" >
+    <a class="navbar-brand" th:href="@{/}">
+      <img class="simple-piggy-bank-money-logo" th:src="@{/img/LogoF.png}" alt="Logo">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/home}">Inicio</a>
+          <a class="nav-link active" th:text="#{navbar.link.home}" th:href="@{/}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/aboutUs}">Sobre Nosotros</a>
+          <a class="nav-link" th:text="#{navbar.link.aboutUs}" th:href="@{/aboutUs}">Sobre Nosotros</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="#">Contáctenos</a>
+          <a class="nav-link" th:text="#{navbar.link.contactUs}" th:href="@{/contactUs}">Contáctenos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link btn btn-light text-dark" th:href="@{/login}">Iniciar Sesión</a>
+          <a class="nav-link btn btn-light text-dark" th:text="#{navbar.link.login}" th:href="@{/login}">Iniciar Sesión</a>
+        </li>
+        <!-- Dropdown para idiomas -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-translate"></i>
+            <span th:text="#{navbar.language}"></span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+            <li>
+              <a class="dropdown-item" th:href="@{''(lang='es')}" th:text="#{navbar.language.es}">Español</a>
+            </li>
+            <li>
+              <a class="dropdown-item" th:href="@{''(lang='en')}" th:text="#{navbar.language.en}">English</a>
+            </li>
+            <li>
+              <a class="dropdown-item" th:href="@{''(lang='fr')}" th:text="#{navbar.language.fr}">Français</a>
+            </li>
+          </ul>
         </li>
       </ul>
     </div>
@@ -42,7 +62,7 @@
   <h2>Contáctanos</h2>
   <p>¿Tienes alguna pregunta, comentario o necesitas asistencia? En Piggy Wallet, estamos aquí para ayudarte. Ponte en contacto con nosotros a través de los siguientes canales y nuestro equipo estará encantado de asistirte.</p>
 
-  <h4>Correo Electrónico</h4>
+  <h3>Correo Electrónico</h3>
   <p>Para consultas generales o soporte técnico:</p>
   <div class="d-flex align-items-center">
     <div>
@@ -51,7 +71,7 @@
     </div>
   </div>
 
-  <h4>Teléfono</h4>
+  <h3>Teléfono</h3>
   <p>Llámanos de lunes a viernes, de 9:00 AM a 6:00 PM:</p>
   <div class="d-flex align-items-center">
     <i class="bi bi-telephone me-2"></i>
@@ -65,22 +85,22 @@
   <p>¡Síguenos en nuestras redes sociales y mantente al día con las últimas actualizaciones!</p>
   <ul class="list-unstyled">
     <li>
-      <a href="https://www.facebook.com/piggywallet" target="_blank">
+      <a class="social-links" href="https://www.facebook.com/piggywallet" target="_blank">
         <i class="bi bi-facebook me-2"></i>Facebook
       </a>
     </li>
     <li>
-      <a href="https://www.twitter.com/piggywallet" target="_blank">
+      <a class="social-links" href="https://www.twitter.com/piggywallet" target="_blank">
         <i class="bi bi-twitter me-2"></i>Twitter
       </a>
     </li>
     <li>
-      <a href="https://www.instagram.com/piggywallet" target="_blank">
+      <a class="social-links" href="https://www.instagram.com/piggywallet" target="_blank">
         <i class="bi bi-instagram me-2"></i>Instagram
       </a>
     </li>
     <li>
-      <a href="https://www.linkedin.com/company/piggywallet" target="_blank">
+      <a class="social-links" href="https://www.linkedin.com/company/piggywallet" target="_blank">
         <i class="bi bi-linkedin me-2"></i>LinkedIn
       </a>
     </li>
@@ -92,12 +112,20 @@
   <div class="container">
     <div class="row">
       <div class="col-md-4 text-start">
-        <img src="/img/LogoF.png" alt="Contact Image">
+        <img th:src="@{/img/LogoF.png}" alt="Contact Image">
         <div class="social-icons mt-3">
-          <a href="#"><i class="bi bi-google"></i></a>
-          <a href="#"><i class="bi bi-twitter"></i></a>
-          <a href="#"><i class="bi bi-linkedin"></i></a>
-          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="https://gmail.com" aria-label="Contact us on Gmail">
+            <i class="bi bi-google"></i>
+          </a>
+          <a href="https://x.com/home" aria-label="Visit us on X (formerly Twitter)">
+            <i class="bi bi-twitter"></i>
+          </a>
+          <a href="https://linkedin.com" aria-label="Find us on LinkedIn">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a href="https://instagram.com" aria-label="Follow us on Instagram">
+            <i class="bi bi-instagram"></i>
+          </a>
         </div>
       </div>
       <div class="col-md-4">

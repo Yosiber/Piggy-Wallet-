@@ -12,7 +12,15 @@ body {
     padding-top: 120px;
 }
 
+.social-links {
+    color: #BACDDE !important;
+    text-decoration: none;
+}
 
+/* Para cambiar el color al pasar el ratón */
+.social-links:hover {
+    color: #005582 !important; /* Un tono más oscuro, por ejemplo */
+}
 
 h1 {
     text-align: left;
@@ -23,6 +31,13 @@ h1 {
     align-self: stretch;
 }
 
+
+.title-cards{
+    font-size: 28px;
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 0;
+}
 
 h2 {
     font-size: 60px;
@@ -35,24 +50,26 @@ h2 {
 }
 
 
-.card {
-    background-color: #BFAFF2;
+.card-aboutUs {
+    background-color: #7498b6 !important;
+    opacity: 60%;
     border: 1px solid #ddd;
     border-radius: 5px;
     height: 100%;
     width: 100%;
+    color: black;
 }
 
 .card h3{
     opacity: 100;
-    color:#000;
+    color: black;
     text-align: center;
     font-size: 40px;
+    font-weight: 400;
 }
 
 .card p{
     color: #000;
-    opacity: 0.5;
     font-size: 30px;
     font-weight: 400;
     text-align: center;
@@ -111,10 +128,11 @@ p {
     font-family: 'OpenSans-Regular', sans-serif;
     font-size: 22px;
     font-weight: 400;
-    opacity: 0.4;
+    opacity: 0.8;
     align-self: stretch;
     height: auto;
     text-align: justify;
+    color: white;
 }
 
 .navbar.navbar-expand-lg.navbar-dark {
@@ -148,7 +166,7 @@ p {
 }
 
 .img-graphics {
-    background-color: #343454;
+    background-color: #557796;
     width: 100%;
     height: 100%;
 }
@@ -234,8 +252,8 @@ section {
     border-radius: 16px;
     width: 77%;
     margin: 0 auto;
-    background-color: #BFAFF2;
-    color: #2b2b2b;
+    background-color: #7498b6;
+    opacity: 60%;
     position: relative;
     padding: 30px;
     text-align: justify;
@@ -245,7 +263,7 @@ section {
 
 .mb-0 {
     text-align: center;
-    color: #2B2B2B;
+    color: black;
     font-family: 'OpenSans-Regular', sans-serif;
     font-size: 18px;
     line-height: 32px;
@@ -256,7 +274,7 @@ section {
 
 .blockquote-footer{
     margin-top: 5%;
-    background-color: #BFAFF2;
+    background-color: #7498b6;
     color: #000;
     opacity: 70%;
 }
@@ -447,7 +465,7 @@ blockquote {
 
 }
 
-.body-login span{
+.body-login .invalid-span{
     color: red;
     position:absolute;
     display:none;
@@ -571,9 +589,12 @@ blockquote {
 
 }
 
-.body-profile h5{
+
+.body-profile h3{
     color: white;
     margin-top: 10px;
+    text-align: left;
+    font-size: 24px;
 }
 
 .body-profile .card{
@@ -587,8 +608,10 @@ blockquote {
     margin-bottom: 20px;
 }
 
-.body-profile .balance-card h4 {
+.body-profile .balance-card h3 {
     font-size: 2rem;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 .body-profile .btn-primary {
@@ -613,19 +636,23 @@ blockquote {
     background-color: #495057;
 }
 
-.body-profile .dropdown-menu {
+.dropdown-menu{
     background-color: #333333;
     border-radius: 10px;
 }
 
-.body-profile .dropdown-item {
+.dropdown-menu {
+    background-color: #333333;
+    border-radius: 10px;
+}
+
+.dropdown-item {
     color: white;
 }
 
-.body-profile .dropdown-item:hover {
+.dropdown-item:hover {
     background-color: #495057;
 }
-
 
 .body-profile .modal-content {
     background-color: #2b2b2b;
@@ -800,20 +827,27 @@ canvas#spendingDonut {
     padding: 1rem 1.5rem;
 }
 
-.card-header h5 {
+.card-header h3  {
     color: #e2e8f0;
     margin: 0;
     font-weight: 500;
 }
 
+.card-body p {
+    color: #e2e8f0 !important;
+    opacity: 100% !important;
+    margin: 0;
+    font-weight: 300;
+}
+
 /* Sobrescribir estilos de Bootstrap para la tabla */
 .table {
-    --bs-table-bg: #1e1e2d !important; /* Fondo base de la tabla */
-    --bs-table-color: #e2e8f0 !important; /* Color de texto principal */
-    --bs-table-striped-bg: #252532 !important; /* Fondo para filas alternadas */
-    --bs-table-striped-color: #e2e8f0 !important;
-    --bs-table-hover-bg: #2d2d44 !important; /* Color de hover */
-    --bs-table-hover-color: #ffffff !important;
+    --bs-table-bg: #000a23 !important; /* Fondo base de la tabla */
+    --bs-table-color: #153f59 !important; /* Color de texto principal */
+    --bs-table-striped-bg: #02152b !important; /* Fondo para filas alternadas */
+    --bs-table-striped-color: #365b77 !important;
+    --bs-table-hover-bg: #021d34 !important; /* Color de hover */
+    --bs-table-hover-color: #557796 !important;
     margin: 0;
     border-collapse: separate; /* Espaciado más limpio entre celdas */
     border-spacing: 0 0.5rem; /* Espaciado entre filas */

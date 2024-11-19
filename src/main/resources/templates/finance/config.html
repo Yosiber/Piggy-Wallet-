@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+  <meta name="description" content="Piggy Wallet Configuration Template">
+  <meta name="viewport" content="width=device-width">
     <title>Configuracion</title>
   <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
@@ -13,54 +15,53 @@
     <!-- Sidebar -->
     <nav class="col-md-2 d-md-block sidebar">
       <div class="text-center">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="#" aria-label="Home">
           <i class="bi bi-house-door-fill nav-icon"></i>
           <span class="nav-text">Piggy Wallet</span>
         </a>
       </div>
       <ul class="nav flex-column mt-4">
         <li class="nav-item">
-          <a class="nav-link active" th:href="@{/finance/dashboard}">
+          <a class="nav-link active" th:href="@{/finance/dashboard}" aria-label="View Finance Dashboard" aria-current="page">
             <i class="bi bi-grid-1x2-fill nav-icon"></i>
             <span class="nav-text">Informe</span>
           </a>
         </li>
-        </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/finance/transactions}">
+          <a class="nav-link" th:href="@{/finance/transactions}" aria-label="View Transactions">
             <i class="bi bi-piggy-bank-fill nav-icon"></i>
             <span class="nav-text">Transacciones</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/finance/analysis}">
+          <a class="nav-link" th:href="@{/finance/analysis}" aria-label="View Analysis">
             <i class="bi bi-cash-stack nav-icon"></i>
             <span class="nav-text">Análisis</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/finance/categories}">
+          <a class="nav-link" th:href="@{/finance/categories}" aria-label="View Categories">
             <i class="bi bi-bar-chart-line nav-icon"></i>
-            <span class="nav-text" >Categorías</span>
+            <span class="nav-text">Categorías</span>
           </a>
         </li>
       </ul>
       <hr class="text-white">
       <ul class="nav flex-column">
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <a class="nav-link" href="#" aria-label="View Profile">
             <i class="bi bi-person-fill nav-icon"></i>
             <span class="nav-text">Perfil</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <a class="nav-link" th:href="@{/finance/config}" aria-label="View Settings">
             <i class="bi bi-gear-fill nav-icon"></i>
             <span class="nav-text">Configuraciones</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/logout}">
+          <a class="nav-link" th:href="@{/logout}" aria-label="Log Out">
             <i class="bi bi-box-arrow-right nav-icon"></i>
             <span class="nav-text">Salir</span>
           </a>

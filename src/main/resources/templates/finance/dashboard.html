@@ -2,12 +2,15 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Piggy Wallet Dashboard Template">
+    <meta name="viewport" content="width=device-width">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Dashboard</title>
+
     <!--- Bootstrap CSS --->
-    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-    <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 
 </head>
@@ -17,32 +20,32 @@
             <!-- Sidebar -->
             <nav class="col-md-2 d-md-block sidebar">
                 <div class="text-center">
-                    <a class="navbar-brand" href="#">
+                    <a class="navbar-brand" href="#" aria-label="Home">
                         <i class="bi bi-house-door-fill nav-icon"></i>
                         <span class="nav-text">Piggy Wallet</span>
                     </a>
                 </div>
                 <ul class="nav flex-column mt-4">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">
+                        <a class="nav-link active" th:href="@{/finance/dashboard}" aria-label="View Finance Dashboard" aria-current="page">
                             <i class="bi bi-grid-1x2-fill nav-icon"></i>
                             <span class="nav-text">Informe</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/finance/transactions}">
+                        <a class="nav-link" th:href="@{/finance/transactions}" aria-label="View Transactions">
                             <i class="bi bi-piggy-bank-fill nav-icon"></i>
                             <span class="nav-text">Transacciones</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/finance/analysis}">
+                        <a class="nav-link" th:href="@{/finance/analysis}" aria-label="View Analysis">
                             <i class="bi bi-cash-stack nav-icon"></i>
                             <span class="nav-text">Análisis</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/finance/categories}">
+                        <a class="nav-link" th:href="@{/finance/categories}" aria-label="View Categories">
                             <i class="bi bi-bar-chart-line nav-icon"></i>
                             <span class="nav-text">Categorías</span>
                         </a>
@@ -51,19 +54,19 @@
                 <hr class="text-white">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="#" aria-label="View Profile">
                             <i class="bi bi-person-fill nav-icon"></i>
                             <span class="nav-text">Perfil</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/finance/config}">
+                        <a class="nav-link" th:href="@{/finance/config}" aria-label="View Settings">
                             <i class="bi bi-gear-fill nav-icon"></i>
                             <span class="nav-text">Configuraciones</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/logout}">
+                        <a class="nav-link" th:href="@{/logout}" aria-label="Log Out">
                             <i class="bi bi-box-arrow-right nav-icon"></i>
                             <span class="nav-text">Salir</span>
                         </a>
@@ -81,9 +84,9 @@
                 <div class="col-md-6">
                     <div class="card balance-summary">
                         <div class="card-header">
-                            <h5 class="card-title">Comportamiento </h5>
+                            <h3 class="card-title"> Comportamiento </h3>
                         </div>
-                        <div class="card-body">>
+                        <div class="card-body">
                             <canvas id="balanceChart"></canvas>
                         </div>
                     </div>
@@ -92,7 +95,7 @@
                 <div class="col-md-6">
                     <div class="card spending-chart">
                         <div class="card-header">
-                            <h5 class="card-title">Gastos por Categorías</h5>
+                            <h3 class="card-title">Gastos por Categorías</h3>
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-center">
@@ -112,7 +115,7 @@
                 <div class="col-lg-6 col-md-12 mb-3">
                     <div class="card">
                         <div class="card-header">
-                            <h5>Transacciones Recientes</h5>
+                            <h3>Transacciones Recientes</h3>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -143,7 +146,7 @@
                 <div class="col-lg-6 col-md-12 mb-3">
                     <div class="card h-100">
                         <div class="card-header d-flex justify-content-between">
-                            <h5>Pagos Próximos</h5>
+                            <h3>Pagos Próximos</h3>
                             <button type="button" class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
                                 Agregar
                             </button>
@@ -191,19 +194,22 @@
                     </div>
                 </div>
             </div>
+        </main>
+    </div>
 
-            <script th:inline="javascript">
-                // Obtener los datos del modelo de Thymeleaf
-                const ingresosPorMesServer = /*[[${ingresosPorMes}]]*/ {};
-                const gastosPorMesServer = /*[[${gastosPorMes}]]*/ {};
-                const gastosPorCategoria = /*[[${gastosPorCategoria}]]*/ {};
+<script th:inline="javascript">
+    // Obtener los datos del modelo de Thymeleaf
+    const ingresosPorMesServer = /*[[${ingresosPorMes}]]*/ {};
+    const gastosPorMesServer = /*[[${gastosPorMes}]]*/ {};
+    const gastosPorCategoria = /*[[${gastosPorCategoria}]]*/ {};
 
-            </script>
+</script>
 
-            <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script src="/js/graphics.js"></script>
-     <div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/graphics.js"></script>
 
 </body>
 </html>

@@ -520,32 +520,40 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-    // Función para convertir fecha ISO a nombre de mes en español
-    function convertirFechaAMes(fecha) {
-        const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-            'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-        const date = new Date(fecha); // Asume que 'fecha' es una cadena en formato ISO
-        return meses[date.getMonth()];
+// Función para convertir fecha ISO a nombre de mes en español
+function convertirFechaAMes(fecha) {
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+    // Asumir que 'fecha' es una cadena en formato ISO
+    const date = new Date(fecha);
+
+    // Asegúrate de que la fecha sea válida antes de usar getMonth
+    if (isNaN(date.getTime())) {
+        console.error("Fecha inválida:", fecha);
+        return null;
     }
 
-// Procesar los datos para la gráfica de ingresos y gastos por mes
+    return meses[date.getMonth()];
+}
+
+// Función para agregar valores por mes
+function agregarValoresPorMes(datosServer, objetoDestino) {
+    Object.entries(datosServer).forEach(([fecha, valor]) => {
+        const mes = convertirFechaAMes(fecha);
+        if (mes) {
+            objetoDestino[mes] = (objetoDestino[mes] || 0) + valor;
+        }
+    });
+}
+
+// Inicializar los objetos
 const ingresosPorMes = {};
 const gastosPorMes = {};
 
-Object.entries(ingresosPorMesServer).forEach(([fecha, valor]) => {
-    const mes = convertirFechaAMes(fecha);
-    ingresosPorMes[mes] = (ingresosPorMes[mes] || 0) + valor;
-});
-
-Object.entries(gastosPorMesServer).forEach(([fecha, valor]) => {
-    const mes = convertirFechaAMes(fecha);
-    gastosPorMes[mes] = (gastosPorMes[mes] || 0) + valor;
-});
-
-// Inicializar la gráfica de ingresos y gastos
-document.addEventListener('DOMContentLoaded', function() {
-    crearGraficasDashboard(ingresosPorMes, gastosPorMes);
-});
+// Agregar los valores a los objetos
+agregarValoresPorMes(ingresosPorMesServer, ingresosPorMes);
+agregarValoresPorMes(gastosPorMesServer, gastosPorMes);
 
 // Colores para el gráfico de dona
 const colors = [
@@ -559,13 +567,17 @@ const colors = [
     'rgba(83, 102, 255, 0.7)'
 ];
 
-// Crear el gráfico de dona para gastos por categoría
+// Crear las gráficas al cargar el DOM
 document.addEventListener('DOMContentLoaded', function() {
+    // Crear gráfica de ingresos y gastos
+    crearGraficasDashboard(ingresosPorMes, gastosPorMes);
+
+    // Crear gráfico de dona para gastos por categoría
     const spendingCtx = document.getElementById('spendingDonut').getContext('2d');
     const labels = Object.keys(gastosPorCategoria);
     const data = Object.values(gastosPorCategoria).map(value => parseFloat(value));
 
-    const spendingDonut = new Chart(spendingCtx, {
+    new Chart(spendingCtx, {
         type: 'doughnut',
         data: {
             labels: labels,
@@ -657,69 +669,6 @@ function addPaymentToList(payment) {
     paymentList.appendChild(newPayment);
 }
 
-function loadUpcomingPayments() {
-    const paymentList = document.getElementById("paymentList");
-    if (!paymentList) return;
-
-    // Obtener los datos del servidor
-    fetch('/finance/dashboard')
-        .then(response => response.json())
-        .then(payments => {
-            paymentList.innerHTML = '';
-            if (payments.length === 0) {
-                const emptyMessage = document.createElement("li");
-                emptyMessage.classList.add("list-group-item", "text-center");
-                emptyMessage.textContent = "No hay pagos próximos registrados";
-                paymentList.appendChild(emptyMessage);
-                return;
-            }
-
-            payments.forEach(payment => {
-                const newPayment = document.createElement("li");
-                newPayment.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
-                newPayment.innerHTML = `
-                    <span>${payment.name}</span>
-                    <span class="badge bg-danger">-$${payment.value.toFixed(2)}</span>
-                `;
-                paymentList.appendChild(newPayment);
-            });
-        })
-        .catch(error => {
-            console.error('Error cargando pagos:', error);
-        });
-}
-
-// Llamar a la función cuando se carga la página
-document.addEventListener('DOMContentLoaded', function() {
-    loadUpcomingPayments();
-});
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    const ingresoModal = document.getElementById('ingresoModal');
-    const gastoModal = document.getElementById('gastoModal');
-    const mainContent = document.querySelector('main');
-
-    ingresoModal.addEventListener('show.bs.modal', function () {
-        ingresoModal.removeAttribute('aria-hidden');
-        mainContent.setAttribute('inert', '');
-        document.getElementById('montoIngreso').focus();
-    });
-
-    ingresoModal.addEventListener('hide.bs.modal', function () {
-        ingresoModal.setAttribute('aria-hidden', 'true');
-        mainContent.removeAttribute('inert');
-    });
-
-    gastoModal.addEventListener('show.bs.modal', function () {
-        gastoModal.removeAttribute('aria-hidden');
-        mainContent.setAttribute('inert', '');
-        document.getElementById('montoGasto').focus();
-    });
-
-    gastoModal.addEventListener('hide.bs.modal', function () {
-        gastoModal.setAttribute('aria-hidden', 'true');
-        mainContent.removeAttribute('inert');
-    });
-});
 
