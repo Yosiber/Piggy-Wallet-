@@ -26,46 +26,74 @@
                 <li class="nav-item">
                     <a class="nav-link active" th:href="@{/finance/dashboard}" aria-label="View Finance Dashboard" aria-current="page">
                         <i class="bi bi-grid-1x2-fill nav-icon"></i>
-                        <span class="nav-text">Informe</span>
+                        <span class="nav-text" th:text="#{slidebar.link.panel}"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/finance/transactions}" aria-label="View Transactions">
                         <i class="bi bi-piggy-bank-fill nav-icon"></i>
-                        <span class="nav-text">Transacciones</span>
+                        <span class="nav-text" th:text="#{slidebar.link.transactions}"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/finance/analysis}" aria-label="View Analysis">
                         <i class="bi bi-cash-stack nav-icon"></i>
-                        <span class="nav-text">Análisis</span>
+                        <span class="nav-text" th:text="#{slidebar.link.analisys}"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/finance/categories}" aria-label="View Categories">
                         <i class="bi bi-bar-chart-line nav-icon"></i>
-                        <span class="nav-text">Categorías</span>
+                        <span class="nav-text" th:text="#{slidebar.link.categories}"></span>
                     </a>
                 </li>
             </ul>
             <hr class="text-white">
             <ul class="nav flex-column">
+                <!-- Dropdown de idiomas para el sidebar -->
+                <li class="nav-item dropdown sidebar-dropdown">
+                    <a class="nav-link d-flex align-items-center" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Seleccionar idioma" aria-haspopup="true">
+                        <i class="bi bi-translate nav-icon" aria-hidden="true"></i>
+                        <span class="nav-text" th:text="#{navbar.language}">Idioma</span>
+                        <i class="bi bi-chevron-right ms-auto" aria-hidden="true"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark submenu" aria-labelledby="languageDropdown" role="menu">
+                        <li role="none">
+                            <a class="dropdown-item" th:href="@{''(lang='es')}" role="menuitem" lang="es" aria-label="Cambiar idioma a Español">
+                                <img th:src="@{/flags/es.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                                <span>Español</span>
+                            </a>
+                        </li>
+                        <li role="none">
+                            <a class="dropdown-item" th:href="@{''(lang='en')}" role="menuitem" lang="en" aria-label="Change language to English">
+                                <img th:src="@{/flags/en.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                                <span>English</span>
+                            </a>
+                        </li>
+                        <li role="none">
+                            <a class="dropdown-item" th:href="@{''(lang='fr')}" role="menuitem" lang="fr" aria-label="Changer la langue en Français">
+                                <img th:src="@{/flags/fr.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                                <span>Français</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" aria-label="View Profile">
                         <i class="bi bi-person-fill nav-icon"></i>
-                        <span class="nav-text">Perfil</span>
+                        <span class="nav-text" th:text="#{slidebar.link.profile}"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/finance/config}" aria-label="View Settings">
                         <i class="bi bi-gear-fill nav-icon"></i>
-                        <span class="nav-text">Configuraciones</span>
+                        <span class="nav-text" th:text="#{slidebar.link.configurations}"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/logout}" aria-label="Log Out">
                         <i class="bi bi-box-arrow-right nav-icon"></i>
-                        <span class="nav-text">Salir</span>
+                        <span class="nav-text" th:text="#{slidebar.link.logout}">Salir</span>
                     </a>
                 </li>
             </ul>
@@ -73,17 +101,17 @@
 
         <main class="col-md-10 col-lg-10 main-content">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-3 pb-2 mb-3">
-                <h2>Categorías</h2>
+                <h2 th:text="#{slidebar.link.categories}" >Categorías</h2>
             </div>
 
             <div class="container mt-5">
                 <!-- Navegación de las pestañas -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="ingresos-tab" data-bs-toggle="tab" data-bs-target="#ingresos" type="button" role="tab" aria-controls="ingresos" aria-selected="true">Ingresos</button>
+                        <button class="nav-link active" id="ingresos-tab" data-bs-toggle="tab" data-bs-target="#ingresos" type="button" role="tab" aria-controls="ingresos" aria-selected="true" th:text="#{transactions.income}">Ingresos</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="gastos-tab" data-bs-toggle="tab" data-bs-target="#gastos" type="button" role="tab" aria-controls="gastos" aria-selected="false">Gastos</button>
+                        <button class="nav-link" id="gastos-tab" data-bs-toggle="tab" data-bs-target="#gastos" type="button" role="tab" aria-controls="gastos" aria-selected="false" th:text="#{transactions.spending}">Gastos</button>
                     </li>
                 </ul>
 
@@ -95,27 +123,27 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="addCategoryModalLabel">Agregar Nueva Categoría</h5>
+                                <h5 class="modal-title" id="addCategoryModalLabel" th:text="#{category.add}" >Agregar Nueva Categoría</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <form id="categoryForm">
                                     <div class="mb-3">
-                                        <label for="categoryName" class="form-label">Nombre de la Categoría</label>
-                                        <input type="text" class="form-control" id="categoryName" placeholder="Ej. Entretenimiento">
+                                        <label for="categoryName" class="form-label" th:text="#{category.add.name}">Nombre de la Categoría</label>
+                                        <input type="text" class="form-control" id="categoryName" th:placeholder="#{category.placeholder.name}">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="categoryType" class="form-label">Tipo de Categoría</label>
+                                        <label for="categoryType" class="form-label" th:text="#{category.add.type}">Tipo de Categoría</label>
                                         <select class="form-select" id="categoryType" required>
-                                            <option value="true">Ingreso</option>
-                                            <option value="false">Gasto</option>
+                                            <option value="true" th:text="#{category.add.income}">Ingreso</option>
+                                            <option value="false" th:text="#{category.add.spending}">Gasto</option>
                                         </select>
                                     </div>
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-primary" onclick="addCategory()">Agregar</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{category.add.cancel}">Cancelar</button>
+                                <button type="button" class="btn btn-primary" onclick="addCategory()" th:text="#{category.add.add}">Agregar</button>
                             </div>
                         </div>
                     </div>

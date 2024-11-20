@@ -42,13 +42,22 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
             <li>
-              <a class="dropdown-item" th:href="@{''(lang='es')}" th:text="#{navbar.language.es}">Español</a>
+              <a class="dropdown-item d-flex align-items-center" th:href="@{''(lang='es')}">
+                <img th:src="@{/flags/es.svg}" alt="Español" width="16" height="16" class="me-2">
+                <span th:text="#{navbar.language.es}">Español</span>
+              </a>
             </li>
             <li>
-              <a class="dropdown-item" th:href="@{''(lang='en')}" th:text="#{navbar.language.en}">English</a>
+              <a class="dropdown-item d-flex align-items-center" th:href="@{''(lang='en')}">
+                <img th:src="@{/flags/en.svg}" alt="English" width="16" height="16" class="me-2">
+                <span th:text="#{navbar.language.en}">English</span>
+              </a>
             </li>
             <li>
-              <a class="dropdown-item" th:href="@{''(lang='fr')}" th:text="#{navbar.language.fr}">Français</a>
+              <a class="dropdown-item d-flex align-items-center" th:href="@{''(lang='fr')}">
+                <img th:src="@{/flags/fr.svg}" alt="Français" width="16" height="16" class="me-2">
+                <span th:text="#{navbar.language.fr}">Français</span>
+              </a>
             </li>
           </ul>
         </li>

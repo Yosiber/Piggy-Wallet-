@@ -11,6 +11,7 @@
 </head>
 <body class="text-light">
 
+<
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
@@ -23,13 +24,13 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link active" th:text="#{navbar.link.home}" th:href="@{/}">Inicio</a>
+          <a class="nav-link " th:text="#{navbar.link.home}" th:href="@{/}">Inicio</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:text="#{navbar.link.aboutUs}" th:href="@{/aboutUs}">Sobre Nosotros</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:text="#{navbar.link.contactUs}" th:href="@{/contactUs}">Contáctenos</a>
+          <a class="nav-link active" th:text="#{navbar.link.contactUs}" th:href="@{/contactUs}">Contáctenos</a>
         </li>
         <li class="nav-item">
           <a class="nav-link btn btn-light text-dark" th:text="#{navbar.link.login}" th:href="@{/login}">Iniciar Sesión</a>
@@ -42,13 +43,22 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
             <li>
-              <a class="dropdown-item" th:href="@{''(lang='es')}" th:text="#{navbar.language.es}">Español</a>
+              <a class="dropdown-item d-flex align-items-center" th:href="@{''(lang='es')}">
+                <img th:src="@{/flags/es.svg}" alt="Español" width="16" height="16" class="me-2">
+                <span th:text="#{navbar.language.es}">Español</span>
+              </a>
             </li>
             <li>
-              <a class="dropdown-item" th:href="@{''(lang='en')}" th:text="#{navbar.language.en}">English</a>
+              <a class="dropdown-item d-flex align-items-center" th:href="@{''(lang='en')}">
+                <img th:src="@{/flags/en.svg}" alt="English" width="16" height="16" class="me-2">
+                <span th:text="#{navbar.language.en}">English</span>
+              </a>
             </li>
             <li>
-              <a class="dropdown-item" th:href="@{''(lang='fr')}" th:text="#{navbar.language.fr}">Français</a>
+              <a class="dropdown-item d-flex align-items-center" th:href="@{''(lang='fr')}">
+                <img th:src="@{/flags/fr.svg}" alt="Français" width="16" height="16" class="me-2">
+                <span th:text="#{navbar.language.fr}">Français</span>
+              </a>
             </li>
           </ul>
         </li>
@@ -59,11 +69,11 @@
 
 <!-- Contáctanos Section -->
 <section class="container my-5">
-  <h2>Contáctanos</h2>
-  <p>¿Tienes alguna pregunta, comentario o necesitas asistencia? En Piggy Wallet, estamos aquí para ayudarte. Ponte en contacto con nosotros a través de los siguientes canales y nuestro equipo estará encantado de asistirte.</p>
+  <h2 th:text="#{contact.section.title}"></h2>
+  <p th:text="#{contact.section.description}"></p>
 
-  <h3>Correo Electrónico</h3>
-  <p>Para consultas generales o soporte técnico:</p>
+  <h3 th:text="#{contact.section.email}"></h3>
+  <p th:text="#{contact.section.consultations}"></p>
   <div class="d-flex align-items-center">
     <div>
       <p> <i class="bi bi-envelope-at-fill me-2"></i>soporte@piggywallet.com</p>
@@ -71,8 +81,8 @@
     </div>
   </div>
 
-  <h3>Teléfono</h3>
-  <p>Llámanos de lunes a viernes, de 9:00 AM a 6:00 PM:</p>
+  <h3 th:text="#{contact.section.phone}"></h3>
+  <p th:text="#{contact.section.schedule}"></p>
   <div class="d-flex align-items-center">
     <i class="bi bi-telephone me-2"></i>
     <p>+57 320 1231232</p>
@@ -81,8 +91,8 @@
 
 <!-- Redes Sociales Section -->
 <section class="container my-5">
-  <h2>Redes Sociales</h2>
-  <p>¡Síguenos en nuestras redes sociales y mantente al día con las últimas actualizaciones!</p>
+  <h2 th:text="#{social.section.title}"></h2>
+  <p th:text="#{social.section.description}"></p>
   <ul class="list-unstyled">
     <li>
       <a class="social-links" href="https://www.facebook.com/piggywallet" target="_blank">
@@ -108,7 +118,7 @@
 </section>
 
 <!-- Footer -->
-<footer class=" text-center py-4">
+<footer class="text-center py-4">
   <div class="container">
     <div class="row">
       <div class="col-md-4 text-start">
@@ -129,13 +139,14 @@
         </div>
       </div>
       <div class="col-md-4">
-        <p>Contact Us</p>
+        <p th:text="#{footer.contact}">Contáctenos</p>
         <p>(+57) 320 1231232</p>
         <p>pigsrWallet@gmail.com</p>
         <p>soporte@piggywallet.com</p>
       </div>
       <div class="col-md-4">
-        <p>© 2024 Piggy Wallet. Todos los derechos reservados.</p>
+        <p th:text="#{footer.rights}">© 2024 Piggy Wallet. Todos los derechos reservados.</p>
+        <p th:text="#{footer.slogan}">Organiza y controla tus finanzas personales.</p>
       </div>
     </div>
   </div>

@@ -33,16 +33,17 @@ h1 {
 
 
 .title-cards{
-    font-size: 28px;
+    font-size: 25px;
     text-align: center;
-    font-weight: 700;
+    line-height: 30px;
+    font-weight: 500;
     margin-bottom: 0;
 }
 
 h2 {
     font-size: 60px;
     text-align: left;
-    line-height: 90px;
+    line-height: 70px;
     font-weight: 700;
     margin-bottom: 20px;
     position: relative;
@@ -142,6 +143,10 @@ p {
     background-color: #333333;
     z-index: 1000;
     padding: 4px;
+}
+
+.body-profile .navbar-expand-lg{
+    margin-bottom: 70px;
 }
 
 .navbar-nav .nav-link {
@@ -639,12 +644,9 @@ blockquote {
 .dropdown-menu{
     background-color: #333333;
     border-radius: 10px;
+
 }
 
-.dropdown-menu {
-    background-color: #333333;
-    border-radius: 10px;
-}
 
 .dropdown-item {
     color: white;
@@ -923,19 +925,19 @@ canvas#spendingDonut {
 /* Categorías */
 .table td:nth-child(3) {
     font-weight: bold;
-    color: #5dade2; /* Azul suave para categorías */
+    color: #5dade2 !important; /* Azul suave para categorías */
     text-align: center;
 }
 
 .table td:nth-child(2){
     font-weight: bold;
-    color: #5dade2 ;
+    color: #5dade2 !important ;
     text-align: center;
 }
 
 /* Fechas */
 .table td:nth-child(4) {
-    color: #adb5bd; /* Gris para fechas */
+    color: #adb5bd !important; /* Gris para fechas */
     text-align: center;
 }
 
@@ -949,6 +951,71 @@ canvas#spendingDonut {
 .body-profile .row.mb-4 {
     min-height: 400px; /* Ajusta según el diseño */
 }
+
+/* Estructura base del sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    overflow: visible !important;
+}
+
+/* Estilos específicos del dropdown */
+.sidebar-dropdown .dropdown-menu.submenu {
+    position: fixed;
+    left: 12.5%; /* Mismo ancho que el sidebar */
+    top: auto;
+    margin-top: -40px; /* Ajustar según la altura del elemento */
+    min-width: 180px;
+    background-color: #2b2b2b;
+    border: 1px solid #3a3a3a;
+    display: none;
+}
+
+.sidebar-dropdown:hover .dropdown-menu.submenu {
+    display: block;
+}
+
+/* Deshabilitar el comportamiento del dropdown hacia abajo */
+.sidebar-dropdown .dropdown-menu {
+    transform: none !important;
+}
+
+.sidebar-dropdown .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+}
+
+.sidebar-dropdown .bi-chevron-right {
+    transition: transform 0.3s;
+    opacity: 0.5;
+}
+
+.sidebar-dropdown:hover .bi-chevron-right {
+    transform: rotate(90deg);
+    opacity: 1;
+}
+
+.sidebar-dropdown .dropdown-item {
+    padding: 0.5rem 1rem;
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-dropdown .dropdown-item:hover {
+    background-color: #3a3a3a;
+    color: white;
+}
+
+/* Asegurar que el dropdown no se vea afectado por el click */
+.sidebar-dropdown .dropdown-toggle::after {
+    display: none;
+}
+
 
 @media (max-width: 768px) {
     .footer-right {

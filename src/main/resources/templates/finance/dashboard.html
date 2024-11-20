@@ -9,7 +9,7 @@
     <title>Dashboard</title>
 
     <!--- Bootstrap CSS --->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 
@@ -17,6 +17,7 @@
 <body class="body-profile">
     <div class="container-fluid">
         <div class="row">
+
             <!-- Sidebar -->
             <nav class="col-md-2 d-md-block sidebar">
                 <div class="text-center">
@@ -29,46 +30,74 @@
                     <li class="nav-item">
                         <a class="nav-link active" th:href="@{/finance/dashboard}" aria-label="View Finance Dashboard" aria-current="page">
                             <i class="bi bi-grid-1x2-fill nav-icon"></i>
-                            <span class="nav-text">Informe</span>
+                            <span class="nav-text" th:text="#{slidebar.link.panel}"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/finance/transactions}" aria-label="View Transactions">
                             <i class="bi bi-piggy-bank-fill nav-icon"></i>
-                            <span class="nav-text">Transacciones</span>
+                            <span class="nav-text" th:text="#{slidebar.link.transactions}"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/finance/analysis}" aria-label="View Analysis">
                             <i class="bi bi-cash-stack nav-icon"></i>
-                            <span class="nav-text">Análisis</span>
+                            <span class="nav-text" th:text="#{slidebar.link.analisys}"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/finance/categories}" aria-label="View Categories">
                             <i class="bi bi-bar-chart-line nav-icon"></i>
-                            <span class="nav-text">Categorías</span>
+                            <span class="nav-text" th:text="#{slidebar.link.categories}"></span>
                         </a>
                     </li>
                 </ul>
                 <hr class="text-white">
                 <ul class="nav flex-column">
+                    <!-- Dropdown de idiomas para el sidebar -->
+                    <li class="nav-item dropdown sidebar-dropdown">
+                        <a class="nav-link d-flex align-items-center" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Seleccionar idioma" aria-haspopup="true">
+                            <i class="bi bi-translate nav-icon" aria-hidden="true"></i>
+                            <span class="nav-text" th:text="#{navbar.language}">Idioma</span>
+                            <i class="bi bi-chevron-right ms-auto" aria-hidden="true"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark submenu" aria-labelledby="languageDropdown" role="menu">
+                            <li role="none">
+                                <a class="dropdown-item" th:href="@{''(lang='es')}" role="menuitem" lang="es" aria-label="Cambiar idioma a Español">
+                                    <img th:src="@{/flags/es.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                                    <span>Español</span>
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a class="dropdown-item" th:href="@{''(lang='en')}" role="menuitem" lang="en" aria-label="Change language to English">
+                                    <img th:src="@{/flags/en.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                                    <span>English</span>
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a class="dropdown-item" th:href="@{''(lang='fr')}" role="menuitem" lang="fr" aria-label="Changer la langue en Français">
+                                    <img th:src="@{/flags/fr.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                                    <span>Français</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" aria-label="View Profile">
                             <i class="bi bi-person-fill nav-icon"></i>
-                            <span class="nav-text">Perfil</span>
+                            <span class="nav-text" th:text="#{slidebar.link.profile}"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/finance/config}" aria-label="View Settings">
                             <i class="bi bi-gear-fill nav-icon"></i>
-                            <span class="nav-text">Configuraciones</span>
+                            <span class="nav-text" th:text="#{slidebar.link.configurations}"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/logout}" aria-label="Log Out">
                             <i class="bi bi-box-arrow-right nav-icon"></i>
-                            <span class="nav-text">Salir</span>
+                            <span class="nav-text" th:text="#{slidebar.link.logout}">Salir</span>
                         </a>
                     </li>
                 </ul>
@@ -76,7 +105,7 @@
 
         <main class="col-md-10 col-lg-10 main-content">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-3 pb-2 mb-3">
-                <h2>Información</h2>
+                <h2 th:text="#{balance.title}"></h2>
             </div>
 
             <!-- Row 1: Balance Summary and Spending -->
@@ -84,7 +113,7 @@
                 <div class="col-md-6">
                     <div class="card balance-summary">
                         <div class="card-header">
-                            <h3 class="card-title"> Comportamiento </h3>
+                            <h3 class="card-title" th:text="#{balance.title.behavior}" ></h3>
                         </div>
                         <div class="card-body">
                             <canvas id="balanceChart"></canvas>
@@ -95,7 +124,7 @@
                 <div class="col-md-6">
                     <div class="card spending-chart">
                         <div class="card-header">
-                            <h3 class="card-title">Gastos por Categorías</h3>
+                            <h3 class="card-title" th:text="#{balance.title.spending.categories}"></h3>
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-center">
@@ -106,26 +135,23 @@
                 </div>
             </div>
 
-
-
             <!-- Row 2: Recent Transactions and Upcoming Payments -->
             <div class="row">
-
                 <!-- Transacciones Recientes -->
                 <div class="col-lg-6 col-md-12 mb-3">
                     <div class="card">
                         <div class="card-header">
-                            <h3>Transacciones Recientes</h3>
+                            <h3 th:text="#{balance.title.transactions}"></h3>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
                                     <thead class="tables">
                                     <tr>
-                                        <th>Cantidad</th>
-                                        <th>Descripcion</th>
-                                        <th>Categoría</th>
-                                        <th>Fecha</th>
+                                        <th th:text="#{balance.title.amount}">Cantidad</th>
+                                        <th th:text="#{balance.title.description}" >Descripcion</th>
+                                        <th th:text="#{balance.title.categories}" >Categoría</th>
+                                        <th th:text="#{balance.title.date}">Fecha</th>
                                     </tr>
                                     </thead>
                                     <tbody id="transactionsTableBody">
@@ -142,19 +168,18 @@
                     </div>
                 </div>
 
-                <!-- Pagos Próximos -->
+                <!-- Upcoming payments -->
                 <div class="col-lg-6 col-md-12 mb-3">
                     <div class="card h-100">
                         <div class="card-header d-flex justify-content-between">
-                            <h3>Pagos Próximos</h3>
-                            <button type="button" class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
+                            <h3 th:text="#{upcoming.title}"></h3>
+                            <button type="button" class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#addPaymentModal" th:text="#{upcoming.add}">
                                 Agregar
                             </button>
                         </div>
                         <div class="card-body">
                             <ul id="paymentList" class="list-group list-group-flush">
-                                <li th:if="${#lists.isEmpty(upcomingPayments)}" class="list-group-item text-center">
-                                    No hay pagos próximos registrados
+                                <li th:if="${#lists.isEmpty(upcomingPayments)}" class="list-group-item text-center" th:text="#{upcoming.not.found}">
                                 </li>
                                 <li th:each="payment : ${upcomingPayments}"
                                     class="list-group-item d-flex justify-content-between align-items-center overflow-hidden">
@@ -175,20 +200,20 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="addPaymentModalLabel">Agregar próximo pago</h5>
+                            <h5 class="modal-title" id="addPaymentModalLabel" th:text="#{payments.add}">Agregar próximo pago</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form id="addPaymentForm" onsubmit="addPayment(); return false;">
                                 <div class="mb-3">
-                                    <label for="paymentName" class="form-label">Nombre del pago</label>
-                                    <input type="text" class="form-control" id="paymentName" placeholder="Ejemplo: Renta, Netflix" required>
+                                    <label for="paymentName" class="form-label" th:text="#{payments.name} ">Nombre del pago</label>
+                                    <input type="text" class="form-control" id="paymentName" th:placeholder="#{payments.placeholder.name}" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="paymentAmount" class="form-label">Cantidad</label>
-                                    <input type="number" class="form-control" id="paymentAmount" placeholder="Ejemplo: 1500.00" step="0.01" required>
+                                    <label for="paymentAmount" class="form-label" th:text="#{payments.amount}">Cantidad</label>
+                                    <input type="number" class="form-control" id="paymentAmount" th:placeholder="#{payments.placeholder.amount}" step="0.01" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">Agregar pago</button>
+                                <button type="submit" class="btn btn-primary w-100" th:text="#{payments.add.pay}" >Agregar pago</button>
                             </form>
                         </div>
                     </div>
@@ -196,6 +221,8 @@
             </div>
         </main>
     </div>
+</div>
+
 
 <script th:inline="javascript">
     // Obtener los datos del modelo de Thymeleaf

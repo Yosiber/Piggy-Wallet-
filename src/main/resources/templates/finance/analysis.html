@@ -14,7 +14,6 @@
 <body class="body-profile">
 <div class="container-fluid">
   <div class="row">
-
     <!-- Sidebar -->
     <nav class="col-md-2 d-md-block sidebar">
       <div class="text-center">
@@ -27,46 +26,74 @@
         <li class="nav-item">
           <a class="nav-link active" th:href="@{/finance/dashboard}" aria-label="View Finance Dashboard" aria-current="page">
             <i class="bi bi-grid-1x2-fill nav-icon"></i>
-            <span class="nav-text">Informe</span>
+            <span class="nav-text" th:text="#{slidebar.link.panel}"></span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/finance/transactions}" aria-label="View Transactions">
             <i class="bi bi-piggy-bank-fill nav-icon"></i>
-            <span class="nav-text">Transacciones</span>
+            <span class="nav-text" th:text="#{slidebar.link.transactions}"></span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/finance/analysis}" aria-label="View Analysis">
             <i class="bi bi-cash-stack nav-icon"></i>
-            <span class="nav-text">Análisis</span>
+            <span class="nav-text" th:text="#{slidebar.link.analisys}"></span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/finance/categories}" aria-label="View Categories">
             <i class="bi bi-bar-chart-line nav-icon"></i>
-            <span class="nav-text">Categorías</span>
+            <span class="nav-text" th:text="#{slidebar.link.categories}"></span>
           </a>
         </li>
       </ul>
       <hr class="text-white">
       <ul class="nav flex-column">
+        <!-- Dropdown de idiomas para el sidebar -->
+        <li class="nav-item dropdown sidebar-dropdown">
+          <a class="nav-link d-flex align-items-center" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Seleccionar idioma" aria-haspopup="true">
+            <i class="bi bi-translate nav-icon" aria-hidden="true"></i>
+            <span class="nav-text" th:text="#{navbar.language}">Idioma</span>
+            <i class="bi bi-chevron-right ms-auto" aria-hidden="true"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark submenu" aria-labelledby="languageDropdown" role="menu">
+            <li role="none">
+              <a class="dropdown-item" th:href="@{''(lang='es')}" role="menuitem" lang="es" aria-label="Cambiar idioma a Español">
+                <img th:src="@{/flags/es.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                <span>Español</span>
+              </a>
+            </li>
+            <li role="none">
+              <a class="dropdown-item" th:href="@{''(lang='en')}" role="menuitem" lang="en" aria-label="Change language to English">
+                <img th:src="@{/flags/en.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                <span>English</span>
+              </a>
+            </li>
+            <li role="none">
+              <a class="dropdown-item" th:href="@{''(lang='fr')}" role="menuitem" lang="fr" aria-label="Changer la langue en Français">
+                <img th:src="@{/flags/fr.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                <span>Français</span>
+              </a>
+            </li>
+          </ul>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="#" aria-label="View Profile">
             <i class="bi bi-person-fill nav-icon"></i>
-            <span class="nav-text">Perfil</span>
+            <span class="nav-text" th:text="#{slidebar.link.profile}"></span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/finance/config}" aria-label="View Settings">
             <i class="bi bi-gear-fill nav-icon"></i>
-            <span class="nav-text">Configuraciones</span>
+            <span class="nav-text" th:text="#{slidebar.link.configurations}"></span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/logout}" aria-label="Log Out">
             <i class="bi bi-box-arrow-right nav-icon"></i>
-            <span class="nav-text">Salir</span>
+            <span class="nav-text" th:text="#{slidebar.link.logout}">Salir</span>
           </a>
         </li>
       </ul>
@@ -77,10 +104,10 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Ingresos</h3>
+              <h3 class="card-title" th:text="#{transactions.income}">Ingresos</h3>
             </div>
             <div class="card-body">
-              <p>Mensual</p>
+              <p th:text="#{transactions.monthly}">Mensual</p>
               <div class="d-flex justify-content-center">
                 <canvas id="myBarChartIncome"></canvas>
               </div>
@@ -91,10 +118,10 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Gastos</h3>
+              <h3 class="card-title" th:text="#{transactions.spending}">Gastos</h3>
             </div>
             <div class="card-body">
-              <p>Mensual</p>
+              <p th:text="#{transactions.monthly}">Mensual</p>
               <div class="d-flex justify-content-center">
                 <canvas id="myBarChartSpending"></canvas>
               </div>
@@ -108,17 +135,17 @@
         <div class="col-lg-6 col-12">
           <div class="card flex-fill">
             <div class="card-header">
-              <h3 class="card-title">Ingresos Recientes</h3>
+              <h3 class="card-title" th:text="#{transactions.income.recently}">Ingresos Recientes</h3>
             </div>
             <div class="card-body">
               <div class="table-responsive mb-4">
                 <table class="table table-striped table-hover">
                   <thead class="table-dark">
                   <tr>
-                    <th>Monto</th>
-                    <th>Descripción</th>
-                    <th>Categoría</th>
-                    <th>Fecha</th>
+                    <th th:text="#{balance.title.amount}">Cantidad</th>
+                    <th th:text="#{balance.title.description}" >Descripcion</th>
+                    <th th:text="#{balance.title.categories}" >Categoría</th>
+                    <th th:text="#{balance.title.date}">Fecha</th>
                   </tr>
                   </thead>
                   <tbody id="ingresosTableBody">
@@ -139,17 +166,17 @@
         <div class="col-lg-6 col-12">
           <div class="card flex-fill">
             <div class="card-header">
-              <h3 class="card-title">Gastos Recientes</h3>
+              <h3 class="card-title" th:text="#{transactions.spending.rencetly}">Gastos Recientes</h3>
             </div>
             <div class="card-body">
               <div class="table-responsive mb-4">
                 <table class="table table-striped table-hover">
                   <thead class="table-dark">
                   <tr>
-                    <th>Monto</th>
-                    <th>Descripción</th>
-                    <th>Categoría</th>
-                    <th>Fecha</th>
+                    <th th:text="#{balance.title.amount}">Cantidad</th>
+                    <th th:text="#{balance.title.description}" >Descripcion</th>
+                    <th th:text="#{balance.title.categories}" >Categoría</th>
+                    <th th:text="#{balance.title.date}">Fecha</th>
                   </tr>
                   </thead>
                   <tbody id="gastosTableBody">
@@ -166,15 +193,13 @@
           </div>
         </div>
       </div>
+  </div>
+</div>
 
 
-
-
-
-      <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <script src="/js/graphics.js"></script>
-
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/graphics.js"></script>
 
 </body>
 </html>
