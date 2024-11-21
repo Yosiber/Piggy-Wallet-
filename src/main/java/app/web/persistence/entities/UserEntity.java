@@ -3,7 +3,9 @@ package app.web.persistence.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +35,10 @@ public class UserEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private String password;
+
+    @CreationTimestamp
+    @Column(name = "fecha_creacion")
+    private LocalDateTime createdAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

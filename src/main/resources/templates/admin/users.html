@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="${pageTitle}">Gestión de Usuarios</title>
+    <!-- Añade tus estilos CSS aquí -->
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${pageTitle}">Gestión de Usuarios</h1>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Fecha de Creación</th>
+                <th>Roles</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}">1</td>
+                <td th:text="${user.username}">usuario1</td>
+                <td th:text="${user.name}">Nombre</td>
+                <td th:text="${user.email}">email@ejemplo.com</td>
+                <td th:text="${#temporals.format(user.createdAt, 'dd-MM-yyyy HH:mm')}">01-01-2024</td>
+                <td>
+                            <span th:each="role : ${user.roles}"
+                                  th:text="${role.rolName}"
+                                  class="badge bg-primary me-1">
+                                ROLE_USER
+                            </span>
+                </td>
+                <td>
+                    <button class="btn btn-danger btn-sm"
+                            th:onclick="'deleteUser(' + ${user.id} + ')'"
+                            th:disabled="${#authentication.name == user.username}">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

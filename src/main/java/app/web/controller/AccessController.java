@@ -21,7 +21,7 @@ public class AccessController {
         UserEntity user = userService.getCurrentSession();
 
         boolean isAdmin = user.getRoles().stream()
-                .anyMatch(role -> role.getRolName().equals("ADMIN")); // Nota el ROLE_ prefix
+                .anyMatch(role -> role.getRolName().equals("ADMIN"));
 
         if (isAdmin) {
             return "redirect:/admin/dashboard";
