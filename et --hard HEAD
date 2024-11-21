@@ -1,0 +1,15 @@
+[33mfe78edc[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Creacion de banderas e internalizacion en las vistas importantes
+[33m133dddf[m Avances en i18n, refactorizacion de codigo y mejoras de accesibilidad
+[33m1a80270[m Implementacion de i18N y finalizacion de Swagger
+[33m479ceb0[m  Finalizacion de la vista Dashboard y creacion del controlador para documentar
+[33m233e77a[m Implementacion de grafica gastos por categorias, tabla de transacciones recientes y creacion de la entidad proximos pagos
+[33m6a202da[m Implementacion de grafico de comportamiento de ingresos y gastos en la vista dashboard
+[33mc714726[m Implementacion de DTO y solucion de bug en la visualizacion de los datos de las vistas Analisis y Transacciones
+[33mfe7d5c4[m Implementacion de graficas en la vista Analisis con bugs
+[33ma337a07[m Implementacion de funcionalidad en las tablas en la vista de Analisys
+[33mbb02b25[m Implementacion de ingreso en transacciones y visualizacion de los datos
+[33m8ad2eb2[m  Implementacion de Categorias por ingreso y gasto
+[33m35a264d[m  Configuracion de categorias por usuario
+[33m8a453f1[m  Implentacion de guardado de categorias y visualizacion de ellas, con bugs
+[33ma16a126[m Implementacion de roles, se cambio  el funcionamiento del login para adaptarlo a diferentes roles y vistas y  creacion de la capa response
+[33m0cf850c[m[33m ([m[1;32mmaster[m[33m)[m Commit inicial, creacion de las capas, implmentacion de vistas y funcionalidad del registro y el login

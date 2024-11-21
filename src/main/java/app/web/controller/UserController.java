@@ -58,20 +58,6 @@ public class UserController {
     }
 
 
-    @GetMapping("/access")
-    public String access(Model model) {
-        UserEntity user = userService.getCurrentSession();
-        boolean isAdminOrUser = user.getRoles().stream()
-                .anyMatch(role -> "ADMIN".equals(role.getRolName()) || "USER".equals(role.getRolName()));
-
-        if (isAdminOrUser) {
-            return "redirect:/finance/dashboard";
-        } else {
-            return "redirect:/login";
-        }
-    }
-
-
     @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);

@@ -6,15 +6,14 @@
   <meta name="viewport" content="width=device-width">
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-  <title>Analisis</title>
+  <title th:text="#{slidebar.link.analisys}">Analisis</title>
   <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body class="body-profile">
 <div class="container-fluid">
-  <div class="row">
-    <!-- Sidebar -->
+  <div class="row">  <!-- Sidebar -->
     <nav class="col-md-2 d-md-block sidebar">
       <div class="text-center">
         <a class="navbar-brand" href="#" aria-label="Home">
@@ -23,6 +22,12 @@
         </a>
       </div>
       <ul class="nav flex-column mt-4">
+        <li class="nav-item" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+          <a class="nav-link" th:href="@{/admin/dashboard}" aria-label="Admin Dashboard">
+            <i class="bi bi-shield-lock-fill nav-icon"></i>
+            <span class="nav-text" th:text="#{slidebar.link.admin}">Panel Admin</span>
+          </a>
+        </li>
         <li class="nav-item">
           <a class="nav-link active" th:href="@{/finance/dashboard}" aria-label="View Finance Dashboard" aria-current="page">
             <i class="bi bi-grid-1x2-fill nav-icon"></i>

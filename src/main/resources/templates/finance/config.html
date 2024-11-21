@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
   <meta name="description" content="Piggy Wallet Configuration Template">
   <meta name="viewport" content="width=device-width">
-    <title>Configuracion</title>
+    <title th:text="#{slidebar.link.configurations}">Configuracion</title>
   <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/styles.css}">
@@ -12,14 +12,6 @@
 <body class="body-profile">
 <div class="container-fluid">
   <div class="row">
-
-    <header class="navbar navbar-expand-lg navbar-dark ">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Piggy Wallet</a>
-        <div class="d-flex align-items-center ms-auto">
-        </div>
-      </div>
-    </header>
 
     <!-- Sidebar -->
     <nav class="col-md-2 d-md-block sidebar">
@@ -33,46 +25,74 @@
         <li class="nav-item">
           <a class="nav-link active" th:href="@{/finance/dashboard}" aria-label="View Finance Dashboard" aria-current="page">
             <i class="bi bi-grid-1x2-fill nav-icon"></i>
-            <span class="nav-text">Informe</span>
+            <span class="nav-text" th:text="#{slidebar.link.panel}"></span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/finance/transactions}" aria-label="View Transactions">
             <i class="bi bi-piggy-bank-fill nav-icon"></i>
-            <span class="nav-text">Transacciones</span>
+            <span class="nav-text" th:text="#{slidebar.link.transactions}"></span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/finance/analysis}" aria-label="View Analysis">
             <i class="bi bi-cash-stack nav-icon"></i>
-            <span class="nav-text">Análisis</span>
+            <span class="nav-text" th:text="#{slidebar.link.analisys}"></span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/finance/categories}" aria-label="View Categories">
             <i class="bi bi-bar-chart-line nav-icon"></i>
-            <span class="nav-text">Categorías</span>
+            <span class="nav-text" th:text="#{slidebar.link.categories}"></span>
           </a>
         </li>
       </ul>
       <hr class="text-white">
       <ul class="nav flex-column">
+        <!-- Dropdown de idiomas para el sidebar -->
+        <li class="nav-item dropdown sidebar-dropdown">
+          <a class="nav-link d-flex align-items-center" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Seleccionar idioma" aria-haspopup="true">
+            <i class="bi bi-translate nav-icon" aria-hidden="true"></i>
+            <span class="nav-text" th:text="#{navbar.language}">Idioma</span>
+            <i class="bi bi-chevron-right ms-auto" aria-hidden="true"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark submenu" aria-labelledby="languageDropdown" role="menu">
+            <li role="none">
+              <a class="dropdown-item" th:href="@{''(lang='es')}" role="menuitem" lang="es" aria-label="Cambiar idioma a Español">
+                <img th:src="@{/flags/es.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                <span>Español</span>
+              </a>
+            </li>
+            <li role="none">
+              <a class="dropdown-item" th:href="@{''(lang='en')}" role="menuitem" lang="en" aria-label="Change language to English">
+                <img th:src="@{/flags/en.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                <span>English</span>
+              </a>
+            </li>
+            <li role="none">
+              <a class="dropdown-item" th:href="@{''(lang='fr')}" role="menuitem" lang="fr" aria-label="Changer la langue en Français">
+                <img th:src="@{/flags/fr.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                <span>Français</span>
+              </a>
+            </li>
+          </ul>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="#" aria-label="View Profile">
             <i class="bi bi-person-fill nav-icon"></i>
-            <span class="nav-text">Perfil</span>
+            <span class="nav-text" th:text="#{slidebar.link.profile}"></span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/finance/config}" aria-label="View Settings">
             <i class="bi bi-gear-fill nav-icon"></i>
-            <span class="nav-text">Configuraciones</span>
+            <span class="nav-text" th:text="#{slidebar.link.configurations}"></span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/logout}" aria-label="Log Out">
             <i class="bi bi-box-arrow-right nav-icon"></i>
-            <span class="nav-text">Salir</span>
+            <span class="nav-text" th:text="#{slidebar.link.logout}">Salir</span>
           </a>
         </li>
       </ul>
