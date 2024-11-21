@@ -33,6 +33,12 @@
                             <span class="nav-text" th:text="#{slidebar.link.admin}">Panel Admin</span>
                         </a>
                     </li>
+                    <li class="nav-item" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+                        <a class="nav-link" th:href="@{/admin/users}" aria-label="Admin Dashboard">
+                            <i class="bi bi-people-fill nav-icon"></i>
+                            <span class="nav-text" th:text="#{slidebar.link.users}">Usuarios</span>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link active" th:href="@{/finance/dashboard}" aria-label="View Finance Dashboard" aria-current="page">
                             <i class="bi bi-grid-1x2-fill nav-icon"></i>

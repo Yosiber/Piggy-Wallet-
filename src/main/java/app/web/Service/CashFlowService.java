@@ -16,4 +16,5 @@ public interface CashFlowService {
     List<CashFlowEntity> getTransactionsByUser(UserEntity user);
     Map<String, Object> getBalanceSummary(UserEntity user);
     Map<String, BigDecimal> getExpensesByCategory(UserEntity user);
+    long countAllTransactions();
 }

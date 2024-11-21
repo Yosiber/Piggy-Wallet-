@@ -22,6 +22,8 @@ body {
     color: #005582 !important; /* Un tono más oscuro, por ejemplo */
 }
 
+
+
 h1 {
     text-align: left;
     font-size: 36px;
@@ -815,6 +817,12 @@ canvas#spendingDonut {
     height: 300px;    /* Ajusta el tamaño según tu diseño */
     margin-top: 5%;
 }
+
+#userSignupsChart, #userRolesChart {
+    width: 100% !important;
+    height: 400px !important; /* Ajusta la altura según lo necesario */
+}
+
 /* Estilos base de la card */
 .card {
     background-color: #1e1e2d;

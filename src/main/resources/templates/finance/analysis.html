@@ -13,7 +13,8 @@
 </head>
 <body class="body-profile">
 <div class="container-fluid">
-  <div class="row">  <!-- Sidebar -->
+  <div class="row">
+    <!-- Sidebar -->
     <nav class="col-md-2 d-md-block sidebar">
       <div class="text-center">
         <a class="navbar-brand" href="#" aria-label="Home">
@@ -26,6 +27,12 @@
           <a class="nav-link" th:href="@{/admin/dashboard}" aria-label="Admin Dashboard">
             <i class="bi bi-shield-lock-fill nav-icon"></i>
             <span class="nav-text" th:text="#{slidebar.link.admin}">Panel Admin</span>
+          </a>
+        </li>
+        <li class="nav-item" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+          <a class="nav-link" th:href="@{/admin/users}" aria-label="Admin Dashboard">
+            <i class="bi bi-people-fill nav-icon"></i>
+            <span class="nav-text" th:text="#{slidebar.link.users}">Usuarios</span>
           </a>
         </li>
         <li class="nav-item">

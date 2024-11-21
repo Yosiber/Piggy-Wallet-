@@ -14,10 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,6 +37,54 @@ public class UserServiceImpl implements UserService {
         roles.add(roleDefault);
         user.setRoles(roles);
         userRepository.save(user);
+    }
+
+    @Override
+    public long countAllUsers() {
+        return userRepository.count();
+    }
+
+    @Override
+    public long countActiveUsers() {
+        // Implementar lógica según tus criterios de usuario activo
+        return userRepository.count(); // Por ahora devuelve todos
+    }
+
+    @Override
+    public List<UserEntity> getRecentUsers(int limit) {
+        return userRepository.findTop5ByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public Map<String, Long> getMonthlySignups() {
+        List<UserEntity> users = userRepository.findAll();
+        Map<String, Long> monthlySignups = new LinkedHashMap<>();
+
+        // Procesar usuarios y agrupar por mes
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
+        users.stream()
+                .filter(u -> u.getCreatedAt() != null)
+                .collect(Collectors.groupingBy(
+                        u -> u.getCreatedAt().format(formatter),
+                        Collectors.counting()
+                ))
+                .forEach(monthlySignups::put);
+
+        return monthlySignups;
+    }
+
+    @Override
+    public Map<String, Long> getRoleDistribution() {
+        Map<String, Long> distribution = new HashMap<>();
+        List<UserEntity> users = userRepository.findAll();
+
+        for (UserEntity user : users) {
+            for (RoleEntity role : user.getRoles()) {
+                distribution.merge(role.getRolName(), 1L, Long::sum);
+            }
+        }
+
+        return distribution;
     }
 
     @Override

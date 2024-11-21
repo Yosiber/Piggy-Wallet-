@@ -13,4 +13,5 @@ public interface CategoryService {
     Set<CategoryEntity> getCategoriesByUser(User user);
     CategoryEntity createCategory(CategoryEntity category, User user);
     Optional<CategoryEntity> findById(Long id);
+    long countAllCategories();
 }

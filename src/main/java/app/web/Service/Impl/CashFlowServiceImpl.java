@@ -38,6 +38,8 @@ public class CashFlowServiceImpl implements CashFlowService {
         this.userService = userService;
     }
 
+
+
     @Override
     public CashFlowEntity saveTransaction(CashFlowEntity cashFlow) {
         // Validar y obtener la categoría
@@ -111,6 +113,11 @@ public class CashFlowServiceImpl implements CashFlowService {
                                 Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
                         )
                 ));
+    }
+
+    @Override
+    public long countAllTransactions() {
+        return cashFlowRepository.count();
     }
 }
 

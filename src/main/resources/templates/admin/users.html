@@ -5,51 +5,158 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title th:text="${pageTitle}">Gestión de Usuarios</title>
     <!-- Añade tus estilos CSS aquí -->
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap-icons-1.11.3/font/bootstrap-icons.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
-<body>
-<div class="container">
-    <h1 th:text="${pageTitle}">Gestión de Usuarios</h1>
+<body class="body-profile">
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-md-block sidebar">
+            <div class="text-center">
+                <a class="navbar-brand" href="#" aria-label="Home">
+                    <i class="bi bi-house-door-fill nav-icon"></i>
+                    <span class="nav-text">Piggy Wallet</span>
+                </a>
+            </div>
+            <ul class="nav flex-column mt-4">
+                <li class="nav-item" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin/dashboard}" aria-label="Admin Dashboard">
+                        <i class="bi bi-shield-lock-fill nav-icon"></i>
+                        <span class="nav-text" th:text="#{slidebar.link.admin}">Panel Admin</span>
+                    </a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin/users}" aria-label="Admin Dashboard">
+                        <i class="bi bi-people-fill nav-icon"></i>
+                        <span class="nav-text" th:text="#{slidebar.link.users}">Usuarios</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/finance/dashboard}" aria-label="View Finance Dashboard" aria-current="page">
+                        <i class="bi bi-grid-1x2-fill nav-icon"></i>
+                        <span class="nav-text" th:text="#{slidebar.link.panel}"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/finance/transactions}" aria-label="View Transactions">
+                        <i class="bi bi-piggy-bank-fill nav-icon"></i>
+                        <span class="nav-text" th:text="#{slidebar.link.transactions}"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/finance/analysis}" aria-label="View Analysis">
+                        <i class="bi bi-cash-stack nav-icon"></i>
+                        <span class="nav-text" th:text="#{slidebar.link.analisys}"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/finance/categories}" aria-label="View Categories">
+                        <i class="bi bi-bar-chart-line nav-icon"></i>
+                        <span class="nav-text" th:text="#{slidebar.link.categories}"></span>
+                    </a>
+                </li>
+            </ul>
+            <hr class="text-white">
+            <ul class="nav flex-column">
+                <!-- Dropdown de idiomas para el sidebar -->
+                <li class="nav-item dropdown sidebar-dropdown">
+                    <a class="nav-link d-flex align-items-center" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Seleccionar idioma" aria-haspopup="true">
+                        <i class="bi bi-translate nav-icon" aria-hidden="true"></i>
+                        <span class="nav-text" th:text="#{navbar.language}">Idioma</span>
+                        <i class="bi bi-chevron-right ms-auto" aria-hidden="true"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark submenu" aria-labelledby="languageDropdown" role="menu">
+                        <li role="none">
+                            <a class="dropdown-item" th:href="@{''(lang='es')}" role="menuitem" lang="es" aria-label="Cambiar idioma a Español">
+                                <img th:src="@{/flags/es.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                                <span>Español</span>
+                            </a>
+                        </li>
+                        <li role="none">
+                            <a class="dropdown-item" th:href="@{''(lang='en')}" role="menuitem" lang="en" aria-label="Change language to English">
+                                <img th:src="@{/flags/en.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                                <span>English</span>
+                            </a>
+                        </li>
+                        <li role="none">
+                            <a class="dropdown-item" th:href="@{''(lang='fr')}" role="menuitem" lang="fr" aria-label="Changer la langue en Français">
+                                <img th:src="@{/flags/fr.svg}" alt="" width="20" height="20" class="me-2" aria-hidden="true">
+                                <span>Français</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" aria-label="View Profile">
+                        <i class="bi bi-person-fill nav-icon"></i>
+                        <span class="nav-text" th:text="#{slidebar.link.profile}"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/finance/config}" aria-label="View Settings">
+                        <i class="bi bi-gear-fill nav-icon"></i>
+                        <span class="nav-text" th:text="#{slidebar.link.configurations}"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}" aria-label="Log Out">
+                        <i class="bi bi-box-arrow-right nav-icon"></i>
+                        <span class="nav-text" th:text="#{slidebar.link.logout}">Salir</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
 
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Usuario</th>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Fecha de Creación</th>
-                <th>Roles</th>
-                <th>Acciones</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.id}">1</td>
-                <td th:text="${user.username}">usuario1</td>
-                <td th:text="${user.name}">Nombre</td>
-                <td th:text="${user.email}">email@ejemplo.com</td>
-                <td th:text="${#temporals.format(user.createdAt, 'dd-MM-yyyy HH:mm')}">01-01-2024</td>
-                <td>
+
+        <main class="col-md-10 col-lg-10 main-content">
+            <h1 th:text="${pageTitle}">Gestión de Usuarios</h1>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Fecha de Creación</th>
+                        <th>Roles</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}">1</td>
+                        <td th:text="${user.username}">usuario1</td>
+                        <td th:text="${user.name}">Nombre</td>
+                        <td th:text="${user.email}">email@ejemplo.com</td>
+                        <td th:text="${#temporals.format(user.createdAt, 'dd-MM-yyyy HH:mm')}">01-01-2024</td>
+                        <td>
                             <span th:each="role : ${user.roles}"
                                   th:text="${role.rolName}"
                                   class="badge bg-primary me-1">
                                 ROLE_USER
                             </span>
-                </td>
-                <td>
-                    <button class="btn btn-danger btn-sm"
-                            th:onclick="'deleteUser(' + ${user.id} + ')'"
-                            th:disabled="${#authentication.name == user.username}">
-                        Eliminar
-                    </button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger btn-sm"
+                                    th:onclick="'deleteUser(' + ${user.id} + ')'"
+                                    th:disabled="${#authentication.name == user.username}">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
     </div>
 </div>
 
+
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script src="/js/admin.js"></script>
 </body>
 </html>

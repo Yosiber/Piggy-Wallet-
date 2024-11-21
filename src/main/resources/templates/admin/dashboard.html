@@ -30,6 +30,12 @@
                         <span class="nav-text" th:text="#{slidebar.link.admin}">Panel Admin</span>
                     </a>
                 </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin/users}" aria-label="Admin Dashboard">
+                        <i class="bi bi-people-fill nav-icon"></i>
+                        <span class="nav-text" th:text="#{slidebar.link.users}">Usuarios</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link active" th:href="@{/finance/dashboard}" aria-label="View Finance Dashboard" aria-current="page">
                         <i class="bi bi-grid-1x2-fill nav-icon"></i>
@@ -106,13 +112,198 @@
             </ul>
         </nav>
 
+        <!-- Main Content -->
         <main class="col-md-10 col-lg-10 main-content">
+            <div class="container mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="h2" th:text="${pageTitle}">Panel de Administración</h5>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Exportar</button>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Tarjetas de Resumen -->
+                <div class="row">
+                    <div class="col-md-3 mb-4">
+                        <div class="card bg-primary text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-white">Total Usuarios</h6>
+                                        <h7 class="mb-0 text-white">[[${totalUsers}]]</h7>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-people-fill fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="card bg-success text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-white">Usuarios Activos</h6>
+                                        <h7 class="mb-0 text-white">[[${activeUsers}]]</h7>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-person-check-fill fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="card bg-info text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-white">Total Categorías</h6>
+                                        <h7 class="mb-0 text-white">[[${totalCategories}]]</h7>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-folder-fill fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="card bg-warning text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-white">Total Transacciones</h6>
+                                        <h7 class="mb-0 text-white">[[${totalTransactions}]]</h7>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-currency-exchange fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficos -->
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title mb-0">Nuevos Usuarios por Mes</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="userSignupsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title mb-0">Distribución de Roles</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="userRolesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Últimos Usuarios -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">Últimos Usuarios Registrados</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Email</th>
+                                    <th>Fecha Registro</th>
+                                    <th>Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="user : ${recentUsers}">
+                                    <td>[[${user.username}]]</td>
+                                    <td>[[${user.email}]]</td>
+                                    <td>[[${#temporals.format(user.createdAt, 'dd-MM-yyyy')}]]</td>
+                                    <td>
+                                        <span class="badge bg-success">Activo</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 </div>
 
 <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+    // Datos para el gráfico de nuevos usuarios
+    const userSignupsCtx = document.getElementById('userSignupsChart').getContext('2d');
+    const userSignupsData = /*[[${monthlySignups}]]*/ [];
+    const userSignupsLabels = /*[[${monthlySignupsLabels}]]*/ [];
+
+    new Chart(userSignupsCtx, {
+        type: 'line',
+        data: {
+            labels: userSignupsLabels,
+            datasets: [{
+                label: 'Nuevos Usuarios',
+                data: userSignupsData,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+
+    // Datos para el gráfico de roles
+    const userRolesCtx = document.getElementById('userRolesChart').getContext('2d');
+    const userRolesData = /*[[${roleDistribution}]]*/ [];
+    const userRolesLabels = /*[[${roleLabels}]]*/ [];
+
+    new Chart(userRolesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: userRolesLabels,
+            datasets: [{
+                data: userRolesData,
+                backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+</script>
 </body>
 </html>
