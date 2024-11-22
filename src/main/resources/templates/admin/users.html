@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Piggy Wallet Transactions Template">
+    <meta name="viewport" content="width=device-width">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title th:text="${pageTitle}">Gestión de Usuarios</title>
@@ -115,7 +118,7 @@
 
             <div class="table-responsive">
                 <table class="table table-striped">
-                    <thead>
+                    <thead class="table-dark">
                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>

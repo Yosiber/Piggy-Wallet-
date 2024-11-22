@@ -928,6 +928,7 @@ canvas#spendingDonut {
     font-weight: bold;
     text-align: center;
     font-size: 1rem;
+    color: #adb5bd;
 }
 
 /* Categorías */
@@ -945,6 +946,12 @@ canvas#spendingDonut {
 
 /* Fechas */
 .table td:nth-child(4) {
+    color: #adb5bd !important; /* Gris para fechas */
+    text-align: center;
+}
+
+/* Fechas */
+.table td:nth-child(5) {
     color: #adb5bd !important; /* Gris para fechas */
     text-align: center;
 }
@@ -1024,7 +1031,21 @@ canvas#spendingDonut {
     display: none;
 }
 
+.card-admin1{
+    background-color: #000a23!important;
+}
 
+.card-admin2{
+    background-color: #365b77!important;
+}
+
+.card-admin3{
+    background-color: #021d34!important;
+}
+
+.card-admin{
+    background-color: #365b77!important;
+}
 @media (max-width: 768px) {
     .footer-right {
         text-align: center;
