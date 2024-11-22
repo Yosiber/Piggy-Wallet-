@@ -1,10 +1,9 @@
-package app.web.Service;
+package app.web.service;
 
 import app.web.persistence.entities.UserEntity;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface UserService {
     List<UserEntity> getAllUsers();

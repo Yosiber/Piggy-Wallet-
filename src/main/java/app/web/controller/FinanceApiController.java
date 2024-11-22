@@ -1,10 +1,10 @@
 package app.web.controller;
 
 
-import app.web.Service.CashFlowService;
-import app.web.Service.CategoryService;
-import app.web.Service.UpcomingPaymentsService;
-import app.web.Service.UserService;
+import app.web.service.CashFlowService;
+import app.web.service.CategoryService;
+import app.web.service.UpcomingPaymentsService;
+import app.web.service.UserService;
 import app.web.persistence.entities.CashFlowEntity;
 import app.web.persistence.entities.CategoryEntity;
 import app.web.persistence.entities.UpcomingPaymentsEntity;

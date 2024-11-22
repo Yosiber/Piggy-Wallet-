@@ -17,7 +17,7 @@ function deleteUser(userId) {
         headers[headerName] = token;
 
         fetch(`/admin/users/${userId}/delete`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: headers,
             credentials: 'same-origin' // Importante para incluir las cookies
         })

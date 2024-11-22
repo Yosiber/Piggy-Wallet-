@@ -1,7 +1,6 @@
-package app.web.Service.Impl;
+package app.web.service.Impl;
 
-import app.web.Service.UpcomingPaymentsService;
-import app.web.persistence.entities.CategoryEntity;
+import app.web.service.UpcomingPaymentsService;
 import app.web.persistence.entities.UpcomingPaymentsEntity;
 import app.web.persistence.entities.UserEntity;
 import app.web.persistence.entities.dto.UpcomingPaymentsDTO;

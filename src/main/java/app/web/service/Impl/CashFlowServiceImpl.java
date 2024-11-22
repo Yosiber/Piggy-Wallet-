@@ -1,8 +1,7 @@
-package app.web.Service.Impl;
+package app.web.service.Impl;
 
-import app.web.Service.CashFlowService;
-import app.web.Service.CategoryService;
-import app.web.Service.UserService;
+import app.web.service.CashFlowService;
+import app.web.service.UserService;
 import app.web.persistence.entities.CashFlowEntity;
 import app.web.persistence.entities.CategoryEntity;
 import app.web.persistence.entities.UserEntity;
@@ -11,12 +10,9 @@ import app.web.persistence.repositories.CategoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,8 +33,6 @@ public class CashFlowServiceImpl implements CashFlowService {
         this.categoryRepository = categoryRepository;
         this.userService = userService;
     }
-
-
 
     @Override
     public CashFlowEntity saveTransaction(CashFlowEntity cashFlow) {
@@ -67,9 +61,6 @@ public class CashFlowServiceImpl implements CashFlowService {
         return category;
     }
 
-    private double adjustTransactionValue(boolean isIncome, double value) {
-        return isIncome ? Math.abs(value) : -Math.abs(value);
-    }
 
     @Override
     public List<CashFlowEntity> getTransactionsByUser(UserEntity user) {

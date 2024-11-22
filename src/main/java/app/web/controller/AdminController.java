@@ -1,15 +1,13 @@
 package app.web.controller;
 
-import app.web.Service.CashFlowService;
-import app.web.Service.CategoryService;
-import app.web.Service.UserService;
+import app.web.service.CashFlowService;
+import app.web.service.CategoryService;
+import app.web.service.UserService;
 import app.web.persistence.entities.RoleEntity;
 import app.web.persistence.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +60,7 @@ public class AdminController {
         return "admin/users";
     }
 
-    @PostMapping("/users/{id}/delete")
+    @DeleteMapping("/users/{id}/delete")
     @ResponseBody
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {

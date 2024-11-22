@@ -1,6 +1,6 @@
-package app.web.Service.Impl;
+package app.web.service.Impl;
 
-import app.web.Service.UserService;
+import app.web.service.UserService;
 import app.web.persistence.entities.RoleEntity;
 import app.web.persistence.entities.UserEntity;
 import app.web.persistence.repositories.RoleRepository;

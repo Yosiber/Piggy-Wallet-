@@ -1,8 +1,7 @@
 package app.web.security;
-import app.web.Service.Impl.UserDetailServiceImpl;
+import app.web.service.Impl.UserDetailServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -32,11 +31,12 @@ public class WebSecurityConfig {
                 .formLogin((form) -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/access")
+                        .failureUrl("/login?error=true") // Error al iniciar sesión
                         .permitAll()
                 )
                 .logout((logout) -> logout
                         .logoutUrl("/logout") // Ruta para cerrar sesión
-                        .logoutSuccessUrl("/login?logout") // Redirección tras cierre de sesión exitoso
+                        .logoutSuccessUrl("/login?logout=true") // Mensaje al cerrar sesión
                         .deleteCookies("JSESSIONID") // Eliminar cookies de sesión
                         .invalidateHttpSession(true) // Invalidar sesión
                         .permitAll()

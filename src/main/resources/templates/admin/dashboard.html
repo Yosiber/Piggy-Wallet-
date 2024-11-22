@@ -115,7 +115,7 @@
         <main class="col-md-10 col-lg-10 main-content">
             <div class="container mt-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="h2" th:text="#{panel.admin.title}"></h5>
+                    <h5  th:text="#{panel.admin.title}"></h5>
                 </div>
 
                 <!-- Tarjetas de Resumen -->
@@ -125,7 +125,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="text-white">Total Usuarios</h6>
+                                        <h6 class="text-white" th:text="#{panel.admin.total.users}">Total Usuarios</h6>
                                         <h7 class="mb-0 text-white">[[${totalUsers}]]</h7>
                                     </div>
                                     <div>
@@ -140,7 +140,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="text-white">Usuarios Activos</h6>
+                                        <h6 class="text-white" th:text="#{panel.admin.active.users}">Usuarios Activos</h6>
                                         <h7 class="mb-0 text-white">[[${activeUsers}]]</h7>
                                     </div>
                                     <div>
@@ -155,7 +155,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="text-white">Total Categorías</h6>
+                                        <h6 class="text-white" th:text="#{panel.admin.total.categories}">Total Categorías</h6>
                                         <h7 class="mb-0 text-white">[[${totalCategories}]]</h7>
                                     </div>
                                     <div>
@@ -170,7 +170,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="text-white">Total Transacciones</h6>
+                                        <h6 class="text-white" th:text="#{panel.admin.total.transactions}">Total Transacciones</h6>
                                         <h7 class="mb-0 text-white">[[${totalTransactions}]]</h7>
                                     </div>
                                     <div>
@@ -187,7 +187,7 @@
                     <div class="col-md-6 mb-4">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title mb-0">Nuevos Usuarios por Mes</h3>
+                                <h3 class="card-title mb-0" th:text="#{panel.admin.users.monthly.title}">Nuevos Usuarios por Mes</h3>
                             </div>
                             <div class="card-body">
                                 <canvas id="userSignupsChart"></canvas>
@@ -197,7 +197,7 @@
                     <div class="col-md-6 mb-4">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title mb-0">Distribución de Roles</h3>
+                                <h3 class="card-title mb-0" th:text="#{panel.admin.roles.title}">Distribución de Roles</h3>
                             </div>
                             <div class="card-body">
                                 <canvas id="userRolesChart"></canvas>
@@ -209,17 +209,16 @@
                 <!-- Tabla de Últimos Usuarios -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h3 class="card-title mb-0">Últimos Usuarios Registrados</h3>
+                        <h3 class="card-title mb-0" th:text="#{panel.admin.users.recently.title}">Últimos Usuarios Registrados</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Usuario</th>
-                                    <th>Email</th>
-                                    <th>Fecha Registro</th>
-                                    <th>Estado</th>
+                                    <th th:text="#{panel.admin.users.recently.user}">Usuario</th>
+                                    <th th:text="#{panel.admin.users.recently.email}">Correo Electronico</th>
+                                    <th th:text="#{panel.admin.users.recently.date}">Fecha Registro</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -227,9 +226,6 @@
                                     <td>[[${user.username}]]</td>
                                     <td>[[${user.email}]]</td>
                                     <td>[[${#temporals.format(user.createdAt, 'dd-MM-yyyy')}]]</td>
-                                    <td>
-                                        <span class="badge bg-success">Activo</span>
-                                    </td>
                                 </tr>
                                 </tbody>
                             </table>

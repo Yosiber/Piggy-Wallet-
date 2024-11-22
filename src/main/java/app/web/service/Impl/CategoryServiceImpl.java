@@ -1,17 +1,15 @@
-package app.web.Service.Impl;
+package app.web.service.Impl;
 
-import app.web.Service.CategoryService;
+import app.web.service.CategoryService;
 import app.web.persistence.entities.CategoryEntity;
 import app.web.persistence.entities.UserEntity;
 import app.web.persistence.repositories.CategoryRepository;
 import app.web.persistence.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 

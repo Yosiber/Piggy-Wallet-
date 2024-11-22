@@ -1,6 +1,6 @@
 package app.web.controller;
 
-import app.web.Service.UserService;
+import app.web.service.UserService;
 import app.web.persistence.entities.UserEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -11,8 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/")
@@ -43,7 +42,17 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String loginPage(){
+    public String loginPage(@RequestParam(value = "error", required = false) String error,
+                            @RequestParam(value = "logout", required = false) String logout,
+                            Model model) {
+        if (error != null) {
+            model.addAttribute("error", "Invalid email or password.");
+        }
+
+        if (logout != null) {
+            model.addAttribute("message", "You have been logged out successfully.");
+        }
+
         return "/users/login";
     }
 

@@ -1,11 +1,10 @@
 package app.web.controller;
 
-import app.web.Service.CashFlowService;
-import app.web.Service.CategoryService;
+import app.web.service.CashFlowService;
+import app.web.service.CategoryService;
 
-import app.web.Service.Impl.CashFlowServiceImpl;
-import app.web.Service.UpcomingPaymentsService;
-import app.web.Service.UserService;
+import app.web.service.UpcomingPaymentsService;
+import app.web.service.UserService;
 import app.web.persistence.entities.CashFlowEntity;
 import app.web.persistence.entities.CategoryEntity;
 import app.web.persistence.entities.UpcomingPaymentsEntity;
@@ -14,15 +13,9 @@ import app.web.persistence.entities.dto.TransactionDTO;
 //import app.web.persistence.entities.dto.TransactionRequestDTO;
 import app.web.persistence.entities.dto.TransactionRequestDTO;
 import app.web.persistence.entities.dto.UpcomingPaymentsDTO;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,8 +29,6 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 

@@ -42,7 +42,7 @@ h1 {
     margin-bottom: 0;
 }
 
-h2 {
+h2,h5 {
     font-size: 60px;
     text-align: left;
     line-height: 70px;
@@ -922,7 +922,7 @@ canvas#spendingDonut {
     transition: all 0.2s ease;
 }
 
-/* Cantidades */
+
 .table td:nth-child(1) {
     font-family: 'Roboto Mono', monospace;
     font-weight: bold;
@@ -931,10 +931,10 @@ canvas#spendingDonut {
     color: #adb5bd;
 }
 
-/* Categorías */
+
 .table td:nth-child(3) {
     font-weight: bold;
-    color: #5dade2 !important; /* Azul suave para categorías */
+    color: #5dade2 !important;
     text-align: center;
 }
 
@@ -944,27 +944,36 @@ canvas#spendingDonut {
     text-align: center;
 }
 
-/* Fechas */
+
 .table td:nth-child(4) {
-    color: #adb5bd !important; /* Gris para fechas */
+    color: #adb5bd !important;
     text-align: center;
 }
 
-/* Fechas */
+
 .table td:nth-child(5) {
-    color: #adb5bd !important; /* Gris para fechas */
+    color: #adb5bd !important;
+    text-align: center;
+}
+
+
+.table td:nth-child(6) {
+    text-align: center;
+}
+
+.table td:nth-child(7) {
     text-align: center;
 }
 
 .body-profile .btn-xs {
-    font-size: 0.75rem; /* Tamaño del texto más pequeño */
-    padding: 0.2rem 0.4rem; /* Menos relleno */
-    border-radius: 0.2rem; /* Ajusta el borde si es necesario */
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.2rem;
 
 }
 
 .body-profile .row.mb-4 {
-    min-height: 400px; /* Ajusta según el diseño */
+    min-height: 400px;
 }
 
 /* Estructura base del sidebar */
@@ -1066,7 +1075,7 @@ canvas#spendingDonut {
 }
 
 @media (max-width: 600px) {
-    p,h1,h2,h3,h4 {
+    p,h1,h2,h3,h4,h5 {
         text-align: center;
     }
 

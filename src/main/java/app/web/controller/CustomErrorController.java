@@ -22,7 +22,7 @@ public class CustomErrorController implements ErrorController {
                 return "redirect:/home"; // Redirigir a /home si la URL no existe
             }
         }
-        // Retornar una vista genérica de error para otros códigos de estado
+
         return "error";
     }
 }

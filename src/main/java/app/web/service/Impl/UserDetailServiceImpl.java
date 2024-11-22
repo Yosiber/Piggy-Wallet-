@@ -1,14 +1,13 @@
-package app.web.Service.Impl;
+package app.web.service.Impl;
 
 
-import app.web.Service.UserService;
+import app.web.service.UserService;
 import app.web.persistence.entities.RoleEntity;
 import app.web.persistence.entities.UserEntity;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
