@@ -32,8 +32,6 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String getAdminDashboard(Model model) {
-        // Datos básicos
-        model.addAttribute("pageTitle", "Panel de Administración");
 
         // Contadores totales
         model.addAttribute("totalUsers", userService.countAllUsers());
@@ -59,9 +57,8 @@ public class AdminController {
 
     @GetMapping("/users")
     public String getUsersList(Model model) {
-        List<UserEntity> users = userService.getAllUsers(); // Necesitarás añadir este método al servicio
+        List<UserEntity> users = userService.getAllUsers();
         model.addAttribute("users", users);
-        model.addAttribute("pageTitle", "Gestión de Usuarios");
         return "admin/users";
     }
 

@@ -30,6 +30,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private HttpServletRequest request;
 
+    @Autowired
+    private ActiveUserSessionListenerImpl activeUserSessionListener;
+
     @Override
     public void createUser(UserEntity user) {
         RoleEntity roleDefault = roleRepository.findById(2L).orElse(null);
@@ -46,8 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public long countActiveUsers() {
-        // Implementar lógica según tus criterios de usuario activo
-        return userRepository.count(); // Por ahora devuelve todos
+        return activeUserSessionListener.getActiveSessions();
     }
 
     @Override

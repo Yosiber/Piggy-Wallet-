@@ -564,7 +564,7 @@ const colors = [
     'rgba(153, 102, 255, 0.7)',
     'rgba(255, 159, 64, 0.7)',
     'rgba(199, 199, 199, 0.7)',
-    'rgba(83, 102, 255, 0.7)'
+    'rgba(6,129,196,0.7)'
 ];
 
 // Crear las gráficas al cargar el DOM

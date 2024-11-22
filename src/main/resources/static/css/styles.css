@@ -820,7 +820,7 @@ canvas#spendingDonut {
 
 #userSignupsChart, #userRolesChart {
     width: 100% !important;
-    height: 400px !important; /* Ajusta la altura según lo necesario */
+    height: 450px !important; /* Ajusta la altura según lo necesario */
 }
 
 /* Estilos base de la card */
