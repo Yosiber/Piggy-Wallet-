@@ -1,6 +1,8 @@
 package app.web.persistence.entities;
 
 
+import app.web.listener.AuditTransactionListener;
+import app.web.listener.AuditUserListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +17,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditTransactionListener.class)
 @Table(name = "tbl_caf")
 public class CashFlowEntity {
 
