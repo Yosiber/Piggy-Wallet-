@@ -1,6 +1,7 @@
 package app.web.persistence.entities;
 
 
+import app.web.listener.AuditCategoryListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditCategoryListener.class)
 @Table(name = "tbl_category")
 public class CategoryEntity {
 

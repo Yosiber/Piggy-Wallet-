@@ -60,26 +60,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<AuditUserEntity> getUserAuditHistory(Long userId) {
-        return List.of();
-    }
-
-    @Override
-    public UserEntity updateUserRoles(Long userId, Set<RoleEntity> roles) {
-        return null;
-    }
-
-    @Override
-    public void updatePassword(Long userId, String newPassword) {
-
-    }
-
-    @Override
-    public List<UserEntity> searchUsers(String keyword) {
-        return List.of();
-    }
-
-    @Override
     public long countAllUsers() {
         return userRepository.count();
     }

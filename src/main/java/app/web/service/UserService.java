@@ -24,8 +24,4 @@ public interface UserService {
     void createUser(UserEntity user);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
-    List<AuditUserEntity> getUserAuditHistory(Long userId);
-    UserEntity updateUserRoles(Long userId, Set<RoleEntity> roles);
-    void updatePassword(Long userId, String newPassword);
-    List<UserEntity> searchUsers(String keyword);
 }
