@@ -1,5 +1,7 @@
 package app.web.persistence.entities;
 
+import app.web.listener.AuditCategoryListener;
+import app.web.listener.AuditPaymentsListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditPaymentsListener.class)
 @Table(name = "tbl_upp")
 public class UpcomingPaymentsEntity {
 
