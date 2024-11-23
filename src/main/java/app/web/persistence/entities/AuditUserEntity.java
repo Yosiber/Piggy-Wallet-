@@ -16,13 +16,13 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuditoryEntity {
+public class AuditUserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private String operation;
-    private String user;
+    private String username;
     private LocalDateTime date;
 }

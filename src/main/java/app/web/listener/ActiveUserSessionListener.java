@@ -1,4 +1,4 @@
-package app.web.service.Impl;
+package app.web.listener;
 
 import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.HttpSessionEvent;
@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @WebListener
-public class ActiveUserSessionListenerImpl implements HttpSessionListener {
+public class ActiveUserSessionListener implements HttpSessionListener {
     private static final AtomicInteger activeSessions = new AtomicInteger(1);
 
     @Override

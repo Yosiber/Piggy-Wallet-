@@ -1,5 +1,7 @@
 package app.web.service.Impl;
 
+import app.web.listener.ActiveUserSessionListener;
+import app.web.persistence.entities.AuditUserEntity;
 import app.web.service.UserService;
 import app.web.persistence.entities.RoleEntity;
 import app.web.persistence.entities.UserEntity;
@@ -31,15 +33,50 @@ public class UserServiceImpl implements UserService {
     private HttpServletRequest request;
 
     @Autowired
-    private ActiveUserSessionListenerImpl activeUserSessionListener;
+    private ActiveUserSessionListener activeUserSessionListener;
 
     @Override
     public void createUser(UserEntity user) {
-        RoleEntity roleDefault = roleRepository.findById(2L).orElse(null);
-        Set<RoleEntity> roles = new HashSet<>();
-        roles.add(roleDefault);
-        user.setRoles(roles);
-        userRepository.save(user);
+        try {
+            RoleEntity roleDefault = roleRepository.findById(2L)
+                    .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
+
+            Set<RoleEntity> roles = new HashSet<>();
+            roles.add(roleDefault);
+            user.setRoles(roles);
+
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al crear el usuario: " + e.getMessage());
+        }
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public List<AuditUserEntity> getUserAuditHistory(Long userId) {
+        return List.of();
+    }
+
+    @Override
+    public UserEntity updateUserRoles(Long userId, Set<RoleEntity> roles) {
+        return null;
+    }
+
+    @Override
+    public void updatePassword(Long userId, String newPassword) {
+
+    }
+
+    @Override
+    public List<UserEntity> searchUsers(String keyword) {
+        return List.of();
     }
 
     @Override

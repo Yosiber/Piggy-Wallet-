@@ -1,5 +1,6 @@
 package app.web.controller;
 
+import app.web.persistence.repositories.RoleRepository;
 import app.web.service.CashFlowService;
 import app.web.service.CategoryService;
 import app.web.service.UserService;
@@ -8,6 +9,7 @@ import app.web.persistence.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,9 @@ public class AdminController {
 
     @Autowired
     private CashFlowService cashFlowService;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/dashboard")
     public String getAdminDashboard(Model model) {
@@ -84,39 +89,56 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/users/{id}/roles")
+    @PostMapping("/users/create")
     @ResponseBody
-    public ResponseEntity<?> getUserRoles(@PathVariable Long id) {
+    public ResponseEntity<?> createUser(@RequestBody UserEntity newUser) {
         try {
-            UserEntity user = userService.getUserById(id);
-            if (user == null) {
-                return ResponseEntity.notFound().build();
+            // Validaciones básicas
+            if (newUser.getUsername() == null || newUser.getUsername().isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(new HashMap<String, String>() {{
+                            put("error", "El nombre de usuario es obligatorio.");
+                        }});
             }
-            return ResponseEntity.ok(user.getRoles());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al obtener roles: " + e.getMessage());
-        }
-    }
+            if (newUser.getPassword() == null || newUser.getPassword().isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(new HashMap<String, String>() {{
+                            put("error", "La contraseña es obligatoria.");
+                        }});
+            }
 
-    @PostMapping("/users/{id}/roles")
-    @ResponseBody
-    public ResponseEntity<?> updateUserRoles(@PathVariable Long id, @RequestBody Set<RoleEntity> roles) {
-        try {
-            UserEntity user = userService.getUserById(id);
-            if (user == null) {
-                return ResponseEntity.notFound().build();
+            // Validar si el usuario ya existe
+            if (userService.existsByUsername(newUser.getUsername())) {
+                return ResponseEntity.badRequest()
+                        .body(new HashMap<String, String>() {{
+                            put("error", "El nombre de usuario ya está en uso.");
+                        }});
             }
-            user.setRoles(roles);
-            userService.saveUser(user);
+
+            // Validar si el email ya existe
+            if (userService.existsByEmail(newUser.getEmail())) {
+                return ResponseEntity.badRequest()
+                        .body(new HashMap<String, String>() {{
+                            put("error", "El email ya está en uso.");
+                        }});
+            }
+
+            // Encriptar la contraseña antes de crear el usuario
+            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+
+            // Crear el usuario
+            userService.createUser(newUser);
+
             return ResponseEntity.ok()
                     .body(new HashMap<String, String>() {{
-                        put("message", "Roles actualizados correctamente");
+                        put("message", "Usuario creado correctamente.");
                     }});
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new HashMap<String, String>() {{
-                        put("error", "Error al actualizar roles: " + e.getMessage());
+                        put("error", "Error al crear el usuario: " + e.getMessage());
                     }});
         }
     }
+
 }

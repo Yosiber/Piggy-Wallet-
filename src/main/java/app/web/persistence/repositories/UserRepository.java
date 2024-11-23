@@ -16,5 +16,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("SELECT u FROM UserEntity u WHERE u.username = :username")
     Optional<UserEntity> findByUsername(@Param("username") String username);
     List<UserEntity> findTop5ByOrderByCreatedAtDesc();
-
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
 }

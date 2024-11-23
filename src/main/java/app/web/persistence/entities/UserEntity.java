@@ -1,5 +1,6 @@
 package app.web.persistence.entities;
 
+import app.web.listener.AuditUserListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditUserListener.class)
 @Table(name = "tbl_users")
 public class UserEntity {
 
