@@ -1,0 +1,181 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="PiggyWalletReport" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a40eda60-28de-4d39-9081-c4b990506675">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#000A23">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#030303"/>
+			<bottomPen lineWidth="0.5" lineColor="#030303"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#FFE4BF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#FFF4E6">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<dataset name="PiggyDataset" uuid="e16302bb-c14e-4488-b5f3-91de621c493f">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+		<query language="SQL"><![CDATA[SELECT * FROM tbl_users]]></query>
+		<field name="fecha_creacion" class="java.time.LocalDateTime">
+			<property name="com.jaspersoft.studio.field.name" value="fecha_creacion"/>
+			<property name="com.jaspersoft.studio.field.label" value="fecha_creacion"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="tbl_users"/>
+		</field>
+		<field name="id" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="id"/>
+			<property name="com.jaspersoft.studio.field.label" value="id"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="tbl_users"/>
+		</field>
+		<field name="apodo" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="apodo"/>
+			<property name="com.jaspersoft.studio.field.label" value="apodo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="tbl_users"/>
+		</field>
+		<field name="correo" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="correo"/>
+			<property name="com.jaspersoft.studio.field.label" value="correo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="tbl_users"/>
+		</field>
+		<field name="nombre" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+			<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="tbl_users"/>
+		</field>
+		<field name="telefono" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="telefono"/>
+			<property name="com.jaspersoft.studio.field.label" value="telefono"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="tbl_users"/>
+		</field>
+	</dataset>
+	<query language="SQL"><![CDATA[SELECT 1]]></query>
+	<background splitType="Stretch"/>
+	<title height="412" splitType="Stretch">
+		<element kind="staticText" uuid="79342bb5-3911-4736-8a74-88cd988806de" x="170" y="20" width="200" height="70" forecolor="#030000" rotation="None" markup="styled" fontSize="16.0" hTextAlign="Center">
+			<paragraph lineSpacing="Proportional" tabStopWidth="50"/>
+			<text><![CDATA[Reporte de Usuarios Piggy Wallet]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.tabStopWidth" value="px"/>
+		</element>
+		<element kind="image" uuid="98c150a8-89c9-492e-92ce-54e7805b7da3" x="7" y="10" width="90" height="70">
+			<expression><![CDATA["C:/Users/yohan_kduvmsd/Desktop/Java Projects/Piggy-Wallet-/src/main/resources/static/img/LogoF.png"]]></expression>
+		</element>
+		<element kind="textField" uuid="5bf3f4f6-da92-4794-afb9-fe5b2a47085d" x="450" y="20" width="100" height="30" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="staticText" uuid="ca5fc715-df8b-4046-bc29-d711e746f09b" x="10" y="120" width="527" height="58" fontSize="10.0">
+			<text><![CDATA[Este documento presenta el registro actualizado de usuarios de la plataforma Piggy Wallet, incluyendo información relevante como identificadores, apodos, correos electrónicos, nombres, teléfonos y fechas de creación. El reporte ha sido generado con fines administrativos y debe ser utilizado exclusivamente por personal autorizado. Cualquier difusión no autorizada de esta información está estrictamente prohibida.
+]]></text>
+		</element>
+		<element kind="component" uuid="39336e05-5bba-4e4d-b588-0df09d468e77" x="10" y="192" width="531" height="220">
+			<component kind="table">
+				<datasetRun uuid="3d571ac9-3463-4369-be8b-87a6a9c824a3" subDataset="PiggyDataset">
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				</datasetRun>
+				<column kind="single" uuid="7a328507-dcc8-4f7c-8bfe-623af3f69ad4" width="89">
+					<columnHeader height="30" style="Table 1_CH">
+						<element kind="staticText" uuid="7cbc8c60-f852-4c82-970a-c70f69bd10da" x="0" y="0" width="89" height="30">
+							<text><![CDATA[id]]></text>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table 1_TD">
+						<element kind="textField" uuid="cd2792b3-84e8-42a9-83df-198d49e39d85" x="0" y="0" width="89" height="30">
+							<expression><![CDATA[$F{id}]]></expression>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+				</column>
+				<column kind="single" uuid="49eeb8a6-7197-4707-adc4-993177f0fc74" width="89">
+					<columnHeader height="30" style="Table 1_CH">
+						<element kind="staticText" uuid="c7c34dec-1493-453b-b007-5313541a0f17" x="0" y="0" width="89" height="30">
+							<text><![CDATA[apodo]]></text>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table 1_TD">
+						<element kind="textField" uuid="a86ae7ff-c516-4a5d-86dd-df5a62bd7597" x="0" y="0" width="89" height="30">
+							<expression><![CDATA[$F{apodo}]]></expression>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+				</column>
+				<column kind="single" uuid="3d1225f4-a99a-49b8-ab26-62bf7f4dffed" width="89">
+					<columnHeader height="30" style="Table 1_CH">
+						<element kind="staticText" uuid="c339fe0a-4e4f-4969-8551-d4fb569685e7" x="0" y="0" width="89" height="30">
+							<text><![CDATA[correo]]></text>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table 1_TD">
+						<element kind="textField" uuid="07345c67-f143-411d-b22f-f61ce386ea33" x="0" y="0" width="89" height="30">
+							<expression><![CDATA[$F{correo}]]></expression>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+				</column>
+				<column kind="single" uuid="3af1930d-b653-4961-88d7-614f3b6579c7" width="89">
+					<columnHeader height="30" style="Table 1_CH">
+						<element kind="staticText" uuid="4208a1f5-a23d-4c90-a331-b0a5405aa8a3" x="0" y="0" width="89" height="30">
+							<text><![CDATA[nombre]]></text>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table 1_TD">
+						<element kind="textField" uuid="7649e5e8-8c60-4e7e-beb3-07ea31938620" x="0" y="0" width="89" height="30">
+							<expression><![CDATA[$F{nombre}]]></expression>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+				</column>
+				<column kind="single" uuid="fe81603f-a468-4af9-9faa-95f3ba12e86b" width="89">
+					<columnHeader height="30" style="Table 1_CH">
+						<element kind="staticText" uuid="28e9e9cb-37fa-4131-8d4f-dc68e703c40b" x="0" y="0" width="89" height="30">
+							<text><![CDATA[telefono]]></text>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table 1_TD">
+						<element kind="textField" uuid="277d8d15-5101-4dea-b18d-bc0b192b9efe" x="0" y="0" width="89" height="30">
+							<expression><![CDATA[$F{telefono}]]></expression>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+				</column>
+				<column kind="single" uuid="622709c8-7c09-44c0-9d03-f65fdadf6cad" width="89">
+					<columnHeader height="30" style="Table 1_CH">
+						<element kind="staticText" uuid="bbff2ae9-dc99-4bde-a03f-bbbb6d0ac6bc" x="0" y="0" width="89" height="30">
+							<text><![CDATA[fecha_creacion]]></text>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table 1_TD">
+						<element kind="textField" uuid="efc1e3eb-c703-4f8b-87e3-120b7fd7d971" x="0" y="0" width="89" height="30">
+							<expression><![CDATA[$F{fecha_creacion}]]></expression>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+				</column>
+			</component>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+			<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+			<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+			<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+		</element>
+	</title>
+	<pageHeader height="230" splitType="Stretch"/>
+	<columnHeader height="61" splitType="Stretch"/>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

@@ -6,7 +6,10 @@ import app.web.service.CategoryService;
 import app.web.service.UserService;
 import app.web.persistence.entities.RoleEntity;
 import app.web.persistence.entities.UserEntity;
+import jakarta.servlet.http.HttpServletResponse;
+import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +17,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sql.DataSource;
+import java.io.OutputStream;
+import java.sql.Connection;
 import java.util.*;
 
 @Controller
@@ -32,6 +38,12 @@ public class AdminController {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @GetMapping("/dashboard")
     public String getAdminDashboard(Model model) {
@@ -138,6 +150,31 @@ public class AdminController {
                     .body(new HashMap<String, String>() {{
                         put("error", "Error al crear el usuario: " + e.getMessage());
                     }});
+        }
+    }
+
+    @GetMapping("/generarReporte")
+    public void generarReporte(HttpServletResponse response) throws Exception {
+        // Configurar el tipo de contenido y el encabezado de la respuesta
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "inline; filename=Reporte_usuarios.pdf");
+
+        // Compilar el reporte
+        JasperReport reporte = JasperCompileManager
+                .compileReport(resourceLoader.getResource("classpath:Report.jrxml").getInputStream());
+
+        // Usar la conexión de base de datos
+        try (Connection conexion = dataSource.getConnection()) {
+            // Generar el reporte sin parámetros
+            JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, null, conexion);
+
+            // Exportar el reporte como PDF y enviarlo en la respuesta
+            try (OutputStream salida = response.getOutputStream()) {
+                JasperExportManager.exportReportToPdfStream(jasperPrint, salida);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Error al generar el reporte: " + e.getMessage());
         }
     }
 

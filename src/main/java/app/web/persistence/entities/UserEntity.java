@@ -33,6 +33,9 @@ public class UserEntity {
     @Column(unique = true, name = "apodo")
     private String username;
 
+    @Column(name = "telefono")
+    private String phone;
+
     @Column(nullable = false, name = "contraseña")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

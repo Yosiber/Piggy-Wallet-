@@ -25,6 +25,17 @@ public class CategoryServiceImpl implements CategoryService {
     private UserRepository userRepository;
 
     @Override
+    public CategoryEntity deleteCategory(Long id, User user) {
+        Optional<CategoryEntity> category = categoryRepository.findById(id);
+        if (category.isPresent() && category.get().getUser().equals(user)) {
+            CategoryEntity categoryToDelete = category.get();
+            categoryRepository.deleteById(id);
+            return categoryToDelete;
+        }
+        return null;
+    }
+
+    @Override
     public long countAllCategories() {
         return categoryRepository.count();
     }

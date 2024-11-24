@@ -1,5 +1,6 @@
 package app.web.controller;
 
+import app.web.persistence.entities.dto.UserUpdateDTO;
 import app.web.service.CashFlowService;
 import app.web.service.CategoryService;
 
@@ -10,21 +11,36 @@ import app.web.persistence.entities.CategoryEntity;
 import app.web.persistence.entities.UpcomingPaymentsEntity;
 import app.web.persistence.entities.UserEntity;
 import app.web.persistence.entities.dto.TransactionDTO;
-//import app.web.persistence.entities.dto.TransactionRequestDTO;
 import app.web.persistence.entities.dto.TransactionRequestDTO;
 import app.web.persistence.entities.dto.UpcomingPaymentsDTO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.sql.DataSource;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -34,6 +50,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
+@Transactional
 @RequestMapping("/finance")
 public class FinanceController {
 
@@ -48,6 +65,8 @@ public class FinanceController {
 
     @Autowired
     private UpcomingPaymentsService upcomingPaymentsService;
+
+
 
     @Autowired
     public FinanceController(CashFlowService cashFlowService,
@@ -169,7 +188,7 @@ public class FinanceController {
         double totalBalance = Math.max(rawBalance, 0);
         String formattedTotalBalance = currencyFormat.format(totalBalance);
 
-        // Pasar valores al modelo
+
         model.addAttribute("balance", formattedBalance); // Balance original (puede ser negativo)
         model.addAttribute("saldoTotal", formattedTotalBalance); // Balance sin negativos
         model.addAttribute("totalIngresos", currencyFormat.format(balanceData.get("totalIncome")));
@@ -205,7 +224,7 @@ public class FinanceController {
             cashFlow.setCategory(category);
             CashFlowEntity savedTransaction = cashFlowService.saveTransaction(cashFlow);
 
-            // Crear el DTO para la respuesta
+
             TransactionDTO transactionDTO = TransactionDTO.builder()
                     .formattedValue(String.format("%.2f", savedTransaction.getValue()))
                     .value(savedTransaction.getValue())
@@ -226,7 +245,7 @@ public class FinanceController {
         UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
         List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
 
-        // Ordenar las transacciones por fecha descendente
+
         transactions.sort((a, b) -> b.getDate().compareTo(a.getDate()));
 
         DecimalFormat df = new DecimalFormat("#,##0.00");
@@ -239,7 +258,7 @@ public class FinanceController {
                         .value(transaction.getValue())
                         .description(transaction.getDescription())
                         .category(transaction.getCategory())
-                        .date(transaction.getDate().toLocalDateTime())  // Convertir Timestamp a LocalDateTime
+                        .date(transaction.getDate().toLocalDateTime())
                         .build())
                 .limit(10)
                 .collect(Collectors.toList());
@@ -251,7 +270,7 @@ public class FinanceController {
                         .value(transaction.getValue())
                         .description(transaction.getDescription())
                         .category(transaction.getCategory())
-                        .date(transaction.getDate().toLocalDateTime())  // Convertir Timestamp a LocalDateTime
+                        .date(transaction.getDate().toLocalDateTime())
                         .build())
                 .limit(10)
                 .collect(Collectors.toList());
@@ -299,7 +318,97 @@ public class FinanceController {
         }
     }
 
+    @GetMapping("/profile")
+    public String profile(Model model) {
+        try {
+            UserEntity currentUser = userService.getCurrentSession();
+            model.addAttribute("user", currentUser);
 
+            // Obtener estadísticas de transacciones
+            List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
+            model.addAttribute("totalTransactions", transactions.size());
+
+            // Obtener balance y totales
+            Map<String, Object> balanceSummary = cashFlowService.getBalanceSummary(currentUser);
+            model.addAttribute("totalIncome", balanceSummary.get("totalIncome"));
+            model.addAttribute("totalExpenses", balanceSummary.get("totalExpenses"));
+            model.addAttribute("balance", balanceSummary.get("balance"));
+
+            // Crear User para getCategoriesByUser
+            UserDetails userDetails = User.withUsername(currentUser.getUsername())
+                    .password(currentUser.getPassword())
+                    .authorities(currentUser.getRoles().stream()
+                            .map(role -> new SimpleGrantedAuthority(role.getRolName()))
+                            .collect(Collectors.toList()))
+                    .build();
+
+            User springUser = (User) userDetails;
+
+            // Obtener categorías activas
+            Set<CategoryEntity> categories = categoryService.getCategoriesByUser(springUser);
+            model.addAttribute("activeCategories", categories.size());
+
+            return "finance/profile";
+        } catch (Exception e) {
+            log.error("Error al cargar el perfil: ", e);
+            return "redirect:/error";
+        }
+    }
+
+    @PutMapping("/profile/update")
+    public String updateProfile(@RequestParam String username,
+                                @RequestParam String email,
+                                @RequestParam(required = false) String phone,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            UserEntity currentUser = userService.getCurrentSession();
+            boolean needsRelogin = false;
+
+            // Verificar si el nuevo username ya existe
+            if (!username.equals(currentUser.getUsername())) {
+                if (userService.existsByUsername(username)) {
+                    redirectAttributes.addFlashAttribute("errorMessage",
+                            "Username already exists");
+                    return "redirect:/finance/profile";
+                }
+                needsRelogin = true;
+            }
+
+            // Verificar si el nuevo email ya existe
+            if (!email.equals(currentUser.getEmail()) &&
+                    userService.existsByEmail(email)) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Email already exists");
+                return "redirect:/finance/profile";
+            }
+
+            // Actualizar los campos
+            currentUser.setEmail(email);
+            currentUser.setUsername(username);
+            if (phone != null && !phone.trim().isEmpty()) {
+                currentUser.setPhone(phone);
+            }
+
+            // Guardar cambios
+            userService.saveUser(currentUser);
+
+            if (needsRelogin) {
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "Profile updated successfully. Please login again with your new username");
+                return "redirect:/logout";
+            } else {
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "Profile updated successfully");
+                return "redirect:/finance/profile";
+            }
+
+        } catch (Exception e) {
+            log.error("Error al actualizar el perfil: ", e);
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error updating profile");
+            return "redirect:/finance/profile";
+        }
+    }
 
 
     @GetMapping("/config")

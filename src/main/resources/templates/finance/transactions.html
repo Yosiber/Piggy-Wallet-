@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="description" content="Piggy Wallet Transactions Template">
     <meta name="viewport" content="width=device-width">
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/img/apple-touch-icon.png}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/img/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon-16x16.png}">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title th:text="#{slidebar.link.transactions}">Transacciones</title>
@@ -91,7 +94,7 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" aria-label="View Profile">
+                    <a class="nav-link" th:href="@{/finance/profile}"  aria-label="View Profile">
                         <i class="bi bi-person-fill nav-icon"></i>
                         <span class="nav-text" th:text="#{slidebar.link.profile}"></span>
                     </a>

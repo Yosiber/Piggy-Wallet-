@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="description" content="Piggy Wallet Configuration Template">
   <meta name="viewport" content="width=device-width">
-    <title th:text="#{slidebar.link.configurations}">Configuracion</title>
+  <link rel="apple-touch-icon" sizes="180x180" th:href="@{/img/apple-touch-icon.png}">
+  <link rel="icon" type="image/png" sizes="32x32" th:href="@{/img/favicon-32x32.png}">
+  <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon-16x16.png}">
+  <title th:text="#{slidebar.link.configurations}">Configuracion</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/styles.css}">
@@ -89,7 +92,7 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" aria-label="View Profile">
+          <a class="nav-link" th:href="@{/finance/profile}"  aria-label="View Profile">
             <i class="bi bi-person-fill nav-icon"></i>
             <span class="nav-text" th:text="#{slidebar.link.profile}"></span>
           </a>
@@ -111,58 +114,57 @@
 
     <main class="col-md-10 col-lg-10 main-content">
       <div class="container text-center">
-        <h1>Configuración</h1>
+        <h1 th:text="#{settings.title}"></h1>
 
         <!-- Botón Información -->
-        <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#infoModal">Información</button>
+        <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#infoModal" th:text="#{settings.button}"></button>
 
         <!-- Modal Información -->
         <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="infoModalLabel">Información de Piggy Wallet</h5>
+                <h4 class="modal-title" id="infoModalLabel" th:text="#{settings.info}"></h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <p><strong>Versión:</strong> 1.0.0</p>
-                <p><strong>Lugar de desarrollo:</strong> Ciudad XYZ</p>
-                <p><strong>Descripción:</strong> Piggy Wallet es una aplicación para la gestión de finanzas personales, ayudándote a controlar tus ingresos y gastos de manera eficiente.</p>
-                <p><strong>Creador:</strong> Yohan Sebastian Bustos Ruiz</p>
+                <p><strong th:text="#{settings.version}"></strong> 1.0.0</p>
+                <p><strong th:text="#{settings.locate}"></strong> <span th:text="#{settings.my.locate}"></span></p>
+                <p><strong th:text="#{settings.description.title}"></strong> <span th:text="#{settings.description.description}"></span></p>
+                <p><strong th:text="#{settings.author.title}"></strong> Yohan Sebastian Bustos Ruiz</p>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{spending.from.close}">Cerrar</button>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Botón para Enviar Sugerencias/Dudas -->
-        <a href="mailto:tuemail@gmail.com?subject=Dudas%20o%20Sugerencias%20sobre%20Piggy%20Wallet" class="btn btn-custom">Enviar Dudas o Sugerencias</a>
+        <a href="mailto:yohansebastianbr@hotmail.com?subject=Dudas%20o%20Sugerencias%20sobre%20Piggy%20Wallet" class="btn btn-custom" th:text="#{settings.suggestions}"></a>
 
         <!-- Botón Políticas de Privacidad -->
-        <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#privacyModal">Políticas de Privacidad</button>
+        <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#privacyModal" th:text="#{settings.politics}"></button>
 
         <!-- Modal Políticas de Privacidad -->
         <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="privacyModalLabel">Políticas de Privacidad</h5>
+                <h4 class="modal-title" id="privacyModalLabel" th:text="#{settings.politics}"></h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <p>En Piggy Wallet, respetamos tu privacidad. Toda la información proporcionada será tratada con confidencialidad y no será compartida con terceros sin tu consentimiento.</p>
-                <p>Recopilamos datos solo para mejorar tu experiencia en la aplicación y cumplir con los estándares legales.</p>
-                <p>Para más detalles, puedes contactarnos a través de nuestro correo electrónico.</p>
+                <p th:text="#{settings.modal.politics1}"></p>
+                <p th:text="#{settings.modal.politics2}"></p>
+                <p th:text="#{settings.modal.politics3}"></p>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{spending.from.close}">Cerrar</button>
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </main>
   </div>
