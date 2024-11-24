@@ -29,9 +29,9 @@ public class UpcomingPaymentsEntity {
     @Column(name = "upp_name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)  // Cambiado a LAZY
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore  // Añade esta anotación
+    @JsonIgnore
     private UserEntity user;
 }
 

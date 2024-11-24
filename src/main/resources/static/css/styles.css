@@ -19,7 +19,7 @@ body {
 
 /* Para cambiar el color al pasar el ratón */
 .social-links:hover {
-    color: #005582 !important; /* Un tono más oscuro, por ejemplo */
+    color: #005582 !important;
 }
 
 
@@ -109,7 +109,7 @@ footer .col-md-4.text-start img {
 footer {
     background-color: #333333;
     color: #fff;
-    padding: 10px 0; /* Cambia "10" al valor que desees */
+    padding: 10px 0;
     box-sizing: content-box;
 }
 
@@ -681,7 +681,7 @@ blockquote {
     border-top: 1px solid #404040;
 }
 
-/* Inputs y select */
+
 .body-profile .form-control,
 .body-profile .form-select{
     background-color: #333333;
@@ -813,17 +813,16 @@ blockquote {
 
 canvas#spendingDonut {
     width: 100%;
-    max-height: 300px; /* Ajusta el tamaño según tu diseño */
-    height: 300px;    /* Ajusta el tamaño según tu diseño */
+    max-height: 300px;
+    height: 300px;
     margin-top: 5%;
 }
 
 #userSignupsChart, #userRolesChart {
     width: 100% !important;
-    height: 450px !important; /* Ajusta la altura según lo necesario */
+    height: 450px !important;
 }
 
-/* Estilos base de la card */
 .card {
     background-color: #1e1e2d;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -850,33 +849,33 @@ canvas#spendingDonut {
     font-weight: 300;
 }
 
-/* Sobrescribir estilos de Bootstrap para la tabla */
+
 .table {
-    --bs-table-bg: #000a23 !important; /* Fondo base de la tabla */
-    --bs-table-color: #153f59 !important; /* Color de texto principal */
-    --bs-table-striped-bg: #02152b !important; /* Fondo para filas alternadas */
+    --bs-table-bg: #000a23 !important;
+    --bs-table-color: #153f59 !important;
+    --bs-table-striped-bg: #02152b !important;
     --bs-table-striped-color: #365b77 !important;
-    --bs-table-hover-bg: #021d34 !important; /* Color de hover */
+    --bs-table-hover-bg: #021d34 !important;
     --bs-table-hover-color: #557796 !important;
     margin: 0;
-    border-collapse: separate; /* Espaciado más limpio entre celdas */
-    border-spacing: 0 0.5rem; /* Espaciado entre filas */
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
 }
 
-/* Encabezados de la tabla */
+
 .table thead th {
-    background-color: #27293d !important; /* Fondo oscuro para encabezados */
-    color: #ffffff !important; /* Texto blanco */
+    background-color: #27293d !important;
+    color: #ffffff !important;
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 0.5px;
     padding: 1rem;
     border: none !important;
-    text-align: center; /* Centrar el texto */
+    text-align: center;
 }
 
-/* Celdas de la tabla */
+
 .table td {
     background-color: #1e1e2d !important;
     border: none !important;
@@ -885,7 +884,7 @@ canvas#spendingDonut {
     font-size: 0.9rem;
 }
 
-/* Filas alternadas */
+
 .table-striped tbody tr:nth-of-type(odd) td {
     background-color: #252532 !important;
 }
@@ -894,30 +893,30 @@ canvas#spendingDonut {
     background-color: #1e1e2d !important;
 }
 
-/* Efecto hover */
+
 .table-hover tbody tr:hover td {
     background-color: #2d2d44 !important;
 }
 
-/* Valores positivos y negativos */
+
 .text-success  {
-    color: #1ecb8c !important; /* Verde brillante para ingresos */
+    color: #1ecb8c !important;
     font-weight: bold;
 }
 
 .text-danger {
-    color: #ff6b6b !important; /* Rojo suave para gastos */
+    color: #ff6b6b !important;
     font-weight: bold;
 }
 
-/* Contenedor responsive */
+
 .table-responsive {
     border-radius: 0.5rem;
     overflow: hidden;
 }
 
 
-/* Animaciones */
+
 .table tbody tr {
     transition: all 0.2s ease;
 }
@@ -976,7 +975,7 @@ canvas#spendingDonut {
     min-height: 400px;
 }
 
-/* Estructura base del sidebar */
+
 .sidebar {
     position: fixed;
     top: 0;
@@ -986,12 +985,12 @@ canvas#spendingDonut {
     overflow: visible !important;
 }
 
-/* Estilos específicos del dropdown */
+
 .sidebar-dropdown .dropdown-menu.submenu {
     position: fixed;
-    left: 12.5%; /* Mismo ancho que el sidebar */
+    left: 12.5%;
     top: auto;
-    margin-top: -40px; /* Ajustar según la altura del elemento */
+    margin-top: -40px;
     min-width: 180px;
     background-color: #2b2b2b;
     border: 1px solid #3a3a3a;
@@ -1002,7 +1001,7 @@ canvas#spendingDonut {
     display: block;
 }
 
-/* Deshabilitar el comportamiento del dropdown hacia abajo */
+
 .sidebar-dropdown .dropdown-menu {
     transform: none !important;
 }
@@ -1035,7 +1034,7 @@ canvas#spendingDonut {
     color: white;
 }
 
-/* Asegurar que el dropdown no se vea afectado por el click */
+
 .sidebar-dropdown .dropdown-toggle::after {
     display: none;
 }
@@ -1101,7 +1100,6 @@ canvas#spendingDonut {
     .body-login .login-container{
         margin: 10px;
     }
-
 
     .body-login{
         padding: 0;

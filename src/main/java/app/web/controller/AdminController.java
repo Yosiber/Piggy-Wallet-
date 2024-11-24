@@ -70,6 +70,13 @@ public class AdminController {
         return "admin/dashboard";
     }
 
+
+    /**
+     * Obtiene la lista de usuarios y los pasa al modelo para ser renderizados en la vista.
+     *
+     * @param model el modelo utilizado para pasar datos a la vista.
+     * @return la plantilla de vista "admin/users" que muestra la lista de usuarios.
+     */
     @GetMapping("/users")
     public String getUsersList(Model model) {
         List<UserEntity> users = userService.getAllUsers();
@@ -155,20 +162,15 @@ public class AdminController {
 
     @GetMapping("/generarReporte")
     public void generarReporte(HttpServletResponse response) throws Exception {
-        // Configurar el tipo de contenido y el encabezado de la respuesta
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "inline; filename=Reporte_usuarios.pdf");
 
-        // Compilar el reporte
         JasperReport reporte = JasperCompileManager
                 .compileReport(resourceLoader.getResource("classpath:Report.jrxml").getInputStream());
 
-        // Usar la conexión de base de datos
         try (Connection conexion = dataSource.getConnection()) {
-            // Generar el reporte sin parámetros
             JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, null, conexion);
 
-            // Exportar el reporte como PDF y enviarlo en la respuesta
             try (OutputStream salida = response.getOutputStream()) {
                 JasperExportManager.exportReportToPdfStream(jasperPrint, salida);
             }

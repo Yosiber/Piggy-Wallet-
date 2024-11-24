@@ -35,7 +35,7 @@ public class CashFlowEntity {
     private String description;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY) // o FetchType.EAGER
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CategoryEntity category;
 

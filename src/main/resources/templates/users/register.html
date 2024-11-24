@@ -78,6 +78,10 @@
 
         <!-- Formulario de registro de sesión -->
         <form th:action="@{/register}" id="formulario" method="post">
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span th:text="#{register.error}">Invalid credentials</span>
+            </div>
             <div class="mb-3">
                 <i class="bi bi-person-fill icono-login"></i>
                 <input type="text" class="form-control" id="name" th:placeholder="#{register.form.placeholder.name}" name="name" required autocomplete="off">

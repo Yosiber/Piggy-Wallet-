@@ -119,13 +119,13 @@
         <main class="col-md-10 col-lg-10 main-content">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-3 pb-2 mb-3">
                 <h2 th:text="#{panel.users.title}"></h2>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">
+                <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-2 px-4" style="margin-top: 40px " data-bs-toggle="modal" data-bs-target="#createUserModal">
                     <i class="bi bi-person-plus-fill"></i>
                     <span th:text="#{panel.admin.users.create}">Crear Usuario</span>
                 </button>
             </div>
             <form th:action="@{/admin/generarReporte}" method="get">
-                <button type="submit" class="btn btn-primary" >Exportar</button>
+                <button type="submit" class="btn btn-primary" th:text="#{panel.pdf}" style="margin-bottom: 10px" >Exportar</button>
             </form>
 
             <div class="table-responsive">

@@ -36,7 +36,6 @@ public class AuditUserListener {
 
     @PreUpdate
     private void preUpdate(UserEntity user) {
-        try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication != null ? authentication.getName() : "system";
 
@@ -46,10 +45,6 @@ public class AuditUserListener {
             history.setOperation("UPDATE");
             history.setUsername(username);
             this.auditUserRepository.save(history);
-        } catch (Exception e) {
-            // Loggear el error pero no interrumpir la operación de borrado
-            e.printStackTrace();
-        }
     }
 
 

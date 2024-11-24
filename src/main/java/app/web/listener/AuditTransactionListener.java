@@ -29,11 +29,10 @@ public class AuditTransactionListener {
         AuditTransactionEntity history = new AuditTransactionEntity();
         history.setAmount(transaction.getValue());
         history.setDate(LocalDateTime.now());
-        history.setCategory(transaction.getCategory().getName()); // Usar la relación o getter adecuado
+        history.setCategory(transaction.getCategory().getName());
         history.setOperation("INSERT");
         history.setUsername(username);
 
-        // Guardar en el repositorio correspondiente
         this.auditTransactionRepository.save(history);
     }
 

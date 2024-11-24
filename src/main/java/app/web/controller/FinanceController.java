@@ -79,19 +79,14 @@ public class FinanceController {
 
     @GetMapping("/dashboard")
     public String getDashboardData(@AuthenticationPrincipal User springUser, Model model) {
-        // Obtener el usuario actual desde el servicio
         UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
 
-        // Obtener todas las transacciones asociadas al usuario
         List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
 
-        // Obtener todas las categorías asociadas al usuario
         Set<CategoryEntity> allCategories = categoryService.getCategoriesByUser(springUser);
 
-        // Obtener pagos próximos usando el DTO directamente
         List<UpcomingPaymentsDTO> upcomingPayments = upcomingPaymentsService.getUpcomingPaymentsByUser(springUser);
 
-        // Formateador para valores numéricos
         DecimalFormat df = new DecimalFormat("#,##0.00");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(new Locale("es", "ES")));
 
@@ -110,23 +105,19 @@ public class FinanceController {
             }
         });
 
-        // Obtener las transacciones recientes (limitado a las últimas 5)
         List<CashFlowEntity> recentTransactions = cashFlowService.getTransactionsByUser(currentUser);
         List<CashFlowEntity> limitedTransactions = recentTransactions.size() > 5
                 ? recentTransactions.subList(0, 5)
                 : recentTransactions;
 
-        // Obtener gastos por categoría
         Map<String, BigDecimal> gastosPorCategoria = cashFlowService.getExpensesByCategory(currentUser);
 
-        // Convertir BigDecimal a String
         Map<String, String> gastosPorCategoriaString = gastosPorCategoria.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         e -> e.getValue().toPlainString()
                 ));
 
-        // Añadir todos los atributos al modelo
         model.addAttribute("upcomingPayments", upcomingPayments);
         model.addAttribute("gastosPorCategoria", gastosPorCategoriaString);
         model.addAttribute("ingresosPorMes", ingresosPorMes);
@@ -142,7 +133,6 @@ public class FinanceController {
         try {
             UpcomingPaymentsEntity savedPayment = upcomingPaymentsService.createUpcomingPayments(upcomingPayments, user);
 
-            // Convertir a DTO
             UpcomingPaymentsDTO dto = new UpcomingPaymentsDTO(
                     savedPayment.getId(),
                     savedPayment.getName(),
@@ -166,39 +156,35 @@ public class FinanceController {
 
         List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
 
-        // Limitar a 10 transacciones
         List<CashFlowEntity> limitedTransactions = transactions.size() > 10
                 ? transactions.subList(0, 10)
                 : transactions;
 
-        // Obtener el balance original
         Map<String, Object> balanceData = cashFlowService.getBalanceSummary(currentUser);
         BigDecimal rawBalanceBigDecimal = balanceData.get("balance") != null
                 ? (BigDecimal) balanceData.get("balance")
                 : BigDecimal.ZERO;
 
-        // Convertir a double
         double rawBalance = rawBalanceBigDecimal.doubleValue();
 
-        // Formatear el balance original
         NumberFormat currencyFormat = NumberFormat.getInstance();
         String formattedBalance = currencyFormat.format(rawBalance);
 
-        // Calcular saldo total (balance sin negativos)
         double totalBalance = Math.max(rawBalance, 0);
         String formattedTotalBalance = currencyFormat.format(totalBalance);
 
 
-        model.addAttribute("balance", formattedBalance); // Balance original (puede ser negativo)
-        model.addAttribute("saldoTotal", formattedTotalBalance); // Balance sin negativos
+        model.addAttribute("balance", formattedBalance);
+        model.addAttribute("saldoTotal", formattedTotalBalance);
         model.addAttribute("totalIngresos", currencyFormat.format(balanceData.get("totalIncome")));
         model.addAttribute("totalGastos", currencyFormat.format(balanceData.get("totalExpenses")));
         model.addAttribute("ingresos", categoriesByType.getOrDefault(true, new ArrayList<>()));
         model.addAttribute("gastos", categoriesByType.getOrDefault(false, new ArrayList<>()));
-        model.addAttribute("transactions", limitedTransactions); // Solo las primeras 10 transacciones
+        model.addAttribute("transactions", limitedTransactions);
 
         return "finance/transactions";
     }
+
     @PostMapping("/transactions")
     @ResponseBody
     public ResponseEntity<?> createTransaction(
@@ -207,7 +193,6 @@ public class FinanceController {
         try {
             UserEntity currentUser = userService.getUserByUsername(springUser.getUsername());
 
-            // Buscar y validar la categoría
             CategoryEntity category = categoryService.findById(requestDTO.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
@@ -215,7 +200,6 @@ public class FinanceController {
                 throw new RuntimeException("La categoría no pertenece al usuario");
             }
 
-            // Crear y guardar la transacción
             CashFlowEntity cashFlow = new CashFlowEntity();
             cashFlow.setUser(currentUser);
             cashFlow.setValue(requestDTO.getValue());
@@ -287,19 +271,18 @@ public class FinanceController {
     public String mostrarCategorias(@AuthenticationPrincipal org.springframework.security.core.userdetails.User user, Model model) {
         Set<CategoryEntity> categories = categoryService.getCategoriesByUser(user);
 
-        // Filtra las categorías en "Ingresos" y "Gastos"
         Set<CategoryEntity> ingresos = categories.stream()
                 .filter(CategoryEntity::isIncome)
-                .collect(Collectors.toSet()); // Cambia a Collectors.toSet()
+                .collect(Collectors.toSet());
 
         Set<CategoryEntity> gastos = categories.stream()
                 .filter(category -> !category.isIncome())
-                .collect(Collectors.toSet()); // Cambia a Collectors.toSet()
+                .collect(Collectors.toSet());
 
         model.addAttribute("ingresos", ingresos);
         model.addAttribute("gastos", gastos);
 
-        return "finance/categories";  // Asegúrate de que la vista esté en la ruta correcta
+        return "finance/categories";
     }
 
 
@@ -324,17 +307,14 @@ public class FinanceController {
             UserEntity currentUser = userService.getCurrentSession();
             model.addAttribute("user", currentUser);
 
-            // Obtener estadísticas de transacciones
             List<CashFlowEntity> transactions = cashFlowService.getTransactionsByUser(currentUser);
             model.addAttribute("totalTransactions", transactions.size());
 
-            // Obtener balance y totales
             Map<String, Object> balanceSummary = cashFlowService.getBalanceSummary(currentUser);
             model.addAttribute("totalIncome", balanceSummary.get("totalIncome"));
             model.addAttribute("totalExpenses", balanceSummary.get("totalExpenses"));
             model.addAttribute("balance", balanceSummary.get("balance"));
 
-            // Crear User para getCategoriesByUser
             UserDetails userDetails = User.withUsername(currentUser.getUsername())
                     .password(currentUser.getPassword())
                     .authorities(currentUser.getRoles().stream()
@@ -344,7 +324,7 @@ public class FinanceController {
 
             User springUser = (User) userDetails;
 
-            // Obtener categorías activas
+
             Set<CategoryEntity> categories = categoryService.getCategoriesByUser(springUser);
             model.addAttribute("activeCategories", categories.size());
 
@@ -364,7 +344,6 @@ public class FinanceController {
             UserEntity currentUser = userService.getCurrentSession();
             boolean needsRelogin = false;
 
-            // Verificar si el nuevo username ya existe
             if (!username.equals(currentUser.getUsername())) {
                 if (userService.existsByUsername(username)) {
                     redirectAttributes.addFlashAttribute("errorMessage",
@@ -374,7 +353,7 @@ public class FinanceController {
                 needsRelogin = true;
             }
 
-            // Verificar si el nuevo email ya existe
+
             if (!email.equals(currentUser.getEmail()) &&
                     userService.existsByEmail(email)) {
                 redirectAttributes.addFlashAttribute("errorMessage",
@@ -382,14 +361,13 @@ public class FinanceController {
                 return "redirect:/finance/profile";
             }
 
-            // Actualizar los campos
+
             currentUser.setEmail(email);
             currentUser.setUsername(username);
             if (phone != null && !phone.trim().isEmpty()) {
                 currentUser.setPhone(phone);
             }
 
-            // Guardar cambios
             userService.saveUser(currentUser);
 
             if (needsRelogin) {

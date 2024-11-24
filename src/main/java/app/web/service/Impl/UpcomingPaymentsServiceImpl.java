@@ -42,7 +42,6 @@ public class UpcomingPaymentsServiceImpl implements UpcomingPaymentsService {
         UserEntity userEntity = userRepository.findByUsername(user.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + user.getUsername()));
 
-        // Crear nueva instancia para evitar problemas con el ID
         UpcomingPaymentsEntity newPayment = new UpcomingPaymentsEntity();
         newPayment.setName(upcomingPayments.getName());
         newPayment.setValue(upcomingPayments.getValue());

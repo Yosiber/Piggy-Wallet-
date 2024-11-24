@@ -36,10 +36,8 @@ public class CashFlowServiceImpl implements CashFlowService {
 
     @Override
     public CashFlowEntity saveTransaction(CashFlowEntity cashFlow) {
-        // Validar y obtener la categoría
         CategoryEntity category = validateCategory(cashFlow);
 
-        // Ajustar el valor según el tipo de transacción (ingreso o gasto)
         if (category.isIncome()) {
             cashFlow.setValue(Math.abs(cashFlow.getValue().floatValue()));
         } else {
@@ -53,7 +51,6 @@ public class CashFlowServiceImpl implements CashFlowService {
         CategoryEntity category = categoryRepository.findById(cashFlow.getCategory().getId())
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
-        // Validar que la categoría pertenezca al usuario
         if (!category.getUser().getId().equals(cashFlow.getUser().getId())) {
             throw new RuntimeException("La categoría no pertenece al usuario");
         }
@@ -73,12 +70,12 @@ public class CashFlowServiceImpl implements CashFlowService {
 
         BigDecimal totalIncome = transactions.stream()
                 .filter(t -> t.getCategory().isIncome())
-                .map(t -> BigDecimal.valueOf(t.getValue())) // Convertir el valor de Float a BigDecimal
+                .map(t -> BigDecimal.valueOf(t.getValue()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalExpenses = transactions.stream()
                 .filter(t -> !t.getCategory().isIncome())
-                .map(t -> BigDecimal.valueOf(Math.abs(t.getValue()))) // Convertir el valor a BigDecimal y tomar valor absoluto
+                .map(t -> BigDecimal.valueOf(Math.abs(t.getValue())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal balance = totalIncome.subtract(totalExpenses);
@@ -96,7 +93,7 @@ public class CashFlowServiceImpl implements CashFlowService {
         List<CashFlowEntity> transactions = getTransactionsByUser(user);
 
         return transactions.stream()
-                .filter(t -> !t.getCategory().isIncome()) // Solo gastos
+                .filter(t -> !t.getCategory().isIncome())
                 .collect(Collectors.groupingBy(
                         t -> t.getCategory().getName(),
                         Collectors.mapping(

@@ -43,7 +43,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Set<CategoryEntity> getCategoriesByUser(User user) {
         Set<CategoryEntity> categories = categoryRepository.findByUserUsername(user.getUsername());
-        System.out.println("Categorías encontradas para el usuario: " + categories);
         return categories;
     }
 
@@ -52,22 +51,10 @@ public class CategoryServiceImpl implements CategoryService {
         UserEntity userEntity = userRepository.findByUsername(user.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Log para debug
-        System.out.println("Creando categoría:");
-        System.out.println("Nombre: " + category.getName());
-        System.out.println("isIncome: " + category.isIncome());
-
-        // Establece el usuario propietario de la categoría
         category.setUser(userEntity);
 
-        // Guarda la categoría
-        CategoryEntity savedCategory = categoryRepository.save(category);
 
-        // Log después de guardar
-        System.out.println("Categoría guardada:");
-        System.out.println("ID: " + savedCategory.getId());
-        System.out.println("Nombre: " + savedCategory.getName());
-        System.out.println("isIncome: " + savedCategory.isIncome());
+        CategoryEntity savedCategory = categoryRepository.save(category);
 
         return savedCategory;
     }

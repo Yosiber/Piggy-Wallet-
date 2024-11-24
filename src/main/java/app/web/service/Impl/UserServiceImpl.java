@@ -10,6 +10,7 @@ import app.web.persistence.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,13 +41,15 @@ public class UserServiceImpl implements UserService {
         try {
             RoleEntity roleDefault = roleRepository.findById(2L)
                     .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
-
             Set<RoleEntity> roles = new HashSet<>();
             roles.add(roleDefault);
             user.setRoles(roles);
-
             userRepository.save(user);
+
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Esta cuenta ya esta registrada");
         } catch (Exception e) {
+            // Otros posibles errores
             throw new RuntimeException("Error al crear el usuario: " + e.getMessage());
         }
     }
@@ -79,7 +82,6 @@ public class UserServiceImpl implements UserService {
         List<UserEntity> users = userRepository.findAll();
         Map<String, Long> monthlySignups = new LinkedHashMap<>();
 
-        // Procesar usuarios y agrupar por mes
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
         users.stream()
                 .filter(u -> u.getCreatedAt() != null)

@@ -90,7 +90,7 @@
           </div>
           <div th:if="${error}" class="alert alert-danger" role="alert">
             <i class="fas fa-exclamation-circle me-2"></i>
-            <span th:text="${error}">Invalid credentials</span>
+            <span th:text="#{login.error}"></span>
           </div>
 
           <form id="formulario" th:action="@{/login}" method="post">
