@@ -9,6 +9,7 @@ import app.web.persistence.entities.UserEntity;
 import jakarta.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +18,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
 import javax.sql.DataSource;
+import java.awt.image.BufferedImage;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.util.*;
@@ -168,9 +171,13 @@ public class AdminController {
         JasperReport reporte = JasperCompileManager
                 .compileReport(resourceLoader.getResource("classpath:Report.jrxml").getInputStream());
 
-        try (Connection conexion = dataSource.getConnection()) {
-            JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, null, conexion);
+        Map<String, Object> parametros = new HashMap<>();
+        Resource imgResource = resourceLoader.getResource("classpath:static/img/LogoF.png");
+        BufferedImage image = ImageIO.read(imgResource.getInputStream());
+        parametros.put("IMAGEN_PATH", image);
 
+        try (Connection conexion = dataSource.getConnection()) {
+            JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, parametros, conexion);
             try (OutputStream salida = response.getOutputStream()) {
                 JasperExportManager.exportReportToPdfStream(jasperPrint, salida);
             }
@@ -179,5 +186,4 @@ public class AdminController {
             throw new Exception("Error al generar el reporte: " + e.getMessage());
         }
     }
-
 }
