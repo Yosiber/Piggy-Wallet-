@@ -169,7 +169,7 @@ public class AdminController {
         response.setHeader("Content-Disposition", "inline; filename=Reporte_usuarios.pdf");
 
         JasperReport reporte = JasperCompileManager
-                .compileReport(resourceLoader.getResource("classpath:Report.jrxml").getInputStream());
+                .compileReport(resourceLoader.getResource("classpath:static/report/Report.jrxml").getInputStream());
 
         Map<String, Object> parametros = new HashMap<>();
         Resource imgResource = resourceLoader.getResource("classpath:static/img/LogoF.png");
