@@ -12,7 +12,18 @@ import java.util.Optional;
 import java.util.Set;
 
 
+/**
+ * Repositorio para la gestión de categorías.
+ * Proporciona métodos para realizar operaciones CRUD sobre entidades de categoría.
+ */
 @Repository
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
-    Set<CategoryEntity> findByUserUsername(String catName);
+
+    /**
+     * Encuentra todas las categorías asociadas al nombre de usuario de un usuario.
+     *
+     * @param username el nombre de usuario del propietario de las categorías.
+     * @return un conjunto de entidades de categoría asociadas al usuario.
+     */
+    Set<CategoryEntity> findByUserUsername(String username);
 }

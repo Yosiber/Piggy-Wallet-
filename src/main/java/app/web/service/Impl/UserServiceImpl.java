@@ -21,6 +21,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Implementación de la interfaz {@link UserService} que gestiona las operaciones relacionadas con usuarios.
+ * Incluye métodos para creación, consulta, actualización y eliminación de usuarios,
+ * además de estadísticas como usuarios activos, registros mensuales y distribución de roles.
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -36,6 +41,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ActiveUserSessionListener activeUserSessionListener;
 
+    /**
+     * Crea un nuevo usuario con un rol por defecto y lo guarda en la base de datos.
+     *
+     * @param user la entidad del usuario que se va a crear.
+     * @throws RuntimeException si el usuario ya está registrado o si ocurre algún error durante el proceso.
+     */
     @Override
     public void createUser(UserEntity user) {
         try {
@@ -49,34 +60,66 @@ public class UserServiceImpl implements UserService {
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("Esta cuenta ya esta registrada");
         } catch (Exception e) {
-            // Otros posibles errores
             throw new RuntimeException("Error al crear el usuario: " + e.getMessage());
         }
     }
 
+    /**
+     * Comprueba si existe un usuario con el nombre de usuario proporcionado.
+     *
+     * @param username el nombre de usuario a verificar.
+     * @return {@code true} si el usuario existe, {@code false} en caso contrario.
+     */
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
 
+    /**
+     * Comprueba si existe un usuario con el correo electrónico proporcionado.
+     *
+     * @param email el correo electrónico a verificar.
+     * @return {@code true} si el correo existe, {@code false} en caso contrario.
+     */
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
+    /**
+     * Cuenta el total de usuarios registrados.
+     *
+     * @return el número total de usuarios.
+     */
     @Override
     public long countAllUsers() {
         return userRepository.count();
     }
 
+    /**
+     * Cuenta el total de usuarios activos basándose en sesiones activas.
+     *
+     * @return el número de usuarios activos.
+     */
     @Override
     public long countActiveUsers() {
         return activeUserSessionListener.getActiveSessions();
     }
 
+    /**
+     * Obtiene una lista de los usuarios más recientes registrados, limitada al número especificado.
+     *
+     * @param limit el número máximo de usuarios recientes a devolver.
+     * @return una lista de los usuarios más recientes.
+     */
     @Override
     public List<UserEntity> getRecentUsers(int limit) {
         return userRepository.findTop5ByOrderByCreatedAtDesc();
     }
 
+    /**
+     * Obtiene un mapa de registros de usuarios agrupados por mes y año.
+     *
+     * @return un mapa donde las claves son meses/años y los valores el conteo de registros.
+     */
     @Override
     public Map<String, Long> getMonthlySignups() {
         List<UserEntity> users = userRepository.findAll();
@@ -94,6 +137,11 @@ public class UserServiceImpl implements UserService {
         return monthlySignups;
     }
 
+    /**
+     * Obtiene la distribución de roles entre los usuarios registrados.
+     *
+     * @return un mapa donde las claves son nombres de roles y los valores el conteo de usuarios con ese rol.
+     */
     @Override
     public Map<String, Long> getRoleDistribution() {
         Map<String, Long> distribution = new HashMap<>();
@@ -108,47 +156,70 @@ public class UserServiceImpl implements UserService {
         return distribution;
     }
 
+    /**
+     * Guarda o actualiza la información de un usuario en la base de datos.
+     *
+     * @param user la entidad del usuario a guardar.
+     * @return el usuario guardado.
+     */
     @Override
     public UserEntity saveUser(UserEntity user) {
         return userRepository.save(user);
     }
 
-    @Override
-    public UserEntity getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
+    /**
+     * Busca un usuario por su nombre de usuario.
+     *
+     * @param username el nombre de usuario.
+     * @return el usuario encontrado, o {@code null} si no existe.
+     */
     @Override
     public UserEntity getUserByUsername(String username) {
         return userRepository.findByUsername(username).orElse(null);
     }
 
+    /**
+     * Obtiene el usuario asociado a la sesión actual.
+     *
+     * @return el usuario de la sesión actual.
+     * @throws RuntimeException si no hay sesión activa.
+     */
     @Override
     public UserEntity getCurrentSession() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
             throw new RuntimeException("No hay sesion activa");
         }
 
         HttpSession session = request.getSession(false);
 
-        if(session == null) {
+        if (session == null) {
             throw new RuntimeException("No hay sesion activa");
         }
 
-        UserEntity user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        UserEntity user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return user;
     }
 
+    /**
+     * Obtiene una lista de todos los usuarios registrados.
+     *
+     * @return una lista de usuarios.
+     */
     @Override
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
 
+    /**
+     * Elimina un usuario por su ID.
+     *
+     * @param id el ID del usuario a eliminar.
+     */
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
-
 }

@@ -13,10 +13,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Implementación del servicio para la gestión de categorías.
+ * Proporciona métodos para crear, eliminar, contar y recuperar categorías asociadas a un usuario.
+ */
 @Service
 @Transactional
 public class CategoryServiceImpl implements CategoryService {
-
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -24,28 +27,36 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private UserRepository userRepository;
 
-    @Override
-    public CategoryEntity deleteCategory(Long id, User user) {
-        Optional<CategoryEntity> category = categoryRepository.findById(id);
-        if (category.isPresent() && category.get().getUser().equals(user)) {
-            CategoryEntity categoryToDelete = category.get();
-            categoryRepository.deleteById(id);
-            return categoryToDelete;
-        }
-        return null;
-    }
 
+    /**
+     * Cuenta el número total de categorías en el sistema.
+     *
+     * @return el número total de categorías.
+     */
     @Override
     public long countAllCategories() {
         return categoryRepository.count();
     }
 
+    /**
+     * Obtiene las categorías asociadas a un usuario específico.
+     *
+     * @param user el usuario cuyas categorías se desean obtener.
+     * @return un conjunto de categorías asociadas al usuario.
+     */
     @Override
     public Set<CategoryEntity> getCategoriesByUser(User user) {
-        Set<CategoryEntity> categories = categoryRepository.findByUserUsername(user.getUsername());
-        return categories;
+        return categoryRepository.findByUserUsername(user.getUsername());
     }
 
+    /**
+     * Crea una nueva categoría asociada a un usuario específico.
+     *
+     * @param category la categoría a crear.
+     * @param user el usuario al que se asociará la categoría.
+     * @return la categoría creada y almacenada en la base de datos.
+     * @throws RuntimeException si el usuario no se encuentra en la base de datos.
+     */
     @Override
     public CategoryEntity createCategory(CategoryEntity category, User user) {
         UserEntity userEntity = userRepository.findByUsername(user.getUsername())
@@ -53,14 +64,18 @@ public class CategoryServiceImpl implements CategoryService {
 
         category.setUser(userEntity);
 
-
-        CategoryEntity savedCategory = categoryRepository.save(category);
-
-        return savedCategory;
+        return categoryRepository.save(category);
     }
 
+    /**
+     * Busca una categoría por su ID.
+     *
+     * @param id el ID de la categoría a buscar.
+     * @return un Optional que contiene la categoría encontrada, o vacío si no existe.
+     */
     @Override
     public Optional<CategoryEntity> findById(Long id) {
         return categoryRepository.findById(id);
     }
 }
+

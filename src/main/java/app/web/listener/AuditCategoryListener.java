@@ -14,12 +14,23 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+/**
+ * Listener que audita las operaciones realizadas sobre entidades de categoría.
+ * Se utiliza para registrar automáticamente la información de auditoría antes de la persistencia.
+ */
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
 public class AuditCategoryListener {
 
+    /** Repositorio para guardar registros de auditoría de categorías. */
     private final AuditCategoryRepository auditCategoryRepository;
 
+    /**
+     * Método ejecutado antes de la persistencia de una entidad {@link CategoryEntity}.
+     * Registra un historial de la operación de inserción con información relevante.
+     *
+     * @param category la entidad de categoría que será persistida.
+     */
     @PrePersist
     private void prePersist(CategoryEntity category) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

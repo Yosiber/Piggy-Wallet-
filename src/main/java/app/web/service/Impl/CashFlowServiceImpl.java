@@ -16,6 +16,11 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Implementación del servicio para la gestión de transacciones de flujo de efectivo (CashFlow).
+ * Proporciona funcionalidades para guardar transacciones, obtener información sobre el balance,
+ * gastos por categoría y contar las transacciones.
+ */
 @Service
 @Transactional
 @Slf4j
@@ -25,6 +30,13 @@ public class CashFlowServiceImpl implements CashFlowService {
     private final CategoryRepository categoryRepository;
     private final UserService userService;
 
+    /**
+     * Constructor que inyecta las dependencias requeridas.
+     *
+     * @param cashFlowRepository repositorio de flujo de efectivo.
+     * @param categoryRepository repositorio de categorías.
+     * @param userService servicio de usuarios.
+     */
     @Autowired
     public CashFlowServiceImpl(CashFlowRepository cashFlowRepository,
                                CategoryRepository categoryRepository,
@@ -34,6 +46,13 @@ public class CashFlowServiceImpl implements CashFlowService {
         this.userService = userService;
     }
 
+    /**
+     * Guarda una transacción de flujo de efectivo después de validar la categoría
+     * y ajustar el valor según sea ingreso o gasto.
+     *
+     * @param cashFlow la transacción a guardar.
+     * @return la transacción guardada.
+     */
     @Override
     public CashFlowEntity saveTransaction(CashFlowEntity cashFlow) {
         CategoryEntity category = validateCategory(cashFlow);
@@ -47,6 +66,13 @@ public class CashFlowServiceImpl implements CashFlowService {
         return cashFlowRepository.save(cashFlow);
     }
 
+    /**
+     * Valida si la categoría asociada a una transacción existe y pertenece al usuario correcto.
+     *
+     * @param cashFlow la transacción que contiene la categoría a validar.
+     * @return la categoría validada.
+     * @throws RuntimeException si la categoría no existe o no pertenece al usuario.
+     */
     private CategoryEntity validateCategory(CashFlowEntity cashFlow) {
         CategoryEntity category = categoryRepository.findById(cashFlow.getCategory().getId())
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
@@ -58,12 +84,24 @@ public class CashFlowServiceImpl implements CashFlowService {
         return category;
     }
 
-
+    /**
+     * Obtiene todas las transacciones de flujo de efectivo de un usuario, ordenadas por fecha descendente.
+     *
+     * @param user el usuario cuyas transacciones se quieren obtener.
+     * @return una lista de transacciones del usuario.
+     */
     @Override
     public List<CashFlowEntity> getTransactionsByUser(UserEntity user) {
         return cashFlowRepository.findByUserOrderByDateDesc(user);
     }
 
+    /**
+     * Calcula un resumen del balance para un usuario, incluyendo ingresos totales,
+     * gastos totales y el balance neto.
+     *
+     * @param user el usuario para el cual se genera el resumen.
+     * @return un mapa con las claves "totalIncome", "totalExpenses" y "balance".
+     */
     @Override
     public Map<String, Object> getBalanceSummary(UserEntity user) {
         List<CashFlowEntity> transactions = getTransactionsByUser(user);
@@ -88,6 +126,12 @@ public class CashFlowServiceImpl implements CashFlowService {
         return summary;
     }
 
+    /**
+     * Calcula los gastos de un usuario agrupados por categoría.
+     *
+     * @param user el usuario cuyas transacciones se agrupan.
+     * @return un mapa donde las claves son los nombres de las categorías y los valores son los gastos totales.
+     */
     @Override
     public Map<String, BigDecimal> getExpensesByCategory(UserEntity user) {
         List<CashFlowEntity> transactions = getTransactionsByUser(user);
@@ -103,6 +147,11 @@ public class CashFlowServiceImpl implements CashFlowService {
                 ));
     }
 
+    /**
+     * Cuenta el número total de transacciones de flujo de efectivo en el sistema.
+     *
+     * @return el número total de transacciones.
+     */
     @Override
     public long countAllTransactions() {
         return cashFlowRepository.count();
