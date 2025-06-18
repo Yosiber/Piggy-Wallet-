@@ -24,13 +24,15 @@
 ## 🛠️ Instalación local
 
 1. Clona el repositorio:
+
    ```bash
    git clone https://github.com/tu_usuario/piggy-wallet.git
 
-2. Configura la base de datos MySQL y ajusta las credenciales en application.properties.
+3. Configura la base de datos MySQL y ajusta las credenciales en application.properties.
   
-  ./mvnw spring-boot:run
-
+  ```bash
+   ./mvnw spring-boot:run
+   ```
 3. Ejecuta el proyecto con Spring Boot:
 
 4. Accede al local host
