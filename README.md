@@ -28,11 +28,6 @@
    ```bash
    git clone https://github.com/tu_usuario/piggy-wallet.git
 
-3. Configura la base de datos MySQL y ajusta las credenciales en application.properties.
-  
-  ```bash
-   ./mvnw spring-boot:run
-   ```
-3. Ejecuta el proyecto con Spring Boot:
-
-4. Accede al local host
+2. Configura la base de datos MySQL y ajusta las credenciales en application.properties.
+3. Ejecuta el proyecto con Spring Boot.
+4. Accede al local host.
